@@ -1,0 +1,7 @@
+class StatusCode:
+    SUCCESS = "AR00"
+    INVALID_CREDENTIALS = "AR01"
+    UNAUTHORIZED = "AR02"
+    NOT_FOUND = "AR03"
+    SERVER_ERROR = "AR04"
+    BAD_REQUEST = "AR05"
