@@ -98,6 +98,60 @@ def get_all_users(request):
                 "message": "All Users Retrieved successfully",
                 "users": users_list}, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_active_users(request):
+    users = Users.get_active_users()
+    users_list = [
+        {
+            "user_id": user.user_id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "msisdn": user.msisdn,
+            "gender": user.gender,
+            "dob": user.dob,
+            "region": user.region,
+            "city": user.city,
+            "socials": user.socials,
+            "user_role": user.user_role,
+            "category_of_interest": user.category_of_interest,
+            "job_notifications": user.job_notifications
+        }
+        for user in users
+    ]
+    return Response({"status_code": StatusCode.SUCCESS, 
+                "message": "All Active Users Retrieved successfully",
+                "users": users_list}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_inactive_users(request):
+    users = Users.get_inactive_users()
+    users_list = [
+        {
+            "user_id": user.user_id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "msisdn": user.msisdn,
+            "gender": user.gender,
+            "dob": user.dob,
+            "region": user.region,
+            "city": user.city,
+            "socials": user.socials,
+            "user_role": user.user_role,
+            "category_of_interest": user.category_of_interest,
+            "job_notifications": user.job_notifications
+        }
+        for user in users
+    ]
+    return Response({"status_code": StatusCode.SUCCESS, 
+                "message": "All Inactive Users Retrieved successfully",
+                "users": users_list}, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -172,6 +226,42 @@ def delete_user(request, user_id):
     return Response({
         "status_code": StatusCode.SUCCESS,
         "message": "User deleted successfully."
+    }, status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def deactivate_user(request, user_id):
+    user = Users.get_user_by_user_id(user_id)  # Fetch user
+    if not user:
+        return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    
+    # Soft delete: set record_status to 0
+    user.is_active = 0
+    user.save()
+    
+    return Response({
+        "status_code": StatusCode.SUCCESS,
+        "message": "User deactivated successfully."
+    }, status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def activate_user(request, user_id):
+    user = Users.get_user_by_user_id(user_id)  # Fetch user
+    if not user:
+        return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    
+    # Soft delete: set record_status to 0
+    user.is_active = 1
+    user.save()
+    
+    return Response({
+        "status_code": StatusCode.SUCCESS,
+        "message": "User activated successfully."
     }, status=status.HTTP_200_OK)
     
     
