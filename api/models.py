@@ -35,6 +35,7 @@ class Users(AbstractBaseUser):
     is_active = models.BooleanField(default=True)  # Required by Django auth system
     is_staff = models.BooleanField(default=False)  # Required for Django admin
     is_superuser = models.BooleanField(default=False)
+    record_status = models.CharField(max_length=2, default="1")
 
     USERNAME_FIELD = "email"  # Use msisdn as the unique identifier
     REQUIRED_FIELDS = []  # Add required fields for createsuperuser
@@ -61,9 +62,19 @@ class Users(AbstractBaseUser):
     @staticmethod
     def get_all_users():
         """Get all users."""
-        return Users.objects.all()
+        return Users.objects.filter(record_status="1").all()
+    
+    @staticmethod
+    def get_active_users():
+        """Get all active users."""
+        return Users.objects.filter(record_status="1", is_active=True).all()
+    
+    @staticmethod
+    def get_inactive_users():
+        """Get all inactive users."""
+        return Users.objects.filter(record_status="1", is_active=False).all()
     
     @staticmethod
     def get_user_by_user_id(user_id):
         """Get a user by user_id."""
-        return Users.objects.filter(user_id=user_id).first()
+        return Users.objects.filter(user_id=user_id, record_status="1").first()
