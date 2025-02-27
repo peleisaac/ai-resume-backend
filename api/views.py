@@ -8,7 +8,7 @@ from uuid import UUID
 from api.models import Users
 from rest_framework import status
 from api.status_codes import StatusCode
-
+from .serializers import UserSerializer
 
 # Create your views here.
 @api_view(['GET'])
@@ -138,5 +138,40 @@ def update_user(request, user_id):
     user = Users.get_user_by_user_id(user_id)  # Fetch user
     if not user:
         return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    # Instantiate the serializer with the current user instance and the incoming data.
+    # Using partial=True allows for partial updates. If you require all fields, you can remove partial=True.
+    serializer = UserSerializer(user, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({
+            "status_code": StatusCode.SUCCESS,
+            "message": "User updated successfully",
+            "user": serializer.data
+        }, status=status.HTTP_200_OK)
+    else:
+        return Response({
+            "status_code": StatusCode.INVALID_CREDENTIALS,
+            "message": "Invalid data",
+            "errors": serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_user(request, user_id):
+    user = Users.get_user_by_user_id(user_id)  # Fetch user
+    if not user:
+        return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    
+    # Soft delete: set record_status to 0
+    user.record_status = 0
+    user.save()
+    
+    return Response({
+        "status_code": StatusCode.SUCCESS,
+        "message": "User deleted successfully."
+    }, status=status.HTTP_200_OK)
     
     
