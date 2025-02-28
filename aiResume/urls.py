@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from api.views import protected_view
 from rest_framework.authtoken.views import obtain_auth_token
-from api.views import sign_up, get_all_users, get_user_by_user_id, update_user
+from api.views import sign_up, get_all_users, get_user_by_user_id, update_user, delete_user, deactivate_user, activate_user, get_inactive_users, get_active_users, get_all_jobs, get_job_by_job_id, add_new_job, delete_job, activate_job, deactivate_job, update_job, get_inactive_jobs, get_active_jobs
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,5 +27,22 @@ urlpatterns = [
     path('api/v1/signup', sign_up, name='sign_up'),
     path('api/v1/users', get_all_users, name='get_all_users'),
     path('api/v1/users/<str:user_id>', get_user_by_user_id, name='get_user_by_user_id'),
+    path('api/v1/users/active/', get_active_users, name='get_active_users'),
+    path('api/v1/users/inactive/', get_inactive_users, name='get_inactive_users'),
     path('api/v1/user/<str:user_id>', update_user, name='update_user'),
+    path('api/v1/user/delete/<str:user_id>', delete_user, name='delete_user'),
+    path('api/v1/user/deactivate/<str:user_id>', deactivate_user, name='deactivate_user'),
+    path('api/v1/user/activate/<str:user_id>', activate_user, name='activate_user'),
+
+    # Jobs APIs
+    path('api/v1/jobs', get_all_jobs, name='get_all_jobs'),
+    path('api/v1/jobs/<str:job_id>', get_job_by_job_id, name='get_job_by_job_id'),
+    path('api/v1/job/add', add_new_job, name='add_new_job'),
+    path('api/v1/job/delete/<str:job_id>', delete_job, name='delete_job'),
+    path('api/v1/job/deactivate/<str:job_id>', deactivate_job, name='deactivate_job'),
+    path('api/v1/job/activate/<str:job_id>', activate_job, name='activate_job'),
+    path('api/v1/job/<str:job_id>', update_job, name='update_job'),
+    path('api/v1/jobs/active/', get_active_jobs, name='get_active_jobs'),
+    path('api/v1/jobs/inactive/', get_inactive_jobs, name='get_inactive_jobs'),
+
 ]
