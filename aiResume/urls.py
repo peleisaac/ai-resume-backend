@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from api.views import protected_view
 from rest_framework.authtoken.views import obtain_auth_token
-from api.views import sign_up, get_all_users, get_user_by_user_id, update_user, delete_user, deactivate_user, activate_user, get_inactive_users, get_active_users, get_all_jobs, get_job_by_job_id, add_new_job, delete_job, activate_job, deactivate_job, update_job, get_inactive_jobs, get_active_jobs
+from api.views import sign_up, get_all_users, get_user_by_user_id, update_user, delete_user, deactivate_user, activate_user, get_inactive_users, get_active_users, get_all_jobs, get_job_by_job_id, add_new_job, delete_job, activate_job, deactivate_job, update_job, get_inactive_jobs, get_active_jobs, get_all_applications, get_application_by_application_id, add_new_application, get_applications_by_user_id, get_applications_by_job_id, update_application_status
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -44,5 +44,13 @@ urlpatterns = [
     path('api/v1/job/<str:job_id>', update_job, name='update_job'),
     path('api/v1/jobs/active/', get_active_jobs, name='get_active_jobs'),
     path('api/v1/jobs/inactive/', get_inactive_jobs, name='get_inactive_jobs'),
+
+    # Applications APIs
+    path('api/v1/applications', get_all_applications, name='get_all_applications'),
+    path('api/v1/applications/<str:application_id>', get_application_by_application_id, name='get_application_by_application_id'),
+    path('api/v1/application/add', add_new_application, name='add_new_application'),
+    path('api/v1/applications/by-user/<str:user_id>', get_applications_by_user_id, name='get_applications_by_user_id'),
+    path('api/v1/applications/by-job/<str:job_id>', get_applications_by_job_id, name='get_applications_by_job_id'),
+    path('api/v1/application/status/<str:application_id>', update_application_status, name='update_application_status'),
 
 ]
