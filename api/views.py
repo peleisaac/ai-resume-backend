@@ -7,6 +7,7 @@ import uuid
 from uuid import UUID
 from api.models import Users
 from api.models import Jobs
+from api.models import Applications
 from rest_framework import status
 from api.status_codes import StatusCode
 from .serializers import UserSerializer, JobSerializer
@@ -124,6 +125,44 @@ def add_new_job(request):
                 "message": "Failed To Create Job"
             }, status=status.HTTP_401_UNAUTHORIZED) 
 
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def add_new_application(request):
+        user_id = request.data.get("user_id")
+        job_id = request.data.get("job_id")
+        application_status = request.data.get("application_status")
+
+
+        application_id = str(uuid.uuid4().hex)
+        if Applications.application_exists(user_id, job_id):
+            return Response({
+                "status_code": StatusCode.BAD_REQUEST,
+                "message": "Application already exists"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Create and save the new job
+        job = Applications(
+            application_id = application_id,
+            job_id = job_id,
+            user_id = user_id,
+            status = application_status
+        )
+
+        job.save()
+
+        if job:
+            return Response({
+                "status_code": StatusCode.SUCCESS,
+                "message": "Application sent successfully"
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response({
+                "status_code": StatusCode.INVALID_CREDENTIALS,
+                "message": "Failed To send Application"
+            }, status=status.HTTP_401_UNAUTHORIZED) 
+
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -178,6 +217,26 @@ def get_all_jobs(request):
     return Response({"status_code": StatusCode.SUCCESS, 
                 "message": "All Jobs Retrieved successfully",
                 "jobs": jobs_list}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_all_applications(request):
+    applications = Applications.get_all_applications()
+    applications_list = [
+        {
+            "application_id": application.application_id,
+            "user_details": Users.get_user_by_user_id_json_format(application.user_id),
+            "job_details": Jobs.get_job_by_job_id_json_format(application.job_id),
+            "status": application.status,
+            "created_at": application.created_at,
+            "updated_at": application.updated_at,
+        }
+        for application in applications
+    ]
+    return Response({"status_code": StatusCode.SUCCESS, 
+                "message": "All Applications Retrieved successfully",
+                "applications": applications_list}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -356,6 +415,82 @@ def get_job_by_job_id(request, job_id):
                 "message": "Job Details Retrieved successfully",
                      "job": job_data}, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_application_by_application_id(request, application_id):
+    try:
+        application_id = application_id # Convert to UUID
+    except ValueError:
+        return Response({"status_code": status.HTTP_400_BAD_REQUEST, "message": "Invalid Application ID format"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    application = Applications.get_application_by_application_id(application_id)  # Fetch Application
+    if not application:
+        return Response({"status_code": StatusCode.NOT_FOUND, "message": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    application_data = {
+            "application_id": application.application_id,
+            "user_id": application.user_id,
+            "job_id": application.job_id,
+            "status": application.status,
+            "created_at": application.created_at,
+            "updated_at": application.updated_at,
+    }
+
+    return Response({"status_code": StatusCode.SUCCESS, 
+                "message": "Application Details Retrieved successfully",
+                     "application": application_data}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_applications_by_user_id(request, user_id):
+    try:
+        user_id = user_id # Convert to UUID
+    except ValueError:
+        return Response({"status_code": status.HTTP_400_BAD_REQUEST, "message": "Invalid User ID format"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    applications = Applications.get_applications_by_user_id(user_id)  # Fetch Application By the user_id
+    
+    application_list = [{
+            "application_id": application.application_id,
+            "user_details": Users.get_user_by_user_id_json_format(application.user_id),
+            "job_details": Jobs.get_job_by_job_id_json_format(application.job_id),
+            "status": application.status,
+            "created_at": application.created_at,
+            "updated_at": application.updated_at,
+    } for application in applications
+    ]
+
+    return Response({"status_code": StatusCode.SUCCESS, 
+                "message": "Applications Retrieved successfully",
+                     "applications": application_list}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_applications_by_job_id(request, job_id):
+    try:
+        job_id = job_id # Convert to UUID
+    except ValueError:
+        return Response({"status_code": status.HTTP_400_BAD_REQUEST, "message": "Invalid Job ID format"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    applications = Applications.get_applications_by_job_id(job_id)  # Fetch Application By the job_id
+    
+    application_list = [{
+            "application_id": application.application_id,
+            "user_details": Users.get_user_by_user_id_json_format(application.user_id),
+            "job_details": Jobs.get_job_by_job_id_json_format(application.job_id),
+            "status": application.status,
+            "created_at": application.created_at,
+            "updated_at": application.updated_at,
+    } for application in applications]
+
+    return Response({"status_code": StatusCode.SUCCESS, 
+                "message": "Applications Retrieved successfully",
+                     "applications": application_list}, status=status.HTTP_200_OK)
+
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
@@ -407,6 +542,25 @@ def update_job(request, job_id):
             "message": "Invalid data",
             "errors": serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_application_status(request, application_id):
+    application = Applications.get_application_by_application_id(application_id)  # Fetch application
+    if not application:
+        return Response({"status_code": StatusCode.NOT_FOUND, "message": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    application_status = request.data.get('application_status')
+    
+    application.status = application_status
+    application.save()
+    
+    return Response({
+        "status_code": StatusCode.SUCCESS,
+        "message": "Application Status updated successfully."
+    }, status=status.HTTP_200_OK)
 
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
