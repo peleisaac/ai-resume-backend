@@ -79,6 +79,26 @@ class Users(AbstractBaseUser):
         """Get a user by user_id."""
         return Users.objects.filter(user_id=user_id, record_status="1").first()
     
+    @staticmethod
+    def get_user_by_user_id_json_format(user_id):
+        """Get a user by user_id."""
+        user = Users.objects.filter(user_id=user_id, record_status="1").first()
+        return {
+            "user_id": str(user.user_id),  # Ensure UUID is serialized as a string
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "msisdn": user.msisdn,
+            "gender": user.gender,
+            "dob": user.dob,
+            "region": user.region,
+            "city": user.city,
+            "socials": user.socials,
+            "user_role": user.user_role,
+            "category_of_interest": user.category_of_interest,
+            "job_notifications": user.job_notifications
+         } if user else None
+    
 
 class Jobs(models.Model):
     id = models.AutoField(primary_key=True)
@@ -124,4 +144,67 @@ class Jobs(models.Model):
     def get_job_by_job_id(job_id):
         """Get a job by job_id."""
         return Jobs.objects.filter(job_id=job_id, record_status="1").first()
+    
+    @staticmethod
+    def get_job_by_job_id_json_format(job_id):
+        """Get a job by job_id in JSON format."""
+        job = Jobs.objects.filter(job_id=job_id, record_status="1").first()
+        return {
+            "job_id": job.job_id,
+            "title": job.title,
+            "description": job.description,
+            "category": job.category,
+            "contract_type": job.contract_type,
+            "experience": job.experience,
+            "education_level": job.education_level,
+            "region": job.region,
+            "city": job.city,
+            "no_of_vacancies": job.no_of_vacancies,
+            "salary": job.salary,
+            "created_at": job.created_at,
+            "updated_at": job.updated_at,
+            "is_active": job.is_active
+        } if job else None
+    
+
+class Applications(models.Model):
+    id = models.AutoField(primary_key=True)
+    application_id = models.CharField(unique=True, max_length=200)
+    status = models.CharField(max_length=50)
+    user_id = models.CharField(max_length=200)
+    job_id = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    record_status = models.CharField(max_length=2, default="1")
+
+    def __str__(self):
+        return f"{self.application_id} ({self.status})"
+    
+    class Meta:
+        db_table = "applications"
+
+    @staticmethod
+    def get_all_applications():
+        """Get all applications."""
+        return Applications.objects.filter(record_status="1").all()
+    
+    @staticmethod
+    def get_application_by_application_id(application_id):
+        """Get an application by application_id."""
+        return Applications.objects.filter(application_id=application_id, record_status="1").first()
+    
+    @staticmethod
+    def get_applications_by_user_id(user_id):
+        """Get applications by user_id."""
+        return Applications.objects.filter(user_id=user_id, record_status="1").all()
+    
+    @staticmethod
+    def get_applications_by_job_id(job_id):
+        """Get applications by job_id."""
+        return Applications.objects.filter(job_id=job_id, record_status="1").all()
+    
+    @staticmethod
+    def application_exists(user_id, job_id):
+        """Check if an application exists with the given user_id and job_id."""
+        return Applications.objects.filter(user_id=user_id, job_id=job_id).exists()
     
