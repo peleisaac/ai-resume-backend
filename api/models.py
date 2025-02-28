@@ -19,8 +19,8 @@ class CustomUserManager(BaseUserManager):
 
 class Users(AbstractBaseUser):
     user_id = models.CharField(unique=True, max_length=200)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
     msisdn = models.CharField(max_length=10, unique=True)  # Make msisdn unique
     gender = models.CharField(max_length=10)
     user_role = models.CharField(max_length=50)
@@ -31,7 +31,7 @@ class Users(AbstractBaseUser):
     category_of_interest = models.CharField(max_length=50)
     job_notifications = models.CharField(max_length=2)
     updated_at = models.DateTimeField(auto_now=True)
-    email = models.EmailField(max_length=255, unique=True)
+    email = models.EmailField(max_length=255, unique=True, default=None)
     is_active = models.BooleanField(default=True)  # Required by Django auth system
     is_staff = models.BooleanField(default=False)  # Required for Django admin
     is_superuser = models.BooleanField(default=False)
@@ -78,3 +78,50 @@ class Users(AbstractBaseUser):
     def get_user_by_user_id(user_id):
         """Get a user by user_id."""
         return Users.objects.filter(user_id=user_id, record_status="1").first()
+    
+
+class Jobs(models.Model):
+    id = models.AutoField(primary_key=True)
+    job_id = models.CharField(unique=True, max_length=200)
+    title = models.CharField(max_length=100)
+    description = models.CharField(max_length=500)
+    category = models.CharField(max_length=50)
+    contract_type = models.CharField(max_length=100)
+    experience = models.CharField(max_length=500)
+    education_level = models.CharField(max_length=200)
+    region = models.CharField(max_length=50)
+    city = models.CharField(max_length=50)
+    no_of_vacancies = models.CharField(max_length=10)
+    salary = models.CharField(max_length=10)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)  # Required by Django auth system
+    record_status = models.CharField(max_length=2, default="1")
+
+    def __str__(self):
+        return f"{self.title} ({self.job_id})"
+    
+    class Meta:
+        db_table = "jobs"
+
+    
+    @staticmethod
+    def get_all_jobs():
+        """Get all jobs."""
+        return Jobs.objects.filter(record_status="1").all()
+    
+    @staticmethod
+    def get_active_jobs():
+        """Get all active jobs."""
+        return Jobs.objects.filter(record_status="1", is_active=True).all()
+    
+    @staticmethod
+    def get_inactive_jobs():
+        """Get all inactive jobs."""
+        return Jobs.objects.filter(record_status="1", is_active=False).all()
+    
+    @staticmethod
+    def get_job_by_job_id(job_id):
+        """Get a job by job_id."""
+        return Jobs.objects.filter(job_id=job_id, record_status="1").first()
+    
