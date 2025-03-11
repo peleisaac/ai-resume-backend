@@ -27,7 +27,9 @@ SECRET_KEY = 'django-insecure-kzp)6adm+83_^r9#vp_xsuu7_4*9h+om6^kx1l1twne^1)^5l1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "ai-resume-backend.axxendcorp.com"
+]
 
 
 # Application definition
