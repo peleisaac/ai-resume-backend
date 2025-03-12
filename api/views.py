@@ -143,6 +143,9 @@ def add_new_job(request):
         contract_type = request.data.get("contract_type")
         experience = request.data.get("experience")
         education_level = request.data.get("education_level")
+        requirements = request.data.get("requirements")
+        required_skills = request.data.get("required_skills")
+        benefits = request.data.get("benefits")
         region = request.data.get("region")
         city = request.data.get("city")
         no_of_vacancies = request.data.get("no_of_vacancies")
@@ -166,6 +169,9 @@ def add_new_job(request):
             contract_type = contract_type,
             experience = experience,
             education_level = education_level,
+            requirements = requirements,
+            required_skills = required_skills,
+            benefits = benefits,
             region = region,
             city = city,
             no_of_vacancies = no_of_vacancies,
@@ -295,6 +301,9 @@ def get_all_jobs(request):
             "contract_type": job.contract_type,
             "experience": job.experience,
             "education_level": job.education_level,
+            "requirements": job.requirements,
+            "required_skills": job.required_skills,
+            "benefits": job.benefits,
             "region": job.region,
             "city": job.city,
             "no_of_vacancies": job.no_of_vacancies,
@@ -371,6 +380,9 @@ def get_active_jobs(request):
             "contract_type": job.contract_type,
             "experience": job.experience,
             "education_level": job.education_level,
+            "requirements": job.requirements,
+            "required_skills": job.required_skills,
+            "benefits": job.benefits,
             "region": job.region,
             "city": job.city,
             "no_of_vacancies": job.no_of_vacancies,
@@ -427,6 +439,9 @@ def get_inactive_jobs(request):
             "contract_type": job.contract_type,
             "experience": job.experience,
             "education_level": job.education_level,
+            "requirements": job.requirements,
+            "required_skills": job.required_skills,
+            "benefits": job.benefits,
             "region": job.region,
             "city": job.city,
             "no_of_vacancies": job.no_of_vacancies,
@@ -496,6 +511,9 @@ def get_job_by_job_id(request, job_id):
             "contract_type": job.contract_type,
             "experience": job.experience,
             "education_level": job.education_level,
+            "requirements": job.requirements,
+            "required_skills": job.required_skills,
+            "benefits": job.benefits,
             "region": job.region,
             "city": job.city,
             "no_of_vacancies": job.no_of_vacancies,
