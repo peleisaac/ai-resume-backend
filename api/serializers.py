@@ -3,6 +3,9 @@ from .models import Users # Adjust the import according to your project structur
 from .models import Jobs
 import json
 
+class FileUploadSerializer(serializers.Serializer):
+    file = serializers.FileField()
+
 class JSONListField(serializers.Field):
     """
     Custom field that serializes a list into a JSON string for storage
@@ -33,7 +36,7 @@ class JSONListField(serializers.Field):
 
 class UserSerializer(serializers.ModelSerializer):
     category_of_interest = JSONListField(required=False)
-    
+
     class Meta:
         model = Users
         fields = (
@@ -50,6 +53,8 @@ class UserSerializer(serializers.ModelSerializer):
             'user_role',
             'category_of_interest',
             'job_notifications',
+            'resume_url',
+            'is_active',
         )
         read_only_fields = ('user_id',)
 
