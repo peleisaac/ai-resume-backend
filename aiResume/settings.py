@@ -32,6 +32,9 @@ ALLOWED_HOSTS = [
     "localhost",
 ]
 
+AZURE_STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=airesumess;AccountKey=Gotmxr4wySgcvDUA37qyIy85kNvlvidWbQNDzuBRO08kxWPtWY3r4dWpCqTQYgioyhkBBZNsQjD6+AStLRwhPQ==;EndpointSuffix=core.windows.net"
+AZURE_CONTAINER_NAME = "airesumeprodcont"
+
 
 # Application definition
 
