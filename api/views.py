@@ -90,6 +90,11 @@ def sign_up(request):
         socials = request.data.get("socials", "")
         user_role = request.data.get("user_role", "")
         category_of_interest = request.data.get("category_of_interest", "")
+        contact_name = request.data.get("contact_name"),
+        company_name = request.data.get("company_name"),
+        address = request.data.get("address"),
+        industry = request.data.get("industry"),
+        company_description = request.data.get("company_description"),
         job_notifications = request.data.get("job_notifications", "")
 
         # category_of_interest = JSONListField(required=False)
@@ -117,7 +122,12 @@ def sign_up(request):
             socials=socials,
             user_role=user_role,
             category_of_interest=category_of_interest,
-            job_notifications=job_notifications
+            job_notifications=job_notifications,
+            contact_name=contact_name,
+            company_name=company_name,
+            address=address,
+            industry=industry,
+            company_description=company_description
         )
         user.set_password(password)  # Hash password before saving
         user.save()
