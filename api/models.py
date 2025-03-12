@@ -21,15 +21,15 @@ class Users(AbstractBaseUser):
     user_id = models.CharField(unique=True, max_length=200)
     first_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
-    msisdn = models.CharField(max_length=10, unique=True)  # Make msisdn unique
-    gender = models.CharField(max_length=10)
+    msisdn = models.CharField(max_length=10, unique=True, blank=True, null=True)  # Make msisdn unique
+    gender = models.CharField(max_length=10, blank=True, null=True)
     user_role = models.CharField(max_length=50)
     dob = models.DateField(blank=True, null=True)
-    region = models.CharField(max_length=50)
-    city = models.CharField(max_length=50)
-    socials = models.CharField(max_length=200)
-    category_of_interest = models.CharField(max_length=50)
-    job_notifications = models.CharField(max_length=2)
+    region = models.CharField(max_length=50, blank=True, null=True)
+    city = models.CharField(max_length=50, blank=True, null=True)
+    socials = models.CharField(max_length=200, blank=True, null=True)
+    category_of_interest = models.CharField(max_length=50, blank=True, null=True)
+    job_notifications = models.CharField(max_length=2, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
     email = models.EmailField(max_length=255, unique=True, default=None)
     is_active = models.BooleanField(default=True)  # Required by Django auth system
