@@ -28,7 +28,7 @@ class Users(AbstractBaseUser):
     address = models.CharField(max_length=200, blank=True, null=True)
     industry = models.CharField(max_length=200, blank=True, null=True)
     company_description = models.TextField(blank=True, null=True)
-    msisdn = models.CharField(max_length=10, unique=True, blank=True, null=True)  # Make msisdn unique
+    msisdn = models.CharField(max_length=10, blank=True, null=True)  # Make msisdn unique
     gender = models.CharField(max_length=10, blank=True, null=True)
     user_role = models.CharField(max_length=50)
     dob = models.DateField(blank=True, null=True)
