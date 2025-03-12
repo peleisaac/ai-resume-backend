@@ -22,6 +22,7 @@ class Users(AbstractBaseUser):
     user_id = models.CharField(unique=True, max_length=200)
     first_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
+    resume_url = models.CharField(max_length=200, blank=True, null=True)
     msisdn = models.CharField(max_length=10, unique=True, blank=True, null=True)  # Make msisdn unique
     gender = models.CharField(max_length=10, blank=True, null=True)
     user_role = models.CharField(max_length=50)
@@ -96,6 +97,7 @@ class Users(AbstractBaseUser):
             "city": user.city,
             "socials": user.socials,
             "user_role": user.user_role,
+            'resume_url': user.resume_url,
             "category_of_interest": json.loads(user.category_of_interest),
             "job_notifications": user.job_notifications
          } if user else None
