@@ -102,7 +102,7 @@ def sign_up(request):
 
         user_id = str(uuid.uuid4().hex)
         # Check if the user already exists
-        if Users.user_exists(email, msisdn):
+        if Users.user_exists(email):
             return Response({
                 "status_code": StatusCode.BAD_REQUEST,
                 "message": "User with this email already exists"
