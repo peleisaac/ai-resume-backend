@@ -105,7 +105,7 @@ def sign_up(request):
         if Users.user_exists(email, msisdn):
             return Response({
                 "status_code": StatusCode.BAD_REQUEST,
-                "message": "User with this email or phone number already exists"
+                "message": "User with this email already exists"
             }, status=status.HTTP_400_BAD_REQUEST)
         
         # Create and save the new user
