@@ -10,9 +10,15 @@ from api.models import Jobs
 from api.models import Applications
 from rest_framework import status
 from api.status_codes import StatusCode
-from .serializers import UserSerializer, JobSerializer
+from .serializers import UserSerializer, JobSerializer, JSONListField
+import json
 
 # Create your views here.
+@api_view(['GET'])
+def index_view(request):
+    return Response({"message": "Welcome to AI Resume backend!"})
+
+
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -34,6 +40,9 @@ def sign_up(request):
         user_role = request.data.get("user_role", "")
         category_of_interest = request.data.get("category_of_interest", "")
         job_notifications = request.data.get("job_notifications", "")
+
+        # category_of_interest = JSONListField(required=False)
+
 
         user_id = str(uuid.uuid4().hex)
         # Check if the user already exists
@@ -181,7 +190,7 @@ def get_all_users(request):
             "city": user.city,
             "socials": user.socials,
             "user_role": user.user_role,
-            "category_of_interest": user.category_of_interest,
+            "category_of_interest": json.loads(user.category_of_interest),
             "job_notifications": user.job_notifications
         }
         for user in users
@@ -189,6 +198,21 @@ def get_all_users(request):
     return Response({"status_code": StatusCode.SUCCESS, 
                 "message": "All Users Retrieved successfully",
                 "users": users_list}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_employer_dashboard_metrics(request):
+    active_jobs = Jobs.get_active_jobs()
+    all_applications_count = Applications.get_all_applications_count()
+    
+    dashboard_metrics_data = {
+        "active_jobs": len(active_jobs),
+        "all_applications_count": all_applications_count
+    }
+    return Response({"status_code": StatusCode.SUCCESS, 
+                "message": "Employer Dashboard Metrics Retrieved successfully",
+                "data": dashboard_metrics_data}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -210,7 +234,8 @@ def get_all_jobs(request):
             "salary": job.salary,
             "created_at": job.created_at,
             "updated_at": job.updated_at,
-            "is_active": job.is_active
+            "is_active": job.is_active,
+            "no_of_applications": Applications.get_number_of_applications_by_job_id(job.job_id)
         }
         for job in jobs
     ]
@@ -256,7 +281,7 @@ def get_active_users(request):
             "city": user.city,
             "socials": user.socials,
             "user_role": user.user_role,
-            "category_of_interest": user.category_of_interest,
+            "category_of_interest": json.loads(user.category_of_interest),
             "job_notifications": user.job_notifications
         }
         for user in users
@@ -311,7 +336,7 @@ def get_inactive_users(request):
             "city": user.city,
             "socials": user.socials,
             "user_role": user.user_role,
-            "category_of_interest": user.category_of_interest,
+            "category_of_interest": json.loads(user.category_of_interest),
             "job_notifications": user.job_notifications
         }
         for user in users
@@ -374,7 +399,7 @@ def get_user_by_user_id(request, user_id):
         "city": user.city,
         "socials": user.socials,
         "user_role": user.user_role,
-        "category_of_interest": user.category_of_interest,
+        "category_of_interest": json.loads(user.category_of_interest),
         "job_notifications": user.job_notifications
     }
     return Response({"status_code": StatusCode.SUCCESS, 
