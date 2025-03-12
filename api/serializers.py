@@ -1,8 +1,39 @@
 from rest_framework import serializers
 from .models import Users # Adjust the import according to your project structure
 from .models import Jobs
+import json
+
+class JSONListField(serializers.Field):
+    """
+    Custom field that serializes a list into a JSON string for storage
+    and deserializes a JSON string back to a list for representation.
+    """
+    def to_internal_value(self, data):
+        # Expecting a list from the input
+        if not isinstance(data, list):
+            raise serializers.ValidationError("Expected a list of strings.")
+        try:
+            # Optionally, validate that all items in the list are strings:
+            if not all(isinstance(item, str) for item in data):
+                raise serializers.ValidationError("All items in the list must be strings.")
+        except Exception as e:
+            raise serializers.ValidationError("Invalid data format: " + str(e))
+        # Convert list to JSON string
+        return json.dumps(data)
+
+    def to_representation(self, value):
+        # When reading, value is the JSON string stored in the DB.
+        try:
+            return json.loads(value)
+        except Exception:
+            # If conversion fails, return the raw value
+            return value
+
+
 
 class UserSerializer(serializers.ModelSerializer):
+    category_of_interest = JSONListField(required=False)
+    
     class Meta:
         model = Users
         fields = (
