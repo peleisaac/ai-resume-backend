@@ -10,8 +10,11 @@ from api.models import Jobs
 from api.models import Applications
 from rest_framework import status
 from api.status_codes import StatusCode
-from .serializers import UserSerializer, JobSerializer, JSONListField
+from .serializers import UserSerializer, JobSerializer, JSONListField, FileUploadSerializer
 import json
+from rest_framework.parsers import MultiPartParser, FormParser
+from azure.storage.blob import BlobServiceClient
+from django.conf import settings
 
 # Create your views here.
 @api_view(['GET'])
@@ -24,6 +27,52 @@ def index_view(request):
 @permission_classes([IsAuthenticated])
 def protected_view(request):
     return Response({"message": "You have access to this view!"})
+
+@api_view(['POST'])
+def file_upload(request, user_id):
+    parser_classes = (MultiPartParser, FormParser)
+    serializer = FileUploadSerializer(data=request.data)
+
+    user = Users.get_user_by_user_id(user_id)  # Fetch user
+
+    if not user:
+        return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    if serializer.is_valid():
+        file = serializer.validated_data["file"]
+        file_name = file.name
+
+        try:
+            # Connect to Azure Storage
+            blob_service_client = BlobServiceClient.from_connection_string(
+                settings.AZURE_STORAGE_CONNECTION_STRING
+            )
+            blob_client = blob_service_client.get_blob_client(
+                container=settings.AZURE_CONTAINER_NAME, blob=file_name
+            )
+
+            # Upload the file
+            blob_client.upload_blob(file.read(), overwrite=True)
+
+            # Get the file URL
+            file_url = blob_client.url
+
+            # Update the user's resume URL
+            user.resume_url = file_url
+
+            # Save the user
+            user.save()
+
+            return Response({
+                "status_code": StatusCode.SUCCESS,
+                "message": "Resume Upload successfully",
+                "file_url": file_url  # Return the file URL
+            }, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def sign_up(request):
@@ -190,8 +239,9 @@ def get_all_users(request):
             "city": user.city,
             "socials": user.socials,
             "user_role": user.user_role,
-            "category_of_interest": json.loads(user.category_of_interest),
-            "job_notifications": user.job_notifications
+            'resume_url': user.resume_url,
+            "category_of_interest": user.category_of_interest,
+            "job_notifications": user.job_notifications,
         }
         for user in users
     ]
@@ -212,6 +262,21 @@ def get_employer_dashboard_metrics(request):
     }
     return Response({"status_code": StatusCode.SUCCESS, 
                 "message": "Employer Dashboard Metrics Retrieved successfully",
+                "data": dashboard_metrics_data}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_jobseeker_dashboard_metrics(request):
+    user_id = request.data.get("user_id", "")
+
+    all_applications_count = Applications.get_applications_by_user_id(user_id)
+    
+    dashboard_metrics_data = {
+        "all_applications_count": len(all_applications_count)
+    }
+    return Response({"status_code": StatusCode.SUCCESS, 
+                "message": "Job Seeker Dashboard Metrics Retrieved successfully",
                 "data": dashboard_metrics_data}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
@@ -336,7 +401,8 @@ def get_inactive_users(request):
             "city": user.city,
             "socials": user.socials,
             "user_role": user.user_role,
-            "category_of_interest": json.loads(user.category_of_interest),
+            'resume_url': user.resume_url,
+            "category_of_interest": user.category_of_interest,
             "job_notifications": user.job_notifications
         }
         for user in users
@@ -399,6 +465,7 @@ def get_user_by_user_id(request, user_id):
         "city": user.city,
         "socials": user.socials,
         "user_role": user.user_role,
+        'resume_url': user.resume_url,
         "category_of_interest": json.loads(user.category_of_interest),
         "job_notifications": user.job_notifications
     }
