@@ -248,7 +248,14 @@ def get_all_users(request):
             "socials": user.socials,
             "user_role": user.user_role,
             'resume_url': user.resume_url,
-            "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
+            "is_active": user.is_active,
+            "company_name": user.company_name,
+            "contact_name": user.contact_name,
+            "address": user.address,
+            "industry": user.industry,
+            "company_description": user.company_description,
+            "category_of_interest": user.category_of_interest,
+            # "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
             "job_notifications": user.job_notifications,
         }
         for user in users
@@ -356,7 +363,14 @@ def get_active_users(request):
             "city": user.city,
             "socials": user.socials,
             "user_role": user.user_role,
-            "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
+            "is_active": user.is_active,
+            "company_name": user.company_name,
+            "contact_name": user.contact_name,
+            "address": user.address,
+            "industry": user.industry,
+            "company_description": user.company_description,
+            "category_of_interest": user.category_of_interest,
+            # "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
             "job_notifications": user.job_notifications
         }
         for user in users
@@ -415,7 +429,14 @@ def get_inactive_users(request):
             "socials": user.socials,
             "user_role": user.user_role,
             'resume_url': user.resume_url,
-            "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
+            "is_active": user.is_active,
+            "company_name": user.company_name,
+            "contact_name": user.contact_name,
+            "address": user.address,
+            "industry": user.industry,
+            "company_description": user.company_description,
+            "category_of_interest": user.category_of_interest,
+            # "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
             "job_notifications": user.job_notifications
         }
         for user in users
@@ -482,7 +503,14 @@ def get_user_by_user_id(request, user_id):
         "socials": user.socials,
         "user_role": user.user_role,
         'resume_url': user.resume_url,
-        "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
+        "is_active": user.is_active,
+        "company_name": user.company_name,
+        "contact_name": user.contact_name,
+        "address": user.address,
+        "industry": user.industry,
+        "company_description": user.company_description,
+        "category_of_interest": user.category_of_interest,
+        # "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
         "job_notifications": user.job_notifications
     }
     return Response({"status_code": StatusCode.SUCCESS, 
