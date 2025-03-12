@@ -54,6 +54,11 @@ class UserSerializer(serializers.ModelSerializer):
             'category_of_interest',
             'job_notifications',
             'resume_url',
+            'company_name',
+            'contact_name',
+            'address',
+            'industry',
+            'company_description',
             'is_active',
         )
         read_only_fields = ('user_id',)
