@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+import json
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, msisdn, password=None, **extra_fields):
@@ -28,7 +29,7 @@ class Users(AbstractBaseUser):
     region = models.CharField(max_length=50, blank=True, null=True)
     city = models.CharField(max_length=50, blank=True, null=True)
     socials = models.CharField(max_length=200, blank=True, null=True)
-    category_of_interest = models.CharField(max_length=50, blank=True, null=True)
+    category_of_interest = models.TextField(blank=True, null=True)
     job_notifications = models.CharField(max_length=2, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
     email = models.EmailField(max_length=255, unique=True, default=None)
@@ -95,7 +96,7 @@ class Users(AbstractBaseUser):
             "city": user.city,
             "socials": user.socials,
             "user_role": user.user_role,
-            "category_of_interest": user.category_of_interest,
+            "category_of_interest": json.loads(user.category_of_interest),
             "job_notifications": user.job_notifications
          } if user else None
     
@@ -189,6 +190,11 @@ class Applications(models.Model):
         return Applications.objects.filter(record_status="1").all()
     
     @staticmethod
+    def get_all_applications_count():
+        """Get the number of applications."""
+        return Applications.objects.filter(record_status="1").count()
+    
+    @staticmethod
     def get_application_by_application_id(application_id):
         """Get an application by application_id."""
         return Applications.objects.filter(application_id=application_id, record_status="1").first()
@@ -202,6 +208,11 @@ class Applications(models.Model):
     def get_applications_by_job_id(job_id):
         """Get applications by job_id."""
         return Applications.objects.filter(job_id=job_id, record_status="1").all()
+    
+    @staticmethod
+    def get_number_of_applications_by_job_id(job_id):
+        """Get the number of applications by job_id."""
+        return Applications.objects.filter(job_id=job_id, record_status="1").count()
     
     @staticmethod
     def application_exists(user_id, job_id):
