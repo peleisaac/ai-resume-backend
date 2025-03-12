@@ -5,3 +5,4 @@ class StatusCode:
     NOT_FOUND = "AR03"
     SERVER_ERROR = "AR04"
     BAD_REQUEST = "AR05"
+    INVALID_USER_ROLE = "AR06"
