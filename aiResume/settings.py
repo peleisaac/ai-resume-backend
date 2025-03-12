@@ -28,7 +28,8 @@ SECRET_KEY = 'django-insecure-kzp)6adm+83_^r9#vp_xsuu7_4*9h+om6^kx1l1twne^1)^5l1
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "ai-resume-backend.axxendcorp.com"
+    "ai-resume-backend.axxendcorp.com",
+    "localhost",
 ]
 
 
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'api',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
 ]
 
 AUTH_USER_MODEL = 'api.Users'
@@ -68,6 +70,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'aiResume.urls'
@@ -146,3 +150,30 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS",
+]
+
+CORS_ALLOW_HEADERS = [
+    "authorization",
+    "content-type",
+    "accept",
+    "x-requested-with",
+    "x-csrftoken",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",  # React/Next.js local dev
+#     "https://yourfrontenddomain.com",  # Production frontend
+# ]
+
