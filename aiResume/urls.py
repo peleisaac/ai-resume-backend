@@ -18,10 +18,11 @@ from django.contrib import admin
 from django.urls import path
 from api.views import protected_view
 from rest_framework.authtoken.views import obtain_auth_token
-from api.views import sign_up, get_all_users, get_user_by_user_id, update_user, delete_user, deactivate_user, activate_user, get_inactive_users, get_active_users, get_all_jobs, get_job_by_job_id, add_new_job, delete_job, activate_job, deactivate_job, update_job, get_inactive_jobs, get_active_jobs, get_all_applications, get_application_by_application_id, add_new_application, get_applications_by_user_id, get_applications_by_job_id, update_application_status
+from api.views import sign_up, get_all_users, get_user_by_user_id, update_user, delete_user, deactivate_user, activate_user, get_inactive_users, get_active_users, get_all_jobs, get_job_by_job_id, add_new_job, delete_job, activate_job, deactivate_job, update_job, get_inactive_jobs, get_active_jobs, get_all_applications, get_application_by_application_id, add_new_application, get_applications_by_user_id, get_applications_by_job_id, update_application_status, index_view, get_employer_dashboard_metrics
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/v1/', index_view),
     path('api/v1/protected/', protected_view),
     path('api/v1/login', obtain_auth_token, name='api_token_auth'),
     path('api/v1/signup', sign_up, name='sign_up'),
@@ -52,5 +53,8 @@ urlpatterns = [
     path('api/v1/applications/by-user/<str:user_id>', get_applications_by_user_id, name='get_applications_by_user_id'),
     path('api/v1/applications/by-job/<str:job_id>', get_applications_by_job_id, name='get_applications_by_job_id'),
     path('api/v1/application/status/<str:application_id>', update_application_status, name='update_application_status'),
+
+    # Dashboard Metrics
+    path('api/v1/employer/dashboard-metrics', get_employer_dashboard_metrics, name='employer_dashboard_metrics'),
 
 ]
