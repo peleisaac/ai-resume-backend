@@ -112,6 +112,9 @@ class Jobs(models.Model):
     contract_type = models.CharField(max_length=100)
     experience = models.CharField(max_length=500)
     education_level = models.CharField(max_length=200)
+    requirements = models.TextField(blank=True, null=True)
+    required_skills = models.TextField(blank=True, null=True)
+    benefits = models.TextField(blank=True, null=True)
     region = models.CharField(max_length=50)
     city = models.CharField(max_length=50)
     no_of_vacancies = models.CharField(max_length=10)
@@ -160,6 +163,9 @@ class Jobs(models.Model):
             "contract_type": job.contract_type,
             "experience": job.experience,
             "education_level": job.education_level,
+            "requirements": job.requirements,
+            "required_skills": job.required_skills,
+            "benefits": job.benefits,
             "region": job.region,
             "city": job.city,
             "no_of_vacancies": job.no_of_vacancies,
