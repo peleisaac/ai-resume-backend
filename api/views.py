@@ -66,7 +66,9 @@ def file_upload(request, user_id):
             return Response({
                 "status_code": StatusCode.SUCCESS,
                 "message": "Resume Upload successfully",
-                "file_url": file_url  # Return the file URL
+                "file_url": file_url,  # Return the file URL
+                "user_details": Users.get_user_by_user_id_json_format(user_id),
+
             }, status=status.HTTP_201_CREATED)
 
         except Exception as e:
