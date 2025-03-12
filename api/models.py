@@ -57,9 +57,9 @@ class Users(AbstractBaseUser):
         db_table = "users"
 
     @staticmethod
-    def user_exists(email, msisdn):
-        """Check if a user exists with the given email or msisdn."""
-        return Users.objects.filter(models.Q(email=email) | models.Q(msisdn=msisdn)).exists()
+    def user_exists(email):
+        """Check if a user exists with the given email."""
+        return Users.objects.filter(models.Q(email=email)).exists()
     
     @staticmethod
     def get_user_by_email(email):
