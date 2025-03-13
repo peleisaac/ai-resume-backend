@@ -13,6 +13,12 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import pymysql
 pymysql.install_as_MySQLdb()
+import os
+from dotenv import load_dotenv
+
+# Load the .env file
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,8 +38,12 @@ ALLOWED_HOSTS = [
     "localhost",
 ]
 
-AZURE_STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=airesumess;AccountKey=Gotmxr4wySgcvDUA37qyIy85kNvlvidWbQNDzuBRO08kxWPtWY3r4dWpCqTQYgioyhkBBZNsQjD6+AStLRwhPQ==;EndpointSuffix=core.windows.net"
-AZURE_CONTAINER_NAME = "airesumeprodcont"
+azure_storage_connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+azure_container_name = os.getenv("AZURE_CONTAINER_NAME")
+
+
+AZURE_STORAGE_CONNECTION_STRING = azure_storage_connection_string
+AZURE_CONTAINER_NAME = azure_container_name
 
 
 # Application definition
@@ -101,14 +111,20 @@ WSGI_APPLICATION = 'aiResume.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+username = os.getenv("DB_USER")
+password = os.getenv("DB_PASSWORD")
+server   = os.getenv("SERVER")
+database = os.getenv("DATABASE")
+port = os.getenv("PORT")
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ai_resume',
-        'USER': 'localhost_admin',
-        'PASSWORD': 'localhostAdmin_2025',
-        'HOST': '20.51.107.46',  # or '127.0.0.1'
-        'PORT': '3306', 
+        'NAME': database,
+        'USER': username,
+        'PASSWORD': password,
+        'HOST': server,  # or '127.0.0.1'
+        'PORT': port, 
     }
 }
 
