@@ -306,8 +306,6 @@ def get_jobseeker_dashboard_metrics(request):
                 "data": dashboard_metrics_data}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
 def get_all_jobs(request):
     jobs = Jobs.get_all_jobs()
     jobs_list = [
