@@ -87,6 +87,16 @@ class Users(AbstractBaseUser):
         return Users.objects.filter(user_id=user_id, record_status="1").first()
     
     @staticmethod
+    def is_profile_complete(user_id, user_role):
+        """Check if a user's profile is complete."""
+        user = Users.objects.filter(user_id=user_id, record_status="1", user_role=user_role).first()
+        if user_role == "jobseeker":
+            return user.first_name and user.last_name and user.email and user.gender and user.msisdn and user.dob and user.region and user.city and user.socials and user.user_role and user.category_of_interest and user.job_notifications and user.resume_url is not None
+        elif user_role == 'employer':
+            return user.email and user.msisdn and user.region and user.city and user.socials and user.company_name and user.contact_name and user.address and user.industry and user.company_description is not None 
+    
+    
+    @staticmethod
     def get_user_by_user_id_json_format(user_id):
         """Get a user by user_id."""
         user = Users.objects.filter(user_id=user_id, record_status="1").first()
@@ -109,7 +119,7 @@ class Users(AbstractBaseUser):
             "address": user.address,
             "industry": user.industry,
             "company_description": user.company_description,
-            "category_of_interest": json.loads(user.category_of_interest),
+            "category_of_interest": json.loads(user.category_of_interest) if user.category_of_interest else [],
             "job_notifications": user.job_notifications
          } if user else None
     
