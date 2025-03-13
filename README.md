@@ -1,4 +1,4 @@
-# ai-resume-backend
+# AI Resume backend
 This repository contains the backend code for the final project using Django Rest Framework designed to manage, query and manipulate data to meet given needs in a particular real-world domain. The REST APIs built enables resume storage using Azure Storage container while integrating seamlessly with an existing HTML, CSS and JavaScript frontend for Jobseekers to apply for jobs posted by employers.
 
 ## Table of Contents
