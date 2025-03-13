@@ -264,8 +264,8 @@ def get_all_users(request):
             "address": user.address,
             "industry": user.industry,
             "company_description": user.company_description,
-            "category_of_interest": user.category_of_interest,
-            # "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
+            # "category_of_interest": user.category_of_interest,
+            "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
             "job_notifications": user.job_notifications,
         }
         for user in users
@@ -379,8 +379,8 @@ def get_active_users(request):
             "address": user.address,
             "industry": user.industry,
             "company_description": user.company_description,
-            "category_of_interest": user.category_of_interest,
-            # "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
+            # "category_of_interest": user.category_of_interest,
+            "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
             "job_notifications": user.job_notifications
         }
         for user in users
@@ -445,8 +445,8 @@ def get_inactive_users(request):
             "address": user.address,
             "industry": user.industry,
             "company_description": user.company_description,
-            "category_of_interest": user.category_of_interest,
-            # "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
+            # "category_of_interest": user.category_of_interest,
+            "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
             "job_notifications": user.job_notifications
         }
         for user in users
@@ -519,8 +519,8 @@ def get_user_by_user_id(request, user_id):
         "address": user.address,
         "industry": user.industry,
         "company_description": user.company_description,
-        "category_of_interest": user.category_of_interest,
-        # "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
+        # "category_of_interest": user.category_of_interest,
+        "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
         "job_notifications": user.job_notifications
     }
     return Response({"status_code": StatusCode.SUCCESS, 
