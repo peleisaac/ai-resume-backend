@@ -6,8 +6,6 @@ This repository contains the backend code for the final project using Django Res
 - [Features](#features)
 - [Technologies Used](#technologies-used)
 - [Setup Instructions](#setup-instructions)
-- [File Structure](#file-structure)
-- [Future Improvements](#future-improvements)
 
 ## Features 
 - REST APIs manage, query and manipulate user data
