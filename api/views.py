@@ -89,7 +89,7 @@ def sign_up(request):
         city = request.data.get("city", "")
         socials = request.data.get("socials", "")
         user_role = request.data.get("user_role", "")
-        category_of_interest = request.data.get("category_of_interest", "")
+        category_of_interest = json.dumps(request.data.get("category_of_interest", ""))
         contact_name = request.data.get("contact_name")
         company_name = request.data.get("company_name")
         address = request.data.get("address")
