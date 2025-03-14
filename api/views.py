@@ -147,19 +147,20 @@ def sign_up(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def add_new_job(request):
-        title = request.data.get("title")
-        description = request.data.get("description")
-        category = request.data.get("category")
-        contract_type = request.data.get("contract_type")
-        experience = request.data.get("experience")
-        education_level = request.data.get("education_level")
-        requirements = json.dumps(request.data.get("requirements"))
-        required_skills = json.dumps(request.data.get("required_skills"))
-        benefits = json.dumps(request.data.get("benefits"))
-        region = request.data.get("region")
-        city = request.data.get("city")
-        no_of_vacancies = request.data.get("no_of_vacancies")
-        salary = request.data.get("salary")
+        title = request.data.get("title", "")
+        description = request.data.get("description", "")
+        category = request.data.get("category", "")
+        contract_type = request.data.get("contract_type", "")
+        experience = request.data.get("experience", "")
+        education_level = request.data.get("education_level", "")
+        requirements = json.dumps(request.data.get("requirements"), "")
+        required_skills = json.dumps(request.data.get("required_skills"), "")
+        benefits = json.dumps(request.data.get("benefits"), "")
+        region = request.data.get("region", "")
+        city = request.data.get("city", "")
+        company_name = request.data.get("company_name", "")
+        no_of_vacancies = request.data.get("no_of_vacancies", "")
+        salary = request.data.get("salary", "")
 
 
 
@@ -306,6 +307,8 @@ def get_jobseeker_dashboard_metrics(request):
                 "data": dashboard_metrics_data}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
 def get_all_jobs(request):
     jobs = Jobs.get_all_jobs()
     jobs_list = [
@@ -321,6 +324,7 @@ def get_all_jobs(request):
             "benefits": json.loads(job.benefits.replace("'", '"')) if job.benefits else [],
             "region": job.region,
             "city": job.city,
+            "company_name": job.company_name,
             "no_of_vacancies": job.no_of_vacancies,
             "salary": job.salary,
             "created_at": job.created_at,
@@ -408,6 +412,7 @@ def get_active_jobs(request):
             "benefits": json.loads(job.benefits.replace("'", '"')) if job.benefits else [],
             "region": job.region,
             "city": job.city,
+            "company_name": job.company_name,
             "no_of_vacancies": job.no_of_vacancies,
             "salary": job.salary,
             "created_at": job.created_at,
@@ -475,6 +480,7 @@ def get_inactive_jobs(request):
             "benefits": json.loads(job.benefits.replace("'", '"')) if job.benefits else [],
             "region": job.region,
             "city": job.city,
+            "company_name": job.company_name,
             "no_of_vacancies": job.no_of_vacancies,
             "salary": job.salary,
             "created_at": job.created_at,
@@ -555,6 +561,7 @@ def get_job_by_job_id(request, job_id):
             "benefits": json.loads(job.benefits.replace("'", '"')) if job.benefits else [],
             "region": job.region,
             "city": job.city,
+            "company_name": job.company_name,
             "no_of_vacancies": job.no_of_vacancies,
             "salary": job.salary,
             "created_at": job.created_at,
