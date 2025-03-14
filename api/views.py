@@ -78,6 +78,23 @@ def file_upload(request, user_id):
 
 @api_view(['POST'])
 def sign_up(request):
+    try:
+        # Required fields
+        if request.data.get("user_role") == "jobseeker":
+            required_fields = ["first_name", "last_name", "email", "password"]
+        elif request.data.get("user_role") == "employer":
+            required_fields = ["company_name", "contact_name", "email", "password"]
+        else:
+            required_fields = []
+        
+        missing_fields = [field for field in required_fields if not request.data.get(field)]
+
+        if missing_fields:
+            return Response({
+                "status_code": StatusCode.BAD_REQUEST,
+                "message": f"Missing required fields: {', '.join(missing_fields)}"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
         first_name = request.data.get("first_name", "")
         last_name = request.data.get("last_name", "")
         email = request.data.get("email", "")
@@ -142,6 +159,11 @@ def sign_up(request):
                 "status_code": StatusCode.INVALID_CREDENTIALS,
                 "message": "Failed To Create User"
             }, status=status.HTTP_401_UNAUTHORIZED) 
+    except Exception as e:
+        return Response({
+            "status_code": StatusCode.SERVER_ERROR,
+            "message": f"An error occurred: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
