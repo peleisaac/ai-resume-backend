@@ -30,51 +30,57 @@ def protected_view(request):
 
 @api_view(['POST'])
 def file_upload(request, user_id):
-    parser_classes = (MultiPartParser, FormParser)
-    serializer = FileUploadSerializer(data=request.data)
+    try:
+        parser_classes = (MultiPartParser, FormParser)
+        serializer = FileUploadSerializer(data=request.data)
 
-    user = Users.get_user_by_user_id(user_id)  # Fetch user
+        user = Users.get_user_by_user_id(user_id)  # Fetch user
 
-    if not user:
-        return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        if not user:
+            return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    if serializer.is_valid():
-        file = serializer.validated_data["file"]
-        file_name = file.name
+        if serializer.is_valid():
+            file = serializer.validated_data["file"]
+            file_name = file.name
 
-        try:
-            # Connect to Azure Storage
-            blob_service_client = BlobServiceClient.from_connection_string(
-                settings.AZURE_STORAGE_CONNECTION_STRING
-            )
-            blob_client = blob_service_client.get_blob_client(
-                container=settings.AZURE_CONTAINER_NAME, blob=file_name
-            )
+            try:
+                # Connect to Azure Storage
+                blob_service_client = BlobServiceClient.from_connection_string(
+                    settings.AZURE_STORAGE_CONNECTION_STRING
+                )
+                blob_client = blob_service_client.get_blob_client(
+                    container=settings.AZURE_CONTAINER_NAME, blob=file_name
+                )
 
-            # Upload the file
-            blob_client.upload_blob(file.read(), overwrite=True)
+                # Upload the file
+                blob_client.upload_blob(file.read(), overwrite=True)
 
-            # Get the file URL
-            file_url = blob_client.url
+                # Get the file URL
+                file_url = blob_client.url
 
-            # Update the user's resume URL
-            user.resume_url = file_url
+                # Update the user's resume URL
+                user.resume_url = file_url
 
-            # Save the user
-            user.save()
+                # Save the user
+                user.save()
 
-            return Response({
-                "status_code": StatusCode.SUCCESS,
-                "message": "Resume Upload successfully",
-                "file_url": file_url,  # Return the file URL
-                "user_details": Users.get_user_by_user_id_json_format(user_id),
+                return Response({
+                    "status_code": StatusCode.SUCCESS,
+                    "message": "Resume Upload successfully",
+                    "file_url": file_url,  # Return the file URL
+                    "user_details": Users.get_user_by_user_id_json_format(user_id),
 
-            }, status=status.HTTP_201_CREATED)
+                }, status=status.HTTP_201_CREATED)
 
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({
+            "status_code": StatusCode.SERVER_ERROR,
+            "message": f"An error occurred: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 def sign_up(request):
@@ -169,6 +175,17 @@ def sign_up(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def add_new_job(request):
+    try:
+        required_fields = ["title", "description", "category", "contract_type", "experience", "education_level", "requirements", "required_skills", "benefits", "region", "city", "company_name", "no_of_vacancies", "salary"]
+
+        missing_fields = [field for field in required_fields if not request.data.get(field)]
+
+        if missing_fields:
+            return Response({
+                "status_code": StatusCode.BAD_REQUEST,
+                "message": f"Missing required fields: {', '.join(missing_fields)}"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
         title = request.data.get("title", "")
         description = request.data.get("description", "")
         category = request.data.get("category", "")
@@ -208,7 +225,8 @@ def add_new_job(request):
             region = region,
             city = city,
             no_of_vacancies = no_of_vacancies,
-            salary = salary
+            salary = salary,
+            company_name = company_name
         )
 
         job.save()
@@ -223,12 +241,29 @@ def add_new_job(request):
                 "status_code": StatusCode.INVALID_CREDENTIALS,
                 "message": "Failed To Create Job"
             }, status=status.HTTP_401_UNAUTHORIZED) 
+    except Exception as e:
+        return Response({
+            "status_code": StatusCode.SERVER_ERROR,
+            "message": f"An error occurred: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def add_new_application(request):
+    try:
+        required_fields = ["user_id", "job_id", "application_status"]
+
+        missing_fields = [field for field in required_fields if not request.data.get(field)]
+
+        if missing_fields:
+            return Response({
+                "status_code": StatusCode.BAD_REQUEST,
+                "message": f"Missing required fields: {', '.join(missing_fields)}"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+
         user_id = request.data.get("user_id")
         job_id = request.data.get("job_id")
         application_status = request.data.get("application_status")
@@ -261,6 +296,11 @@ def add_new_application(request):
                 "status_code": StatusCode.INVALID_CREDENTIALS,
                 "message": "Failed To send Application"
             }, status=status.HTTP_401_UNAUTHORIZED) 
+    except Exception as e:
+        return Response({
+            "status_code": StatusCode.SERVER_ERROR,
+            "message": f"An error occurred: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -676,179 +716,233 @@ def get_applications_by_job_id(request, job_id):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def update_user(request, user_id):
-    user = Users.get_user_by_user_id(user_id)  # Fetch user
-    if not user:
-        return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-    
-    # Instantiate the serializer with the current user instance and the incoming data.
-    # Using partial=True allows for partial updates. If you require all fields, you can remove partial=True.
-    serializer = UserSerializer(user, data=request.data, partial=True)
-    if serializer.is_valid():
-        serializer.save()
+    try:
+        user = Users.get_user_by_user_id(user_id)  # Fetch user
+        if not user:
+            return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Instantiate the serializer with the current user instance and the incoming data.
+        # Using partial=True allows for partial updates. If you require all fields, you can remove partial=True.
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "status_code": StatusCode.SUCCESS,
+                "message": "User updated successfully",
+                "user": serializer.data
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                "status_code": StatusCode.INVALID_CREDENTIALS,
+                "message": "Invalid data",
+                "errors": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
         return Response({
-            "status_code": StatusCode.SUCCESS,
-            "message": "User updated successfully",
-            "user": serializer.data
-        }, status=status.HTTP_200_OK)
-    else:
-        return Response({
-            "status_code": StatusCode.INVALID_CREDENTIALS,
-            "message": "Invalid data",
-            "errors": serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
+            "status_code": StatusCode.SERVER_ERROR,
+            "message": f"An error occurred: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def update_job(request, job_id):
-    job = Jobs.get_job_by_job_id(job_id)  # Fetch job
-    if not job:
-        return Response({"status_code": StatusCode.NOT_FOUND, "message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
-    
-    # Instantiate the serializer with the current job instance and the incoming data.
-    # Using partial=True allows for partial updates. If you require all fields, you can remove partial=True.
-    serializer = JobSerializer(job, data=request.data, partial=True)
-    if serializer.is_valid():
-        serializer.save()
+    try:
+        job = Jobs.get_job_by_job_id(job_id)  # Fetch job
+        if not job:
+            return Response({"status_code": StatusCode.NOT_FOUND, "message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Instantiate the serializer with the current job instance and the incoming data.
+        # Using partial=True allows for partial updates. If you require all fields, you can remove partial=True.
+        serializer = JobSerializer(job, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "status_code": StatusCode.SUCCESS,
+                "message": "Job updated successfully",
+                "job": serializer.data
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                "status_code": StatusCode.INVALID_CREDENTIALS,
+                "message": "Invalid data",
+                "errors": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
         return Response({
-            "status_code": StatusCode.SUCCESS,
-            "message": "Job updated successfully",
-            "job": serializer.data
-        }, status=status.HTTP_200_OK)
-    else:
-        return Response({
-            "status_code": StatusCode.INVALID_CREDENTIALS,
-            "message": "Invalid data",
-            "errors": serializer.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
+            "status_code": StatusCode.SERVER_ERROR,
+            "message": f"An error occurred: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def update_application_status(request, application_id):
-    application = Applications.get_application_by_application_id(application_id)  # Fetch application
-    if not application:
-        return Response({"status_code": StatusCode.NOT_FOUND, "message": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
-    
-    application_status = request.data.get('application_status')
-    
-    application.status = application_status
-    application.save()
-    
-    return Response({
-        "status_code": StatusCode.SUCCESS,
-        "message": "Application Status updated successfully."
-    }, status=status.HTTP_200_OK)
+    try:
+        application = Applications.get_application_by_application_id(application_id)  # Fetch application
+        if not application:
+            return Response({"status_code": StatusCode.NOT_FOUND, "message": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        application_status = request.data.get('application_status')
+        
+        application.status = application_status
+        application.save()
+        
+        return Response({
+            "status_code": StatusCode.SUCCESS,
+            "message": "Application Status updated successfully."
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            "status_code": StatusCode.SERVER_ERROR,
+            "message": f"An error occurred: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_user(request, user_id):
-    user = Users.get_user_by_user_id(user_id)  # Fetch user
-    if not user:
-        return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-    
-    
-    # Soft delete: set record_status to 0
-    user.record_status = 0
-    user.save()
-    
-    return Response({
-        "status_code": StatusCode.SUCCESS,
-        "message": "User deleted successfully."
-    }, status=status.HTTP_200_OK)
+    try:
+        user = Users.get_user_by_user_id(user_id)  # Fetch user
+        if not user:
+            return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        
+        # Soft delete: set record_status to 0
+        user.record_status = 0
+        user.save()
+        
+        return Response({
+            "status_code": StatusCode.SUCCESS,
+            "message": "User deleted successfully."
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            "status_code": StatusCode.SERVER_ERROR,
+            "message": f"An error occurred: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_job(request, job_id):
-    job = Jobs.get_job_by_job_id(job_id)  # Fetch job
-    if not job:
-        return Response({"status_code": StatusCode.NOT_FOUND, "message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
-    
-    
-    # Soft delete: set record_status to 0
-    job.record_status = 0
-    job.save()
-    
-    return Response({
-        "status_code": StatusCode.SUCCESS,
-        "message": "Job deleted successfully."
-    }, status=status.HTTP_200_OK)
+    try:
+        job = Jobs.get_job_by_job_id(job_id)  # Fetch job
+        if not job:
+            return Response({"status_code": StatusCode.NOT_FOUND, "message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        
+        # Soft delete: set record_status to 0
+        job.record_status = 0
+        job.save()
+        
+        return Response({
+            "status_code": StatusCode.SUCCESS,
+            "message": "Job deleted successfully."
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            "status_code": StatusCode.SERVER_ERROR,
+            "message": f"An error occurred: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def deactivate_user(request, user_id):
-    user = Users.get_user_by_user_id(user_id)  # Fetch user
-    if not user:
-        return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-    
-    
-    # Soft delete: set record_status to 0
-    user.is_active = 0
-    user.save()
-    
-    return Response({
-        "status_code": StatusCode.SUCCESS,
-        "message": "User deactivated successfully."
-    }, status=status.HTTP_200_OK)
+    try:
+        user = Users.get_user_by_user_id(user_id)  # Fetch user
+        if not user:
+            return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        
+        # Soft delete: set record_status to 0
+        user.is_active = 0
+        user.save()
+        
+        return Response({
+            "status_code": StatusCode.SUCCESS,
+            "message": "User deactivated successfully."
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            "status_code": StatusCode.SERVER_ERROR,
+            "message": f"An error occurred: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def deactivate_job(request, job_id):
-    job = Jobs.get_job_by_job_id(job_id)  # Fetch job
-    if not job:
-        return Response({"status_code": StatusCode.NOT_FOUND, "message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
-    
-    
-    # Soft delete: set record_status to 0
-    job.is_active = 0
-    job.save()
-    
-    return Response({
-        "status_code": StatusCode.SUCCESS,
-        "message": "Job deactivated successfully."
-    }, status=status.HTTP_200_OK)
+    try:
+        job = Jobs.get_job_by_job_id(job_id)  # Fetch job
+        if not job:
+            return Response({"status_code": StatusCode.NOT_FOUND, "message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        
+        # Soft delete: set record_status to 0
+        job.is_active = 0
+        job.save()
+        
+        return Response({
+            "status_code": StatusCode.SUCCESS,
+            "message": "Job deactivated successfully."
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            "status_code": StatusCode.SERVER_ERROR,
+            "message": f"An error occurred: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def activate_user(request, user_id):
-    user = Users.get_user_by_user_id(user_id)  # Fetch user
-    if not user:
-        return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
-    
-    
-    # Soft delete: set record_status to 0
-    user.is_active = 1
-    user.save()
-    
-    return Response({
-        "status_code": StatusCode.SUCCESS,
-        "message": "User activated successfully."
-    }, status=status.HTTP_200_OK)
+    try:
+        user = Users.get_user_by_user_id(user_id)  # Fetch user
+        if not user:
+            return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        
+        # Soft delete: set record_status to 0
+        user.is_active = 1
+        user.save()
+        
+        return Response({
+            "status_code": StatusCode.SUCCESS,
+            "message": "User activated successfully."
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            "status_code": StatusCode.SERVER_ERROR,
+            "message": f"An error occurred: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def activate_job(request, job_id):
-    job = Jobs.get_job_by_job_id(job_id)  # Fetch job
-    if not job:
-        return Response({"status_code": StatusCode.NOT_FOUND, "message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
-    
-    
-    # Soft delete: set record_status to 0
-    job.is_active = 1
-    job.save()
-    
-    return Response({
-        "status_code": StatusCode.SUCCESS,
-        "message": "Job activated successfully."
-    }, status=status.HTTP_200_OK)
+    try:
+        job = Jobs.get_job_by_job_id(job_id)  # Fetch job
+        if not job:
+            return Response({"status_code": StatusCode.NOT_FOUND, "message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        
+        # Soft delete: set record_status to 0
+        job.is_active = 1
+        job.save()
+        
+        return Response({
+            "status_code": StatusCode.SUCCESS,
+            "message": "Job activated successfully."
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            "status_code": StatusCode.SERVER_ERROR,
+            "message": f"An error occurred: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     
