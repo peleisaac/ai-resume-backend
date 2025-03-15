@@ -106,6 +106,14 @@ This repository contains the backend code for the final project using Django Res
 - **updated_at**
 - **record_status**
 
+### Saved Jobs
+- **id** (PK)
+- **saved_job_id** (unique)
+- **user_id** (FK)
+- **job_id** (FK)
+- **created_at**
+- **updated_at**
+
 ### Relationships
 
 - **Users** entity is managed by **CustomUserManager**.
@@ -113,6 +121,7 @@ This repository contains the backend code for the final project using Django Res
 - **Jobs** entity has static methods for various operations.
 - **Applications** entity has static methods for various operations.
 - **Applications** entity has foreign keys to **Users** and **Jobs** entities.
+- **Saved Jobs** entity has foreign keys to **Users** and **Jobs** entities.
 
 ### ER Diagram
 
@@ -146,12 +155,24 @@ This repository contains the backend code for the final project using Django Res
 | record_status    |
 +------------------+
 
-+------------------+
++------------------+                   
 | Applications     |
 +------------------+
 | id (PK)          |
 | application_id (unique)|
 | status           |
+| user_id (FK)     |
+| job_id (FK)      |
+| created_at       |
+| updated_at       |
+| record_status    |
++------------------+
+
++------------------+
+| Saved Jobs       |
++------------------+
+| id (PK)          |
+| saved_job_id (unique) |
 | user_id (FK)     |
 | job_id (FK)      |
 | created_at       |
