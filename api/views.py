@@ -8,6 +8,7 @@ from uuid import UUID
 from api.models import Users
 from api.models import Jobs
 from api.models import Applications
+from api.models import SavedJobs
 from rest_framework import status
 from api.status_codes import StatusCode
 from .serializers import UserSerializer, JobSerializer, JSONListField, FileUploadSerializer
@@ -479,7 +480,7 @@ def get_active_jobs(request):
             "salary": job.salary,
             "created_at": job.created_at,
             "updated_at": job.updated_at,
-            "is_active": job.is_active
+            "is_active": job.is_active,
         }
         for job in jobs
     ]
@@ -547,13 +548,64 @@ def get_inactive_jobs(request):
             "salary": job.salary,
             "created_at": job.created_at,
             "updated_at": job.updated_at,
-            "is_active": job.is_active
+            "is_active": job.is_active,
         }
         for job in jobs
     ]
     return Response({"status_code": StatusCode.SUCCESS, 
                 "message": "All Inactive Jobs Retrieved successfully",
                 "jobs": jobs_list}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def return_saved_jobs(request):
+    saved_jobs = SavedJobs.get_all_saved_jobs()
+
+    saved_jobs_list = [
+        {
+            "saved_job_id": saved_job.saved_job_id,
+            "user_id": saved_job.user_id,
+            "job_id": Jobs.get_job_by_job_id_json_format(saved_job.job_id),
+            "created_at": saved_job.created_at,
+            "updated_at": saved_job.updated_at,
+        }
+        for saved_job in saved_jobs
+    ]
+
+    return Response({"status_code": StatusCode.SUCCESS, 
+                "message": "All Saved Jobs Retrieved successfully",
+                "saved_jobs": saved_jobs_list}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_saved_jobs_by_user(request, user_id):
+    try:
+        user_id = user_id # Convert to UUID
+    except ValueError:
+        return Response({"status_code": status.HTTP_400_BAD_REQUEST, "message": "Invalid user ID format"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    saved_jobs = SavedJobs.get_saved_jobs_by_user_id(user_id)
+
+
+
+    saved_jobs_list = [
+        {
+            "saved_job_id": saved_job.saved_job_id,
+            "user_id": saved_job.user_id,
+            "job_details": Jobs.get_job_by_job_id_json_format(saved_job.job_id),
+            "created_at": saved_job.created_at,
+            "updated_at": saved_job.updated_at,
+        }
+        for saved_job in saved_jobs
+    ]
+
+    return Response({"status_code": StatusCode.SUCCESS, 
+                "message": "All Saved Jobs Retrieved successfully",
+                "saved_jobs": saved_jobs_list}, status=status.HTTP_200_OK)
+
 
 
 @api_view(['GET'])
@@ -628,7 +680,7 @@ def get_job_by_job_id(request, job_id):
             "salary": job.salary,
             "created_at": job.created_at,
             "updated_at": job.updated_at,
-            "is_active": job.is_active
+            "is_active": job.is_active,
     }
 
     return Response({"status_code": StatusCode.SUCCESS, 
@@ -872,6 +924,52 @@ def deactivate_user(request, user_id):
             "message": f"An error occurred: {str(e)}"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def save_job(request):
+    try:
+        job_id = request.data.get('job_id', '')
+        user_id = request.data.get('user_id', '')
+
+        required_fields = ["job_id", "user_id"]
+
+        missing_fields = [field for field in required_fields if not request.data.get(field)]
+
+        if missing_fields:
+            return Response({
+                "status_code": StatusCode.BAD_REQUEST,
+                "message": f"Missing required fields: {', '.join(missing_fields)}"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        saved_job = SavedJobs.saved_job_exists(job_id, user_id)
+
+        if saved_job:
+            return Response({
+                "status_code": StatusCode.BAD_REQUEST,
+                "message": "Job already saved"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        saved_job_id = str(uuid.uuid4().hex)
+
+        saved_job = SavedJobs(
+            saved_job_id = saved_job_id,
+            job_id = job_id,
+            user_id = user_id
+        )
+
+        saved_job.save()
+        
+        return Response({
+            "status_code": StatusCode.SUCCESS,
+            "message": "Job saved successfully."
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            "status_code": StatusCode.SERVER_ERROR,
+            "message": f"An error occurred: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
