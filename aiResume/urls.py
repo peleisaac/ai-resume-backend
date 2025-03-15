@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from api.views import protected_view
 from rest_framework.authtoken.views import obtain_auth_token
-from api.views import sign_up, get_all_users, get_user_by_user_id, update_user, delete_user, deactivate_user, activate_user, get_inactive_users, get_active_users, get_all_jobs, get_job_by_job_id, add_new_job, delete_job, activate_job, deactivate_job, update_job, get_inactive_jobs, get_active_jobs, get_all_applications, get_application_by_application_id, add_new_application, get_applications_by_user_id, get_applications_by_job_id, update_application_status, index_view, get_employer_dashboard_metrics, get_jobseeker_dashboard_metrics, file_upload
+from api.views import sign_up, get_all_users, get_user_by_user_id, update_user, delete_user, deactivate_user, activate_user, get_inactive_users, get_active_users, get_all_jobs, get_job_by_job_id, add_new_job, delete_job, activate_job, deactivate_job, update_job, get_inactive_jobs, get_active_jobs, get_all_applications, get_application_by_application_id, add_new_application, get_applications_by_user_id, get_applications_by_job_id, update_application_status, index_view, get_employer_dashboard_metrics, get_jobseeker_dashboard_metrics, file_upload, save_job, return_saved_jobs, get_saved_jobs_by_user
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -42,6 +42,9 @@ urlpatterns = [
     path('api/v1/job/delete/<str:job_id>', delete_job, name='delete_job'),
     path('api/v1/job/deactivate/<str:job_id>', deactivate_job, name='deactivate_job'),
     path('api/v1/job/activate/<str:job_id>', activate_job, name='activate_job'),
+    path('api/v1/jobs/saved/<str:user_id>', get_saved_jobs_by_user, name='get_saved_jobs_by_user'),
+    path('api/v1/job/save', save_job, name='save_job'),
+    path('api/v1/jobs/saved/all', return_saved_jobs, name='return_saved_jobs'),
     path('api/v1/job/<str:job_id>', update_job, name='update_job'),
     path('api/v1/jobs/active/', get_active_jobs, name='get_active_jobs'),
     path('api/v1/jobs/inactive/', get_inactive_jobs, name='get_inactive_jobs'),
