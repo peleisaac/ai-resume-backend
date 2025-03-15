@@ -195,7 +195,7 @@ class Jobs(models.Model):
             "salary": job.salary,
             "created_at": job.created_at,
             "updated_at": job.updated_at,
-            "is_active": job.is_active
+            "is_active": job.is_active,
         } if job else None
     
 
@@ -249,4 +249,41 @@ class Applications(models.Model):
     def application_exists(user_id, job_id):
         """Check if an application exists with the given user_id and job_id."""
         return Applications.objects.filter(user_id=user_id, job_id=job_id).exists()
+    
+
+
+class SavedJobs(models.Model):
+    id = models.AutoField(primary_key=True)
+    saved_job_id = models.CharField(unique=True, max_length=200)
+    user_id = models.CharField(max_length=200)
+    job_id = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    record_status = models.CharField(max_length=2, default="1")
+
+    def __str__(self):
+        return f"{self.job_id} ({self.user_id})"
+    
+    class Meta:
+        db_table = "saved_jobs"
+
+    @staticmethod
+    def get_all_saved_jobs():
+        """Get all saved jobs."""
+        return SavedJobs.objects.filter(record_status="1").all()
+
+    @staticmethod
+    def get_saved_jobs_by_user_id(user_id):
+        """Get saved jobs by user_id."""
+        return SavedJobs.objects.filter(user_id=user_id, record_status="1").all()
+    
+    @staticmethod
+    def get_saved_jobs_by_job_id(job_id):
+        """Get saved jobs by job_id."""
+        return SavedJobs.objects.filter(job_id=job_id, record_status="1").all()
+    
+    @staticmethod
+    def saved_job_exists(user_id, job_id):
+        """Check if a saved job exists with the given user_id and job_id."""
+        return SavedJobs.objects.filter(user_id=user_id, job_id=job_id).exists()
     
