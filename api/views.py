@@ -361,9 +361,11 @@ def get_jobseeker_dashboard_metrics(request):
     user_id = request.data.get("user_id", "")
 
     all_applications_count = Applications.get_applications_by_user_id(user_id)
+    saved_jobs_count = SavedJobs.get_saved_jobs_by_user_id(user_id)
     
     dashboard_metrics_data = {
-        "all_applications_count": len(all_applications_count)
+        "all_applications_count": len(all_applications_count),
+        "saved_jobs_count": len(saved_jobs_count)
     }
     return Response({"status_code": StatusCode.SUCCESS, 
                 "message": "Job Seeker Dashboard Metrics Retrieved successfully",
