@@ -77,6 +77,7 @@ This repository contains the backend code for the final project using Django Res
 #### Jobs
 - **id** (PK)
 - **job_id** (unique)
+- **employer_id**
 - **title**
 - **description**
 - **category**
@@ -101,6 +102,7 @@ This repository contains the backend code for the final project using Django Res
 - **application_id** (unique)
 - **status**
 - **user_id** (FK)
+- **employer_id** (FK)
 - **job_id** (FK)
 - **created_at**
 - **updated_at**
@@ -110,6 +112,7 @@ This repository contains the backend code for the final project using Django Res
 - **id** (PK)
 - **saved_job_id** (unique)
 - **user_id** (FK)
+- **employer_id** (FK)
 - **job_id** (FK)
 - **created_at**
 - **updated_at**
@@ -130,7 +133,8 @@ This repository contains the backend code for the final project using Django Res
 |    Users         |          |  CustomUserManager   |          |    Jobs          |
 +------------------+          +----------------------+          +------------------+
 | user_id (PK)     |          | create_user()        |          | id (PK)          |
-| first_name       |          | create_superuser()   |          | job_id (unique)  |
+| first_name       |          | create_superuser()   |          | job_id (unique)
+                                                                | employer_id (FK) |                  
 | last_name        |          | get_user_by_user_id()|          | title            |
 | resume_url       |          | is_profile_complete()|          | description      |
 | company_name     |          | get_user_by_user_id_json_format()| category         |
@@ -162,6 +166,7 @@ This repository contains the backend code for the final project using Django Res
 | application_id (unique)|
 | status           |
 | user_id (FK)     |
+| employer_id (FK) |
 | job_id (FK)      |
 | created_at       |
 | updated_at       |
@@ -173,7 +178,8 @@ This repository contains the backend code for the final project using Django Res
 +------------------+
 | id (PK)          |
 | saved_job_id (unique) |
-| user_id (FK)     |
+| user_id (FK)
+| employer_id (FK) |
 | job_id (FK)      |
 | created_at       |
 | updated_at       |
