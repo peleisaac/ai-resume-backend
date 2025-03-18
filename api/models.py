@@ -127,6 +127,7 @@ class Users(AbstractBaseUser):
 class Jobs(models.Model):
     id = models.AutoField(primary_key=True)
     job_id = models.CharField(unique=True, max_length=200)
+    employer_id = models.CharField(max_length=200)
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=500)
     category = models.CharField(max_length=50)
@@ -159,6 +160,17 @@ class Jobs(models.Model):
         return Jobs.objects.filter(record_status="1").all()
     
     @staticmethod
+    def get_all_jobs_posted_by_employer(employer_id):
+        """Get all jobs Posted By Employer"""
+        return Jobs.objects.filter(record_status="1", employer_id=employer_id).all()
+    
+    @staticmethod
+    def get_active_jobs_by_employer(employer_id):
+        """Get all active jobs By User."""
+        return Jobs.objects.filter(record_status="1", is_active=True, employer_id=employer_id).all()
+    
+
+    @staticmethod
     def get_active_jobs():
         """Get all active jobs."""
         return Jobs.objects.filter(record_status="1", is_active=True).all()
@@ -178,6 +190,7 @@ class Jobs(models.Model):
         """Get a job by job_id in JSON format."""
         job = Jobs.objects.filter(job_id=job_id, record_status="1").first()
         return {
+            "employer_id": job.employer_id,
             "job_id": job.job_id,
             "title": job.title,
             "description": job.description,
@@ -204,6 +217,7 @@ class Applications(models.Model):
     application_id = models.CharField(unique=True, max_length=200)
     status = models.CharField(max_length=50)
     user_id = models.CharField(max_length=200)
+    employer_id = models.CharField(max_length=200)
     job_id = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -219,6 +233,11 @@ class Applications(models.Model):
     def get_all_applications():
         """Get all applications."""
         return Applications.objects.filter(record_status="1").all()
+    
+    @staticmethod
+    def get_all_applications_count_for_employer(employer_id):
+        """Get the number of applications For Employer."""
+        return Applications.objects.filter(record_status="1", employer_id=employer_id).count()
     
     @staticmethod
     def get_all_applications_count():
@@ -255,6 +274,7 @@ class Applications(models.Model):
 class SavedJobs(models.Model):
     id = models.AutoField(primary_key=True)
     saved_job_id = models.CharField(unique=True, max_length=200)
+    employer_id = models.CharField(max_length=200)
     user_id = models.CharField(max_length=200)
     job_id = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -286,4 +306,5 @@ class SavedJobs(models.Model):
     def saved_job_exists(user_id, job_id):
         """Check if a saved job exists with the given user_id and job_id."""
         return SavedJobs.objects.filter(user_id=user_id, job_id=job_id).exists()
+    
     
