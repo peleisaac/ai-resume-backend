@@ -177,7 +177,7 @@ def sign_up(request):
 @permission_classes([IsAuthenticated])
 def add_new_job(request):
     try:
-        required_fields = ["title", "description", "category", "contract_type", "experience", "education_level", "requirements", "required_skills", "benefits", "region", "city", "company_name", "no_of_vacancies", "salary"]
+        required_fields = ["employer_id", "title", "description", "category", "contract_type", "experience", "education_level", "requirements", "required_skills", "benefits", "region", "city", "company_name", "no_of_vacancies", "salary"]
 
         missing_fields = [field for field in required_fields if not request.data.get(field)]
 
@@ -187,15 +187,16 @@ def add_new_job(request):
                 "message": f"Missing required fields: {', '.join(missing_fields)}"
             }, status=status.HTTP_400_BAD_REQUEST)
 
+        employer_id = request.data.get("employer_id", "")
         title = request.data.get("title", "")
         description = request.data.get("description", "")
         category = request.data.get("category", "")
         contract_type = request.data.get("contract_type", "")
         experience = request.data.get("experience", "")
         education_level = request.data.get("education_level", "")
-        requirements = json.dumps(request.data.get("requirements"), "")
-        required_skills = json.dumps(request.data.get("required_skills"), "")
-        benefits = json.dumps(request.data.get("benefits"), "")
+        requirements = json.dumps(request.data.get("requirements"))
+        required_skills = json.dumps(request.data.get("required_skills"))
+        benefits = json.dumps(request.data.get("benefits"))
         region = request.data.get("region", "")
         city = request.data.get("city", "")
         company_name = request.data.get("company_name", "")
@@ -213,6 +214,7 @@ def add_new_job(request):
         
         # Create and save the new job
         job = Jobs(
+            employer_id = employer_id,
             job_id = job_id,
             title = title,
             description = description,
@@ -254,7 +256,7 @@ def add_new_job(request):
 @permission_classes([IsAuthenticated])
 def add_new_application(request):
     try:
-        required_fields = ["user_id", "job_id", "application_status"]
+        required_fields = ["user_id", "job_id", "employer_id", "application_status"]
 
         missing_fields = [field for field in required_fields if not request.data.get(field)]
 
@@ -267,6 +269,7 @@ def add_new_application(request):
 
         user_id = request.data.get("user_id")
         job_id = request.data.get("job_id")
+        employer_id = request.data.get("employer_id")
         application_status = request.data.get("application_status")
 
 
@@ -282,6 +285,7 @@ def add_new_application(request):
             application_id = application_id,
             job_id = job_id,
             user_id = user_id,
+            employer_id = employer_id,
             status = application_status
         )
 
@@ -339,12 +343,14 @@ def get_all_users(request):
                 "message": "All Users Retrieved successfully",
                 "users": users_list}, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
+@api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_employer_dashboard_metrics(request):
-    active_jobs = Jobs.get_active_jobs()
-    all_applications_count = Applications.get_all_applications_count()
+    employer_id = request.data.get("employer_id", "")
+
+    active_jobs = Jobs.get_active_jobs_by_employer(employer_id=employer_id)
+    all_applications_count = Applications.get_all_applications_count_for_employer(employer_id=employer_id)
     
     dashboard_metrics_data = {
         "active_jobs": len(active_jobs),
@@ -378,6 +384,40 @@ def get_all_jobs(request):
     jobs = Jobs.get_all_jobs()
     jobs_list = [
         {
+            "employer_id": job.employer_id,
+            "job_id": job.job_id,
+            "title": job.title,
+            "description": job.description,
+            "category": job.category,
+            "contract_type": job.contract_type,
+            "experience": job.experience,
+            "requirements": json.loads(job.requirements.replace("'", '"')) if job.requirements else [],
+            "required_skills": json.loads(job.required_skills.replace("'", '"')) if job.required_skills else [],
+            "benefits": json.loads(job.benefits.replace("'", '"')) if job.benefits else [],
+            "region": job.region,
+            "city": job.city,
+            "company_name": job.company_name,
+            "no_of_vacancies": job.no_of_vacancies,
+            "salary": job.salary,
+            "created_at": job.created_at,
+            "updated_at": job.updated_at,
+            "is_active": job.is_active,
+            "no_of_applications": Applications.get_number_of_applications_by_job_id(job.job_id)
+        }
+        for job in jobs
+    ]
+    return Response({"status_code": StatusCode.SUCCESS, 
+                "message": "All Jobs Retrieved successfully",
+                "jobs": jobs_list}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
+def get_all_jobs_by_employer(request, employer_id):
+    jobs = Jobs.get_active_jobs_by_employer(employer_id)
+    jobs_list = [
+        {
+            "employer_id": job.employer_id,
             "job_id": job.job_id,
             "title": job.title,
             "description": job.description,
@@ -465,6 +505,7 @@ def get_active_jobs(request):
     jobs = Jobs.get_active_jobs()
     jobs_list = [
         {
+            "employer_id": job.employer_id,
             "job_id": job.job_id,
             "title": job.title,
             "description": job.description,
@@ -533,6 +574,7 @@ def get_inactive_jobs(request):
     jobs = Jobs.get_inactive_jobs()
     jobs_list = [
         {
+            "employer_id": job.employer_id,
             "job_id": job.job_id,
             "title": job.title,
             "description": job.description,
@@ -665,7 +707,8 @@ def get_job_by_job_id(request, job_id):
         return Response({"status_code": StatusCode.NOT_FOUND, "message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
     
     job_data = {
-         "job_id": job.job_id,
+            "employer_id": job.employer_id,
+            "job_id": job.job_id,
             "title": job.title,
             "description": job.description,
             "category": job.category,
