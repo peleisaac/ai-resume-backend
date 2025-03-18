@@ -133,14 +133,14 @@ This repository contains the backend code for the final project using Django Res
 |    Users         |          |  CustomUserManager   |          |    Jobs          |
 +------------------+          +----------------------+          +------------------+
 | user_id (PK)     |          | create_user()        |          | id (PK)          |
-| first_name       |          | create_superuser()   |          | job_id (unique)
-                                                                | employer_id (FK) |                  
+| first_name       |          | create_superuser()   |          | job_id (unique)  |
+|                  |          |                      |          | employer_id (FK) |                  
 | last_name        |          | get_user_by_user_id()|          | title            |
 | resume_url       |          | is_profile_complete()|          | description      |
-| company_name     |          | get_user_by_user_id_json_format()| category         |
+| company_name     |          | get_user_by_user_id_json_format()| category        |
 | contact_name     |          +----------------------+          | contract_type    |
-| address          |                                             | company_name     |
-| industry         |                                             | experience       |
+| address          |                                             | company_name    |
+| industry         |                                             | experience      |
 | company_description |                                         | education_level  |
 | msisdn (unique)  |                                             | requirements     |
 | gender           |                                             | required_skills  |
