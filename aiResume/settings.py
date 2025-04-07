@@ -34,7 +34,7 @@ SECRET_KEY = 'django-insecure-kzp)6adm+83_^r9#vp_xsuu7_4*9h+om6^kx1l1twne^1)^5l1
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "ai-resume-backend.axxendcorp.com",
+    "ai-resume-backend-v1.axxendcorp.com",
     "localhost",
 ]
 
@@ -63,6 +63,8 @@ INSTALLED_APPS = [
 
 AUTH_USER_MODEL = 'api.Users'
 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -85,6 +87,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
 ROOT_URLCONF = 'aiResume.urls'
