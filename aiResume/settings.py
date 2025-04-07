@@ -127,7 +127,10 @@ DATABASES = {
         'USER': username,
         'PASSWORD': password,
         'HOST': server,  # or '127.0.0.1'
-        'PORT': port, 
+        'PORT': port,
+        'OPTIONS': {
+            'connect_timeout': 20,  # Increase from default (10) to something like 20 or 30
+        }
     }
 }
 
