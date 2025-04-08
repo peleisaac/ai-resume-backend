@@ -156,7 +156,7 @@ def sign_up(request):
         user.set_password(password)  # Hash password before saving
         user.save()
 
-        signed_up_user = user.get_user_by_user_id(user_id)
+        signed_up_user = user.get_user_by_user_id_json_format(user_id)
 
         if user:
             return Response({
