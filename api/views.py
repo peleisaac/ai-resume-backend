@@ -156,10 +156,13 @@ def sign_up(request):
         user.set_password(password)  # Hash password before saving
         user.save()
 
+        signed_up_user = user.get_user_by_user_id(user_id)
+
         if user:
             return Response({
                 "status_code": StatusCode.SUCCESS,
-                "message": "User created successfully"
+                "message": "User created successfully",
+                "data": signed_up_user
             }, status=status.HTTP_201_CREATED)
         else:
             return Response({
@@ -234,10 +237,13 @@ def add_new_job(request):
 
         job.save()
 
+        added_job = job.get_job_by_job_id(job_id)
+
         if job:
             return Response({
                 "status_code": StatusCode.SUCCESS,
-                "message": "Job created successfully"
+                "message": "Job created successfully",
+                "data": added_job
             }, status=status.HTTP_201_CREATED)
         else:
             return Response({
@@ -291,10 +297,13 @@ def add_new_application(request):
 
         job.save()
 
+        added_application = Applications.get_application_by_application_id(application_id) 
+
         if job:
             return Response({
                 "status_code": StatusCode.SUCCESS,
-                "message": "Application sent successfully"
+                "message": "Application sent successfully",
+                "data": added_application
             }, status=status.HTTP_201_CREATED)
         else:
             return Response({
@@ -334,7 +343,7 @@ def get_all_users(request):
             "resume_url": user.resume_url,
             "company_description": user.company_description,
             "profile_complete": Users.is_profile_complete(user.user_id, user.user_role),
-            "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
+            "category_of_interest": json.loads(user.category_of_interest) if user.category_of_interest else [],
             "job_notifications": user.job_notifications,
         }
         for user in users
@@ -391,9 +400,9 @@ def get_all_jobs(request):
             "category": job.category,
             "contract_type": job.contract_type,
             "experience": job.experience,
-            "requirements": json.loads(job.requirements.replace("'", '"')) if job.requirements else [],
-            "required_skills": json.loads(job.required_skills.replace("'", '"')) if job.required_skills else [],
-            "benefits": json.loads(job.benefits.replace("'", '"')) if job.benefits else [],
+            "requirements": json.loads(job.requirements) if job.requirements else [],
+            "required_skills": json.loads(job.required_skills) if job.required_skills else [],
+            "benefits": json.loads(job.benefits) if job.benefits else [],
             "region": job.region,
             "city": job.city,
             "company_name": job.company_name,
@@ -424,9 +433,9 @@ def get_all_jobs_by_employer(request, employer_id):
             "category": job.category,
             "contract_type": job.contract_type,
             "experience": job.experience,
-            "requirements": json.loads(job.requirements.replace("'", '"')) if job.requirements else [],
-            "required_skills": json.loads(job.required_skills.replace("'", '"')) if job.required_skills else [],
-            "benefits": json.loads(job.benefits.replace("'", '"')) if job.benefits else [],
+            "requirements": json.loads(job.requirements) if job.requirements else [],
+            "required_skills": json.loads(job.required_skills) if job.required_skills else [],
+            "benefits": json.loads(job.benefits) if job.benefits else [],
             "region": job.region,
             "city": job.city,
             "company_name": job.company_name,
@@ -489,7 +498,7 @@ def get_active_users(request):
             "resume_url": user.resume_url,
             "company_description": user.company_description,
             "profile_complete": Users.is_profile_complete(user.user_id, user.user_role),
-            "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
+            "category_of_interest": json.loads(user.category_of_interest) if user.category_of_interest else [],
             "job_notifications": user.job_notifications
         }
         for user in users
@@ -513,9 +522,9 @@ def get_active_jobs(request):
             "contract_type": job.contract_type,
             "experience": job.experience,
             "education_level": job.education_level,
-            "requirements": json.loads(job.requirements.replace("'", '"')) if job.requirements else [],
-            "required_skills": json.loads(job.required_skills.replace("'", '"')) if job.required_skills else [],
-            "benefits": json.loads(job.benefits.replace("'", '"')) if job.benefits else [],
+            "requirements": json.loads(job.requirements) if job.requirements else [],
+            "required_skills": json.loads(job.required_skills) if job.required_skills else [],
+            "benefits": json.loads(job.benefits) if job.benefits else [],
             "region": job.region,
             "city": job.city,
             "company_name": job.company_name,
@@ -558,7 +567,7 @@ def get_inactive_users(request):
             "resume_url": user.resume_url,
             "company_description": user.company_description,
             "profile_complete": Users.is_profile_complete(user.user_id, user.user_role),
-            "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
+            "category_of_interest": json.loads(user.category_of_interest) if user.category_of_interest else [],
             "job_notifications": user.job_notifications
         }
         for user in users
@@ -582,9 +591,9 @@ def get_inactive_jobs(request):
             "contract_type": job.contract_type,
             "experience": job.experience,
             "education_level": job.education_level,
-            "requirements": json.loads(job.requirements.replace("'", '"')) if job.requirements else [],
-            "required_skills": json.loads(job.required_skills.replace("'", '"')) if job.required_skills else [],
-            "benefits": json.loads(job.benefits.replace("'", '"')) if job.benefits else [],
+            "requirements": json.loads(job.requirements) if job.requirements else [],
+            "required_skills": json.loads(job.required_skills) if job.required_skills else [],
+            "benefits": json.loads(job.benefits) if job.benefits else [],
             "region": job.region,
             "city": job.city,
             "company_name": job.company_name,
@@ -686,7 +695,7 @@ def get_user_by_user_id(request, user_id):
         "resume_url": user.resume_url,
         "company_description": user.company_description,
         "profile_complete": Users.is_profile_complete(user.user_id, user.user_role),
-        "category_of_interest": json.loads(user.category_of_interest.replace("'", '"')) if user.category_of_interest else [],
+        "category_of_interest": json.loads(user.category_of_interest) if user.category_of_interest else [],
         "job_notifications": user.job_notifications
     }
     return Response({"status_code": StatusCode.SUCCESS, 
@@ -715,9 +724,9 @@ def get_job_by_job_id(request, job_id):
             "contract_type": job.contract_type,
             "experience": job.experience,
             "education_level": job.education_level,
-            "requirements": json.loads(job.requirements.replace("'", '"')) if job.requirements else [],
-            "required_skills": json.loads(job.required_skills.replace("'", '"')) if job.required_skills else [],
-            "benefits": json.loads(job.benefits.replace("'", '"')) if job.benefits else [],
+            "requirements": json.loads(job.requirements) if job.requirements else [],
+            "required_skills": json.loads(job.required_skills) if job.required_skills else [],
+            "benefits": json.loads(job.benefits) if job.benefits else [],
             "region": job.region,
             "city": job.city,
             "company_name": job.company_name,
