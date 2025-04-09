@@ -319,8 +319,8 @@ class SavedJobs(models.Model):
     @staticmethod
     def saved_job_exists(user_id, job_id):
         """Check if a saved job exists with the given user_id and job_id."""
-        return SavedJobs.objects.filter(user_id=user_id, job_id=job_id).exists()
-
+        return SavedJobs.objects.filter(user_id=user_id, job_id=job_id, record_status="1").first()
+    
     @staticmethod
     def get_saved_job(user_id, job_id):
         """Get saved job with the given user_id and job_id."""
