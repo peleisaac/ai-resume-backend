@@ -895,10 +895,14 @@ def update_application_status(request, application_id):
         
         application.status = application_status
         application.save()
+
+        updated_application = Applications.get_application_by_application_id_json_format(application_id)
+
         
         return Response({
             "status_code": StatusCode.SUCCESS,
-            "message": "Application Status updated successfully."
+            "message": "Application Status updated successfully.",
+            "data": updated_application
         }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({
