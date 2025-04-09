@@ -297,7 +297,7 @@ def add_new_application(request):
 
         job.save()
 
-        added_application = Applications.get_application_by_application_id(application_id) 
+        added_application = Applications.get_application_by_application_id_json_format(application_id) 
 
         if job:
             return Response({
