@@ -237,7 +237,7 @@ def add_new_job(request):
 
         job.save()
 
-        added_job = job.get_job_by_job_id(job_id)
+        added_job = job.get_job_by_job_id_json_format(job_id)
 
         if job:
             return Response({
