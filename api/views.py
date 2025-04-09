@@ -1001,12 +1001,37 @@ def save_job(request):
                 "message": f"Missing required fields: {', '.join(missing_fields)}"
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        saved_job = SavedJobs.saved_job_exists(job_id, user_id)
+        saved_job = SavedJobs.saved_job_exists(user_id, job_id)
 
-        if saved_job:
+        job_saved = Jobs.get_job_by_job_id(job_id)
+
+        job_data = {
+            "employer_id": job_saved.employer_id,
+            "job_id": job_saved.job_id,
+            "title": job_saved.title,
+            "description": job_saved.description,
+            "category": job_saved.category,
+            "contract_type": job_saved.contract_type,
+            "experience": job_saved.experience,
+            "education_level": job_saved.education_level,
+            "requirements": json.loads(job_saved.requirements) if job_saved.requirements else [],
+            "required_skills": json.loads(job_saved.required_skills) if job_saved.required_skills else [],
+            "benefits": json.loads(job_saved.benefits) if job_saved.benefits else [],
+            "region": job_saved.region,
+            "city": job_saved.city,
+            "company_name": job_saved.company_name,
+            "no_of_vacancies": job_saved.no_of_vacancies,
+            "salary": job_saved.salary,
+            "created_at": job_saved.created_at,
+            "updated_at": job_saved.updated_at,
+            "is_active": job_saved.is_active,
+        }
+
+        if saved_job is not None:
             return Response({
                 "status_code": StatusCode.BAD_REQUEST,
-                "message": "Job already saved"
+                "message": "Job already saved",
+                "data": job_data
             }, status=status.HTTP_400_BAD_REQUEST)
         
         saved_job_id = str(uuid.uuid4().hex)
@@ -1022,6 +1047,65 @@ def save_job(request):
         return Response({
             "status_code": StatusCode.SUCCESS,
             "message": "Job saved successfully."
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            "status_code": StatusCode.SERVER_ERROR,
+            "message": f"An error occurred: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def remove_saved_job(request):
+    try:
+        job_id = request.data.get('job_id', '')
+        user_id = request.data.get('user_id', '')
+
+        required_fields = ["job_id", "user_id"]
+
+        missing_fields = [field for field in required_fields if not request.data.get(field)]
+
+        if missing_fields:
+            return Response({
+                "status_code": StatusCode.BAD_REQUEST,
+                "message": f"Missing required fields: {', '.join(missing_fields)}"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        saved_job = SavedJobs.get_saved_job(user_id, job_id)
+
+        saved_job.record_status = 0
+
+        saved_job.save()
+
+        removed_saved_job = Jobs.get_job_by_job_id(job_id)
+
+        job_data = {
+            "employer_id": removed_saved_job.employer_id,
+            "job_id": removed_saved_job.job_id,
+            "title": removed_saved_job.title,
+            "description": removed_saved_job.description,
+            "category": removed_saved_job.category,
+            "contract_type": removed_saved_job.contract_type,
+            "experience": removed_saved_job.experience,
+            "education_level": removed_saved_job.education_level,
+            "requirements": json.loads(removed_saved_job.requirements) if removed_saved_job.requirements else [],
+            "required_skills": json.loads(removed_saved_job.required_skills) if removed_saved_job.required_skills else [],
+            "benefits": json.loads(removed_saved_job.benefits) if removed_saved_job.benefits else [],
+            "region": removed_saved_job.region,
+            "city": removed_saved_job.city,
+            "company_name": removed_saved_job.company_name,
+            "no_of_vacancies": removed_saved_job.no_of_vacancies,
+            "salary": removed_saved_job.salary,
+            "created_at": removed_saved_job.created_at,
+            "updated_at": removed_saved_job.updated_at,
+            "is_active": removed_saved_job.is_active,
+        }
+        
+        return Response({
+            "status_code": StatusCode.SUCCESS,
+            "message": "Saved job removed successfully.",
+            "data": job_data
         }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({
