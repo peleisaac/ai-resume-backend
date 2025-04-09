@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from api.views import protected_view
 from rest_framework.authtoken.views import obtain_auth_token
-from api.views import sign_up, get_all_users, get_user_by_user_id, update_user, delete_user, deactivate_user, activate_user, get_inactive_users, get_active_users, get_all_jobs, get_job_by_job_id, add_new_job, delete_job, activate_job, deactivate_job, update_job, get_inactive_jobs, get_active_jobs, get_all_applications, get_application_by_application_id, add_new_application, get_applications_by_user_id, get_applications_by_job_id, update_application_status, index_view, get_employer_dashboard_metrics, get_jobseeker_dashboard_metrics, file_upload, save_job, return_saved_jobs, get_saved_jobs_by_user, get_all_jobs_by_employer
+from api.views import sign_up, get_all_users, get_user_by_user_id, update_user, delete_user, deactivate_user, activate_user, get_inactive_users, get_active_users, get_all_jobs, get_job_by_job_id, add_new_job, delete_job, activate_job, deactivate_job, update_job, get_inactive_jobs, get_active_jobs, get_all_applications, get_application_by_application_id, add_new_application, get_applications_by_user_id, get_applications_by_job_id, update_application_status, index_view, get_employer_dashboard_metrics, get_jobseeker_dashboard_metrics, file_upload, save_job, return_saved_jobs, get_saved_jobs_by_user, get_all_jobs_by_employer, remove_saved_job
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -49,6 +49,8 @@ urlpatterns = [
     path('api/v1/job/<str:job_id>', update_job, name='update_job'),
     path('api/v1/jobs/active/', get_active_jobs, name='get_active_jobs'),
     path('api/v1/jobs/inactive/', get_inactive_jobs, name='get_inactive_jobs'),
+    path('api/v1/saved-job/remove', remove_saved_job, name='remove_saved_job'),
+
 
     # Applications APIs
     path('api/v1/applications', get_all_applications, name='get_all_applications'),
