@@ -268,6 +268,20 @@ class Applications(models.Model):
     def application_exists(user_id, job_id):
         """Check if an application exists with the given user_id and job_id."""
         return Applications.objects.filter(user_id=user_id, job_id=job_id).exists()
+
+    @staticmethod
+    def get_application_by_application_id_json_format(application_id):
+        """Get an application by application_id in JSON format."""
+        application = Applications.objects.filter(application_id=application_id, record_status="1").first()
+        return {
+            "application_id": application.application_id,
+            "status": application.status,
+            "user_id": application.user_id,
+            "employer_id": application.employer_id,
+            "job_id": application.job_id,
+            "created_at": application.created_at,
+            "updated_at": application.updated_at,
+        } if application else None
     
 
 
