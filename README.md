@@ -186,3 +186,125 @@ This repository contains the backend code for the final project using Django Res
 | record_status    |
 +------------------+
 ```
+
+## Deployment Procedure
+This project was deployed using a Virtual Machine (VM) on a Azure. The steps taken to accomplish that are as follows:
+
+- I created a new VM (Ubuntu 22.04 LTS).
+- I assigned a public IP address and configure security groups to allow SSH (port 22), HTTP (port 80), and HTTPS (port 443).
+- I connected to the VM via SSH
+  ```bash
+   ssh your_username@your_server_ip
+   ```
+- I updated & installed Essential Packages using the commands below
+  ```bash
+  sudo apt update && sudo apt upgrade -y
+  sudo apt install python3-pip python3-venv python3-dev build-essential libpq-dev nginx git -y
+  ```
+- I cloned the respository from github using the link:
+```bash
+https://github.com/peleisaac/ai-resume-backend.git
+```
+- I Set Up a Virtual Environment
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+- I installed Project dependancies
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+- I configured django settings
+```bash
+Configure Django Settings
+
+Set ALLOWED_HOSTS in settings.py to include your server IP/domain.
+
+Set DEBUG=False for production.
+
+Configure STATIC_ROOT and MEDIA_ROOT in settings.py.
+```
+- Collect Static Files
+```bash
+python manage.py collectstatic
+```
+- Apply database migrations
+```bash
+python manage.py migrate
+```
+- Set Up Gunicorn as the Application Server
+- Install gunicorn by using the command:
+```bash
+pip install gunicorn
+```
+-Test it manually
+```bash
+gunicorn --bind 0.0.0.0:8000 your_project_name.wsgi:application
+```
+- Configure Supervisor to Manage Gunicorn
+```bash
+sudo apt install supervisor
+```
+- Create a Supervisor config for Gunicorn:
+```bash
+sudo nano /etc/supervisor/conf.d/your_project.conf
+```
+- Example Config
+```bash
+[program:your_project]
+command=/home/your_username/your-repo/venv/bin/gunicorn --workers 3 --bind unix:/home/your_username/your-repo/your_project.sock your_project_name.wsgi:application
+directory=/home/your_username/your-repo
+user=your_username
+autostart=true
+autorestart=true
+stdout_logfile=/var/log/your_project/gunicorn.log
+stderr_logfile=/var/log/your_project/gunicorn_error.log
+```
+- Create Log Directories
+```bash
+sudo mkdir -p /var/log/your_project/
+sudo chown -R your_username:your_username /var/log/your_project/
+```
+-Reload Supervisor
+```bash
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl status
+```
+- Configure Nginx as a revere proxy
+```bash
+sudo nano /etc/nginx/sites-available/your_project
+```
+-Example Config
+```bash
+server {
+    listen 80;
+    server_name your_domain.com your_server_ip;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /static/ {
+        root /home/your_username/your-repo;
+    }
+
+    location /media/ {
+        root /home/your_username/your-repo;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/your_username/your-repo/your_project.sock;
+    }
+}
+```
+-Enable the config
+```bash
+sudo ln -s /etc/nginx/sites-available/your_project /etc/nginx/sites-enabled
+sudo nginx -t
+sudo systemctl restart nginx
+```
+-Secure with https (Optional but recommended)
+```bash
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d your_domain.com
+```
