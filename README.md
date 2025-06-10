@@ -1,6 +1,25 @@
 # AI Resume backend
 This repository contains the backend code for the final project using Django Rest Framework designed to manage, query and manipulate data to meet given needs in a particular real-world domain. The REST APIs built enables resume storage using Azure Storage container while integrating seamlessly with an existing HTML, CSS and JavaScript frontend for Jobseekers to apply for jobs posted by employers.
 
+Our AI resume project is designed to meet the needs of two main target audiences: job seekers and employers.
+
+For job seekers, the platform streamlines the process of finding relevant job opportunities. By uploading their resumes, job seekers receive personalized job matches tailored to their skills, experience, and preferences—reducing the time and effort needed to search for opportunities manually. This directly addresses their need for quick, accurate, and relevant job matching, increasing their chances of finding the right role faster.
+
+For employers, the platform provides access to a pool of qualified candidates that match their job requirements. Using AI algorithms, the system analyzes candidate profiles and resumes to highlight the best fits for a given role. This saves employers time in the recruitment process and helps them find candidates whose skills align with their specific needs.
+
+By focusing on these two target audiences, our platform bridges the gap between job seekers and employers—offering a smarter, data-driven approach to recruitment and job discovery.
+
+For security, the following has been implemented on the backend to protect user data:
+
+- HTTPS: Enforce secure data transfer using HTTPS.
+- Authentication/Authorization: Strong session/token management using Token based authentication.
+- Input Validation: We sanitize inputs to prevent injections (SQL, XSS).
+- File Upload Security: Validate file types and sizes before uploading to Azure blob storage.
+- Database Security: We use MVC, parameterized queries, and least privilege.
+- Logging & Monitoring: We Detect suspicious activities by logging all activities in the backend.
+- Environment Management: We Use .env for sensitive settings, no hard-coded secrets.
+- Regular Updates: Patch libraries and dependencies.
+
 ## Table of Contents
 
 - [Features](#features)
