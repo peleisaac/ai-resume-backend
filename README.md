@@ -266,7 +266,7 @@ stderr_logfile=/var/log/your_project/gunicorn_error.log
 sudo mkdir -p /var/log/your_project/
 sudo chown -R your_username:your_username /var/log/your_project/
 ```
--Reload Supervisor
+- Reload Supervisor
 ```bash
 sudo supervisorctl reread
 sudo supervisorctl update
@@ -276,7 +276,7 @@ sudo supervisorctl status
 ```bash
 sudo nano /etc/nginx/sites-available/your_project
 ```
--Example Config
+- Example Config
 ```bash
 server {
     listen 80;
@@ -297,13 +297,13 @@ server {
     }
 }
 ```
--Enable the config
+- Enable the config
 ```bash
 sudo ln -s /etc/nginx/sites-available/your_project /etc/nginx/sites-enabled
 sudo nginx -t
 sudo systemctl restart nginx
 ```
--Secure with https (Optional but recommended)
+- Secure with https (Optional but recommended)
 ```bash
 sudo apt install certbot python3-certbot-nginx -y
 sudo certbot --nginx -d your_domain.com
