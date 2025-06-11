@@ -26,6 +26,9 @@ For security, the following has been implemented on the backend to protect user 
 - [Features](#features)
 - [Technologies Used](#technologies-used)
 - [Setup Instructions](#setup-instructions)
+- [Database Schema](#database-schema)
+- [Testing Implemented](#testing-implemented)
+- [Deployment Procedure](#deployment-procedure)
 
 ## User Stories
 ### Job Seeker User Stories
@@ -227,6 +230,9 @@ For security, the following has been implemented on the backend to protect user 
 | record_status    |
 +------------------+
 ```
+
+## Testing Implemented
+Automated testing was implemented for the backend. Sample test cases can be found in the tests.py file.
 
 ## Deployment Procedure
 This project was deployed using a Virtual Machine (VM) on a Azure. The steps taken to accomplish that are as follows:
