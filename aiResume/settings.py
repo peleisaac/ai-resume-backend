@@ -34,7 +34,7 @@ SECRET_KEY = 'django-insecure-kzp)6adm+83_^r9#vp_xsuu7_4*9h+om6^kx1l1twne^1)^5l1
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "ai-resume-backend-v1.axxendcorp.com",
+    "ai-resume-backend-v2.axxendcorp.com",
     "localhost",
 ]
 
