@@ -1,0 +1,133 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Jobs | Jobseeker Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/button.css' %}">
+    <!-- <link rel="stylesheet" href="../css/dashboard.css"> -->
+    <link rel="stylesheet" href="{% static 'css/jobseekers-dashboard.css' %}">
+    <!-- <link rel="stylesheet" href="../css/jobs.css"> -->
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Container - Will be populated by JS -->
+        <div id="sidebar"></div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <h1>Browse Available Jobs</h1>
+                <div class="user-actions">
+                    <button class="notification-btn" title="Notifications">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M15 17H9M9 17H8.5C7.11929 17 6 15.8807 6 14.5V9.5C6 8.11929 7.11929 7 8.5 7H15.5C16.8807 7 18 8.11929 18 9.5V14.5C18 15.8807 16.8807 17 15.5 17H15M9 17V18C9 19.1046 9.89543 20 11 20H13C14.1046 20 15 19.1046 15 18V17M12 3V7"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div class="user-avatar">
+                        <img src="/static/assets/lady.jpg" alt="User Avatar">
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Jobs Page Content -->
+            <section class="jobs-container">
+                <div class="search-filters">
+                    <h3>Find Your Next Opportunity</h3>
+                    <div class="search-bar">
+                        <input type="text" id="job-search" placeholder="Search for job titles, companies, or keywords">
+                        <button id="search-btn" class="btn primary">Search</button>
+                    </div>
+                    <div class="filters">
+                        <div class="filter-group">
+                            <label for="location">Location</label>
+                            <select id="location">
+                                <option value="">All Locations</option>
+                                <option value="remote">Remote</option>
+                                <option value="accra">Accra</option>
+                                <option value="kumasi">Kumasi</option>
+                                <option value="koforidua">Koforidua</option>
+                                <option value="tamale">Tamale</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="job-type">Job Type</label>
+                            <select id="job-type">
+                                <option value="">All Types</option>
+                                <option value="full-time">Full-Time</option>
+                                <option value="part-time">Part-Time</option>
+                                <option value="contract">Contract</option>
+                                <option value="internship">Internship</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="experience">Experience</label>
+                            <select id="experience">
+                                <option value="">All Levels</option>
+                                <option value="entry">Entry Level</option>
+                                <option value="mid">Mid Level</option>
+                                <option value="senior">Senior Level</option>
+                                <option value="executive">Executive</option>
+                            </select>
+                        </div>
+                        <button id="filter-btn" class="btn secondary-blue">Apply Filters</button>
+                    </div>
+                </div>
+
+                <div class="jobs-section">
+                    <div class="job-count">
+                        <h3><span id="job-count-number">0</span> Jobs Found</h3>
+                    </div>
+                    <div id="jobs-list" class="jobs-list">
+                        <!-- Jobs will be loaded dynamically here -->
+                        <div class="loading-spinner">
+                            <div class="spinner"></div>
+                            <p>Loading jobs...</p>
+                        </div>
+                    </div>
+                    <div class="pagination">
+                        <button id="prev-page" class="btn secondary disabled">Previous</button>
+                        <div id="page-numbers" class="page-numbers">
+                            <span class="current">1</span>
+                        </div>
+                        <button id="next-page" class="btn secondary">Next</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    </div>
+
+    <!-- Job Details Modal -->
+    <div id="job-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="job-detail-content">
+                <!-- Job details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" id="apply-button">Apply Now</button>
+                <button class="btn secondary-blue" id="save-job-button">Save Job</button>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="{% static 'context/constants/apiEndpoints.js' %}"></script>
+    <script src="{% static 'js/jobseekerSidebar.js' %}"></script>
+    <script src="{% static 'js/browseJobs.js' %}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,54 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Your CV</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/cv-upload.css' %}">
+
+</head>
+
+<body data-role="jobseeker">
+
+    <div id="header"></div>
+
+    <div class="main-content">
+        <div class="cv_container" id="cv-container">
+            <h2>Add Your CV</h2>
+            <!-- Upload Section -->
+            <div id="upload-section" class="upload-box active">
+                <p>Complete your profile by adding your CV</p>
+                <label for="cv-upload">Upload CV (PDF, DOC, DOCX, max 10MB)</label>
+                <input type="file" id="cv-upload" accept=".pdf, .doc, .docx">
+                <button class="cv_btn">SUBMIT</button>
+            </div>
+            <!-- Success Message Section -->
+            <div id="success-section" class="success-message">
+                <p>Your CV was successfully uploaded. Thanks for completing your profile.</p>
+                <p>You can now apply to jobs of your choice.</p>
+                <button class="cv_btn" onclick="window.location.href = '/jobseeker-dashboard'">GO TO
+                    HOME</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer"></div>
+
+
+    <script src="{% static 'js/header.js' %}"></script>
+    <script src="{% static 'js/footer.js' %}"></script>
+    <script type="module" src="{% static 'js/uploadFile.js' %}"></script>
+    <script src="{% static 'context/constants/apiEndpoints.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{% static 'context/constants/toast.js' %}"></script>
+
+</body>
+
+</html>

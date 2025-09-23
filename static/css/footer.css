@@ -1,0 +1,13 @@
+@import url('variables.css'); /* Import color variables */
+
+.footer {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    font-family: var(--font-family);
+}
+
+.footer-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}

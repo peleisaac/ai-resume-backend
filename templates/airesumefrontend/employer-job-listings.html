@@ -1,0 +1,152 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Listings | AI Resume Screening</title>
+    <!-- <link rel="stylesheet" href="../css/variables.css"> -->
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/employer-dashboard.css' %}">
+
+    <!-- <link rel="stylesheet" href="../css/employer-dashboard.css"> -->
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <div id="sidebar"></div>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="top-bar">
+                <h1>Job Listings</h1>
+                <div class="user-actions">
+                    <button class="notification-btn" title="Notifications">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M15 17H9M9 17H8.5C7.11929 17 6 15.8807 6 14.5V9.5C6 8.11929 7.11929 7 8.5 7H15.5C16.8807 7 18 8.11929 18 9.5V14.5C18 15.8807 16.8807 17 15.5 17H15M9 17V18C9 19.1046 9.89543 20 11 20H13C14.1046 20 15 19.1046 15 18V17M12 3V7"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div class="user-avatar">
+                        <img src="/static/assets/lady.jpg" alt="User Avatar">
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="card-header">
+                    <h2>Manage Your Job Listings</h2>
+                    <div class="action-buttons">
+                        <button type="button" id="createNewJob" class="btn primary-btn create-job-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" />
+                            </svg>
+                            Create New Job
+                        </button>
+                        <div class="search-container">
+                            <input type="text" id="searchJobs" placeholder="Search listings...">
+                            <button class="search-btn" title="Search">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <div class="filter-group">
+                        <label for="categoryFilter">Category:</label>
+                        <select id="categoryFilter">
+                            <option value="all">All Categories</option>
+                            <option value="technology">Technology</option>
+                            <option value="finance">Finance</option>
+                            <option value="healthcare">Healthcare</option>
+                            <option value="education">Education</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="sales">Sales</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="statusFilter">Status:</label>
+                        <select id="statusFilter">
+                            <option value="all">All Statuses</option>
+                            <option value="active">Active</option>
+                            <option value="paused">Paused</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="dateFilter">Date Posted:</label>
+                        <select id="dateFilter">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="jobs-table-container">
+                    <table class="jobs-table">
+                        <thead>
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Category</th>
+                                <th>Location</th>
+                                <th>Applications</th>
+                                <th>Date Posted</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jobsTableBody">
+                            <!-- Jobs will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    <button class="pagination-btn" title="Previous Page" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </button>
+                    <span class="pagination-current">Page 1 of 1</span>
+                    <button class="pagination-btn" title="Next Page" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+    <!-- Load our module files in the correct order -->
+    <script src="{% static 'context/constants/apiEndpoints.js' %}"></script>
+    <script src="{% static 'js/job-data.js' %}"></script>
+    <script src="{% static 'js/job-filters.js' %}"></script>
+    <!-- <script src="../js/job-filters.js"></script> -->
+    <!-- <script src="../js/job-listings.js"></script> -->
+    <script src="{% static 'js/job-listings.js' %}"></script>
+
+    <!-- <script src="../js/employer-dashboard.js"></script> -->
+    <script src="{% static 'js/employerDashboard.js' %}"></script>
+
+
+</body>
+
+</html>

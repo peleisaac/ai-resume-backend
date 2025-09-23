@@ -1,0 +1,44 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jobseekers Sign Up</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+
+    <!-- <link rel="stylesheet" href="../css/auth.css">
+    <link rel="stylesheet" href="../css/header.css">
+    <link rel="stylesheet" href="../css/footer.css"> -->
+</head>
+
+<body data-role="employer">
+    <div id="header"></div>
+
+    <div class="container" id="auth-container"></div>
+    <div id="footer"></div>
+
+    <script type="module" src="{% static 'js/authSignup.js' %}"></script>
+    <script src="{% static 'context/constants/apiEndpoints.js' %}"></script>
+
+    <!-- <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("auth-container").innerHTML = loadSignUpForm("employer");
+        });
+    </script> -->
+    <script src="{% static 'js/header.js' %}"></script>
+    <script src="{% static 'js/footer.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{% static 'context/constants/toast.js' %}"></script>
+</body>
+
+</html>

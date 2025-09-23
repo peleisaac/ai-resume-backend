@@ -1,0 +1,65 @@
+body {
+    font-family: var(--font-family);
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .main-content {
+    flex: 1; /* This pushes the footer to the bottom */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .cv_container {
+    max-width: 500px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .upload-box,
+  .success-message {
+    display: none;
+  }
+  
+  .upload-box.active,
+  .success-message.active {
+    display: block;
+  }
+  
+  .upload-box {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .success-message {
+    background: #d0ebff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .cv_btn {
+    background: #f56565;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 10px;
+  }
+  #header,
+  #footer {
+    width: 100%;
+  }

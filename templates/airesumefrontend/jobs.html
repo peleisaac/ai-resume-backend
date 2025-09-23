@@ -1,0 +1,115 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Jobs | AI Resume Screening</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/button.css">
+    <link rel="stylesheet" href="../css/header.css">
+    <link rel="stylesheet" href="../css/footer.css">
+    <link rel="stylesheet" href="../css/jobs.css"> -->
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/button.css' %}">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jobs.css' %}">
+</head>
+</head>
+
+<body>
+    <!-- Dynamic Header -->
+    <div id="header"></div>
+
+    <!-- Jobs Page Content -->
+    <section class="jobs-container">
+        <div class="search-filters">
+            <h2>Find Your Next Opportunity</h2>
+            <div class="search-bar">
+                <input type="text" id="job-search" placeholder="Search for job titles, companies, or keywords">
+                <button id="search-btn" class="btn primary">Search</button>
+            </div>
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="location">Location</label>
+                    <select id="location">
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="job-type">Job Type</label>
+                    <select id="job-type">
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="category">Category</label>
+                    <select id="category">
+                    </select>
+                </div>
+                <button id="filter-btn" class="btn secondary-blue">Apply Filters</button>
+            </div>
+        </div>
+
+        <div class="jobs-section">
+            <div class="job-count">
+                <h3><span id="job-count-number">0</span> Jobs Found</h3>
+            </div>
+            <div id="jobs-list" class="jobs-list">
+                <!-- Jobs will be loaded dynamically here -->
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Loading jobs...</p>
+                </div>
+            </div>
+            <div class="pagination">
+                <button id="prev-page" class="btn secondary disabled">Previous</button>
+                <div id="page-numbers" class="page-numbers">
+                    <span class="current">1</span>
+                </div>
+                <button id="next-page" class="btn secondary">Next</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Job Details Modal -->
+    <div id="job-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="job-detail-content">
+                <!-- Job details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn primary" id="apply-btn">Apply Now</button>
+                <button class="btn secondary-blue" id="save-job-btn">Save Job</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Footer -->
+    <div id="footer"></div>
+
+    <!-- <script src="../js/header.js"></script>
+    <script src="../js/footer.js"></script>
+    <script src="../js/navigation.js"></script>
+    <script src="../context/constants/apiEndpoints.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="../context/constants/toast.js"></script>
+    <script src="../js/jobService.js"></script>
+    <script src="../js/jobs.js"></script> -->
+    <script src="{% static 'js/header.js' %}"></script>
+    <script src="{% static 'js/footer.js' %}"></script>
+    <script src="{% static 'js/navigation.js' %}"></script>
+    <script src="{% static 'context/constants/apiEndpoints.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{% static 'context/constants/toast.js' %}"></script>
+    <script src="{% static 'js/jobService.js' %}"></script>
+    <script src="{% static 'js/jobs.js' %}"></script>
+</body>
+
+</html>

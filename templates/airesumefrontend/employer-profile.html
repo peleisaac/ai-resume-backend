@@ -1,0 +1,296 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employer Profile</title>
+    <link rel="stylesheet" href="{% static 'css/profiles.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/header.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}" />
+
+    <!-- <link rel="stylesheet" href="../css/profiles.css" />
+    <link rel="stylesheet" href="../css/header.css" />
+    <link rel="stylesheet" href="../css/footer.css" /> -->
+  </head>
+
+  <body data-role="employer">
+    <div id="header"></div>
+
+    <div class="profile_container">
+      <div class="profile-header">
+        <h2>Complete Your Company Profile</h2>
+        <p>You must complete your profile to post jobs.</p>
+      </div>
+      <form id="employer-form">
+        <div class="company-contact-info row">
+          <div>
+            <label for="company-name">Company Name</label>
+            <input
+              type="text"
+              id="company-name"
+              placeholder="Company Name"
+              required
+            />
+          </div>
+
+          <div>
+            <label for="contact-name">Contact Name</label>
+            <input
+              type="text"
+              id="contact-name"
+              placeholder="Contact Name"
+              required
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="business-email">Business Email</label>
+          <input
+            type="email"
+            id="business-email"
+            placeholder="Business Email"
+            required
+          />
+        </div>
+
+        <div>
+          <label for="company-description">Company Description</label>
+          <textarea
+            id="company-description"
+            placeholder="Company Description"
+            required
+          ></textarea>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="industry-sector">Industry/Business Sector</label>
+            <select id="industry-sector" required>
+              <option value="">Select Industry</option>
+              <option value="IT">Information Technology</option>
+              <option value="Finance">Finance</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Education">Education</option>
+              <option value="Manufacturing">Manufacturing</option>
+              <option value="Construction">Construction</option>
+              <option value="Retail">Retail</option>
+              <option value="Transportation">Transportation</option>
+              <option value="Hospitality">Hospitality</option>
+              <option value="Media">Media & Entertainment</option>
+              <option value="Agriculture">Agriculture</option>
+              <option value="Telecommunication">Telecommunication</option>
+              <option value="Energy">Energy & Utilities</option>
+              <option value="Legal">Legal</option>
+              <option value="Real Estate">Real Estate</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="region">Region</label>
+            <select id="region" required>
+              <option value="">Select Region</option>
+              <option value="Greater Accra">Greater Accra</option>
+              <option value="Ashanti">Ashanti</option>
+              <option value="Western">Western</option>
+              <option value="Eastern">Eastern</option>
+              <option value="Volta">Volta</option>
+              <option value="Northern">Northern</option>
+              <option value="Upper East">Upper East</option>
+              <option value="Upper West">Upper West</option>
+              <option value="Bono">Bono</option>
+              <option value="Savannah">Savannah</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="city">City</label>
+            <input type="text" id="city" placeholder="City" required />
+          </div>
+
+          <div>
+            <label for="address">Address</label>
+            <input type="text" id="address" placeholder="Address" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="phone-number">Phone Number</label>
+            <input
+              type="text"
+              id="phone-number"
+              placeholder="Phone Number"
+              required
+            />
+          </div>
+
+          <div>
+            <label for="website">Website, Facebook, or LinkedIn</label>
+            <input
+              type="text"
+              id="website"
+              placeholder="Website, Facebook, or LinkedIn"
+            />
+          </div>
+        </div>
+
+        <div>
+          <button class="profile_button" type="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+    <div id="footer"></div>
+    <script src="{% static 'context/constants/apiEndpoints.js' %}"></script>
+    <script type="module">
+      function validatePhoneNumber(input) {
+        input.value = input.value.replace(/\D/g, "");
+
+        if (input.value.length > 10) {
+          input.value = input.value.slice(0, 10);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", async function () {
+        const user = JSON.parse(localStorage.getItem("user"));
+
+        if (!user || !user.user_id) {
+          alert("User not found. Please log in.");
+          window.location.href = "/employer-signin"; // Redirect to login if user is missing
+          return;
+        }
+
+        try {
+          // Fetch the user data
+          const response = await fetch(
+            `${apiEndpoints.updateUser}/${user.user_id}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Token ${user.token}`,
+              },
+            }
+          );
+
+          const data = await response.json();
+
+          if (response.ok) {
+            // Populate the form fields
+            document.getElementById("company-name").value =
+              data.user.company_name || "";
+            document.getElementById("contact-name").value =
+              data.user.contact_name || "";
+            document.getElementById("business-email").value =
+              data.user.email || "";
+            document.getElementById("company-description").value =
+              data.user.company_description || "";
+            document.getElementById("industry-sector").value =
+              data.user.industry || "";
+            document.getElementById("region").value = data.user.region || "";
+            document.getElementById("city").value = data.user.city || "";
+            document.getElementById("address").value = data.user.address || "";
+            document.getElementById("phone-number").value =
+              data.user.msisdn || "";
+            document.getElementById("website").value = data.user.socials || "";
+          } else {
+            throw new Error(data.message || "Failed to fetch user details");
+          }
+        } catch (error) {
+          console.error("Error fetching user details:", error);
+          alert(error.message);
+        }
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const jobseekerForm = document.getElementById("employer-form");
+
+        jobseekerForm.addEventListener("submit", async function (event) {
+          event.preventDefault(); // Prevent page refresh
+
+          // Collecting form data
+          const formData = {
+            company_name: document.getElementById("company-name").value.trim(),
+            contact_name: document.getElementById("contact-name").value.trim(),
+            email: document.getElementById("business-email").value.trim(),
+            company_description: document.getElementById("company-description")
+              .value,
+            industry: document.getElementById("industry-sector").value,
+            region: document.getElementById("region").value.trim(),
+            city: document.getElementById("city").value.trim(),
+            address: document.getElementById("address").value.trim(),
+            msisdn: document.getElementById("phone-number").value.trim(),
+            socials: document.getElementById("website").value.trim(),
+            // job_notifications: getJobNotificationStatus(),
+            user_role: "employer",
+          };
+
+          console.log("Updating profile:", formData); // Debugging
+
+          const user = JSON.parse(localStorage.getItem("user"));
+
+          try {
+            const response = await fetch(
+              `${apiEndpoints.updateUser}/${user.user_id}`,
+              {
+                // Replace with actual API URL
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Token ${user?.token}`, // Assuming token is stored in localStorage
+                },
+                body: JSON.stringify(formData),
+              }
+            );
+
+            const data = await response.json();
+
+            if (response.ok) {
+              alert("Profile updated successfully!");
+              window.location.href = "/employer-dashboard"; // Redirect to CV upload page
+            } else {
+              throw new Error(data.message || "Profile update failed");
+            }
+          } catch (error) {
+            console.error("Error updating profile:", error);
+            alert(error.message);
+          }
+        });
+
+        // Helper function to get selected categories (max 2)
+        function getSelectedCategories() {
+          const selected = [];
+          document
+            .querySelectorAll("#category-list input:checked")
+            .forEach((checkbox) => {
+              selected.push(checkbox.value);
+            });
+          return selected.slice(0, 2); // Ensure max 2 selections
+        }
+
+        function getJobNotificationStatus() {
+          return document.getElementById("job-notifications").checked
+            ? "1"
+            : "0";
+        }
+
+        function validatePhoneNumber(input) {
+          // Remove any non-digit characters
+          input.value = input.value.replace(/\D/g, "");
+
+          // Ensure length does not exceed 10
+          if (input.value.length > 10) {
+            input.value = input.value.slice(0, 10);
+          }
+        }
+      });
+    </script>
+    <script src="{% static 'js/header.js' %}"></script>
+    <script src="{% static 'js/footer.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,83 @@
+@import url('variables.css');
+
+*{
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-family);
+}
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column; 
+    justify-content: space-between;
+}
+
+
+.landing {
+    background-color: var(--grey-color);
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    align-items: center;
+    padding: 3rem 1rem;
+}
+
+.landing_container {
+    display: flex;
+    gap: 2rem;
+    max-width: 1200px;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+}
+
+.text-content {
+    max-width: 600px;
+}
+
+.text-content h1 {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.highlight {
+    color: var(--danger-color);
+}
+
+.text-content p {
+    font-size: var(--font-size-medium);
+    color: gray;
+    margin-top: var(--margin-medium);
+}
+
+.buttons {
+    margin-top: var(--margin-medium);
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.image-content img {
+    max-width: 100%;
+    height: auto;
+}
+
+#header, #footer{
+    flex-shrink: 0; 
+    
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .landing_container {
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .image-content {
+        display: flex;
+        justify-content: flex-end;
+    }
+}

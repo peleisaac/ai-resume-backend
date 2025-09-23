@@ -1,0 +1,27 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Home Page</title>
+    <link
+      rel="stylesheet"
+      href="{% static 'airesumefrontend/css/style.css' %}"
+    />
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}" />
+  </head>
+  <body>
+    <!-- Dynamic Header -->
+    <div id="header"></div>
+
+    <h1>Welcome to AI Resume Project</h1>
+    <!-- Dynamic Footer -->
+    <div id="footer"></div>
+
+    <script src="{% static 'js/header.js' %}"></script>
+    <script src="{% static 'js/footer.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,142 @@
+@import url("variables.css");
+
+* {
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--grey-color);
+  margin: 0;
+}
+
+#auth-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+.auth-box,
+#signin-form,
+#signup-form {
+  background: var(--white-color);
+  padding: var(--padding-large);
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+#signin-form,
+#signup-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.title {
+  color: var(--primary-color);
+  font-size: var(--font-size-large);
+  font-weight: bold;
+}
+
+.subtitle {
+  color: var(--google-text-color);
+}
+
+.error-message {
+  color: var(--danger-color);
+  font-size: var(--font-size-small);
+}
+
+label {
+  display: block;
+  text-align: left;
+  width: 100%;
+  font-size: var(--font-size-medium);
+  margin-top: var(--margin-small);
+}
+
+input {
+  width: 100%;
+  border: 1px solid var(--ash-border-color);
+  border-radius: 5px;
+  margin-top: var(--margin-small);
+  padding: 10px;
+  height: 40px;
+  font-size: 1rem;
+}
+
+.signin-btn,
+.signup-btn {
+  width: 100%;
+  padding: var(--padding-medium);
+  background-color: var(--danger-color);
+  color: var(--white-color);
+  border: none;
+  margin-top: var(--margin-medium);
+  cursor: pointer;
+  font-size: var(--font-size-medium);
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.signin-btn:hover,
+.signup-btn:hover {
+  background-color: var(--darker-red-color);
+}
+
+.secondary-btn {
+  width: 100%;
+  padding: var(--padding-medium);
+  background-color: var(--white-color);
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  margin-top: var(--margin-small);
+  cursor: pointer;
+  font-size: var(--font-size-medium);
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.secondary-btn:hover {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+}
+
+#header,
+#footer {
+  width: 100%;
+}
+
+
+@media (max-width: 480px) {
+  #auth-container {
+    padding: 20px;
+  }
+  .auth-box,
+  #signin-form,
+  #signup-form {
+    padding: var(--padding-small) var(--padding-medium);
+  }
+
+  input,
+  .signin-btn,
+  .signup-btn,
+  .secondary-btn {
+    font-size: 0.9rem;
+  }
+}

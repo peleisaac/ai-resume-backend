@@ -1,0 +1,406 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Job | AI Resume Screening</title>
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'css/employer-dashboard.css' %}">
+
+    <!-- <link rel="stylesheet" href="../css/header.css">
+    <link rel="stylesheet" href="../css/footer.css">
+    <link rel="stylesheet" href="../css/employer-dashboard.css"> -->
+</head>
+
+<body>
+
+
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <div id="sidebar"></div>
+
+
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="top-bar">
+                <h1>New Job</h1>
+                <div class="user-actions">
+                    <button class="notification-btn" title="Notifications">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M15 17H9M9 17H8.5C7.11929 17 6 15.8807 6 14.5V9.5C6 8.11929 7.11929 7 8.5 7H15.5C16.8807 7 18 8.11929 18 9.5V14.5C18 15.8807 16.8807 17 15.5 17H15M9 17V18C9 19.1046 9.89543 20 11 20H13C14.1046 20 15 19.1046 15 18V17M12 3V7"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div class="user-avatar">
+                        <img src="/static/assets/lady.jpg" alt="User Avatar">
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="card-header">
+                    <h2>Create a Job Listing</h2>
+                    <p>Fill out the form below to Post a Job</p>
+                </div>
+
+                <form id="jobPostingForm" class="job-form">
+                    <div class="form-group">
+                        <label for="jobTitle">Job Title <span class="required">*</span></label>
+                        <input type="text" id="jobTitle" name="jobTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="companyName">Company Name <span class="required">*</span></label>
+                        <input type="text" id="companyName" name="companyName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="jobDescription">Job Description <span class="required">*</span></label>
+                        <textarea id="jobDescription" name="jobDescription" rows="6" required></textarea>
+                    </div>
+
+                    <!-- Requirements Section -->
+                    <div class="form-group multi-item-section">
+                        <label>Requirements <span class="required">*</span> </label>
+                        <div class="item-input-container">
+                            <input type="text" id="requirementInput" placeholder="Add a requirement">
+                            <button type="button" id="addRequirementBtn" class="add-item-btn">Add</button>
+                        </div>
+                        <div id="requirementsList" class="items-list"></div>
+                        <input type="hidden" id="requirementsData" name="requirements">
+                    </div>
+
+                    <!-- Benefits Section -->
+                    <div class="form-group multi-item-section">
+                        <label>Benefits <span class="required">*</span></label>
+                        <div class="item-input-container">
+                            <input type="text" id="benefitInput" placeholder="Add a benefit">
+                            <button type="button" id="addBenefitBtn" class="add-item-btn">Add</button>
+                        </div>
+                        <div id="benefitsList" class="items-list"></div>
+                        <input type="hidden" id="benefitsData" name="benefits">
+                    </div>
+
+                    <!-- Required Skills Section -->
+                    <div class="form-group multi-item-section">
+                        <label>Required Skills <span class="required">*</span></label>
+                        <div class="item-input-container">
+                            <input type="text" id="skillInput" placeholder="Add a required skill">
+                            <button type="button" id="addSkillBtn" class="add-item-btn">Add</button>
+                        </div>
+                        <div id="skillsList" class="items-list"></div>
+                        <input type="hidden" id="skillsData" name="required_skills">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="category">Category <span class="required">*</span></label>
+                            <select id="category" name="category" required>
+                                <option value="" selected disabled>Select a category</option>
+                                <option value="technology">Technology</option>
+                                <option value="finance">Finance</option>
+                                <option value="healthcare">Healthcare</option>
+                                <option value="education">Education</option>
+                                <option value="marketing">Marketing</option>
+                                <option value="sales">Sales</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group half">
+                            <label for="contractType">Contract Type <span class="required">*</span></label>
+                            <select id="contractType" name="contractType" required>
+                                <option value="" selected disabled>Select contract type</option>
+                                <option value="fullTime">Full-Time</option>
+                                <option value="partTime">Part-Time</option>
+                                <option value="contract">Contract</option>
+                                <option value="internship">Internship</option>
+                                <option value="temporary">Temporary</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="experience">Experience Required <span class="required">*</span></label>
+                            <select id="experience" name="experience" required>
+                                <option value="" selected disabled>Select experience level</option>
+                                <option value="entry">Entry Level</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="experienced">Experienced</option>
+                                <option value="senior">Senior</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group half">
+                            <label for="education">Education Level <span class="required">*</span></label>
+                            <select id="education" name="education" required>
+                                <option value="" selected disabled>Select education level</option>
+                                <option value="highSchool">High School</option>
+                                <option value="associate">Associate's Degree</option>
+                                <option value="bachelor">Bachelor's Degree</option>
+                                <option value="master">Master's Degree</option>
+                                <option value="doctorate">Doctorate</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="region">Region <span class="required">*</span></label>
+                            <select id="region" name="region" required>
+                                <option value="" selected disabled>Select Region</option>
+                                <option value="Greater Accra">Greater Accra</option>
+                                <option value="Ashanti">Ashanti</option>
+                                <option value="Western">Western</option>
+                                <option value="Eastern">Eastern</option>
+                                <option value="Volta">Volta</option>
+                                <option value="Northern">Northern</option>
+                                <option value="Upper East">Upper East</option>
+                                <option value="Upper West">Upper West</option>
+                                <option value="Bono">Bono</option>
+                                <option value="Savannah">Savannah</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group half">
+                            <label for="city">City <span class="required">*</span></label>
+                            <input type="text" id="city" name="city" placeholder="Enter city" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="vacancies">Number of Vacancies</label>
+                            <input type="number" id="vacancies" name="vacancies" min="1" value="1">
+                        </div>
+
+                        <div class="form-group half">
+                            <label for="salary">Salary</label>
+                            <input type="text" id="salary" name="salary" placeholder="e.g. $50,000 - $70,000">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn primary-btn submit-btn">Post a Job</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+
+    <!-- <script src="../js/header.js"></script> -->
+    <script src="{% static 'js/header.js' %}"></script>
+    <script src="{% static 'js/footer.js' %}"></script>
+    <!-- <script src="../js/footer.js"></script> -->
+    <script src="{% static 'context/constants/apiEndpoints.js' %}"></script>
+    <!-- <script src="../context/constants/apiEndpoints.js"></script> -->
+
+    <!-- <script src="../js/job-listings.js"></script> -->
+    <!-- <script src="../js/job-data.js"></script> -->
+    <script src="{% static 'js/job-listings.js' %}"></script>
+    <script src="{% static 'js/job-data.js' %}"></script>
+    <!-- <script src="../js/employer-dashboard.js"></script> -->
+    <script src="{% static 'js/employerDashboard.js' %}"></script>
+
+
+
+    <script type="module">
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const user = JSON.parse(localStorage.getItem("user")) || {}; // Adjust this based on how you store employer details
+            console.log("User:", user);
+            // Check if the employerData has a companyName and set it
+            const employer_id = user.user_id;
+            console.log("employer_id", employer_id);
+
+            const CompanyName = user.company_name;
+            console.log(CompanyName);
+            if (CompanyName) {
+                document.getElementById("companyName").value = user.company_name;
+            }
+
+            // Make the company name field read-only to prevent changes
+            document.getElementById("companyName").setAttribute("readonly", "true");
+
+
+
+            let requirements = [];
+            let benefits = [];
+            let skills = [];
+
+            // Set up event handlers for the Requirements section
+            const requirementInput = document.getElementById("requirementInput");
+            const addRequirementBtn = document.getElementById("addRequirementBtn");
+            const requirementsList = document.getElementById("requirementsList");
+            const requirementsData = document.getElementById("requirementsData");
+
+            addRequirementBtn.addEventListener("click", function () {
+                addItemToList(requirementInput, requirementsList, requirements, requirementsData);
+            });
+
+            requirementInput.addEventListener("keypress", function (e) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    addItemToList(requirementInput, requirementsList, requirements, requirementsData);
+                }
+            });
+
+            // Set up event handlers for the Benefits section
+            const benefitInput = document.getElementById("benefitInput");
+            const addBenefitBtn = document.getElementById("addBenefitBtn");
+            const benefitsList = document.getElementById("benefitsList");
+            const benefitsData = document.getElementById("benefitsData");
+
+            addBenefitBtn.addEventListener("click", function () {
+                addItemToList(benefitInput, benefitsList, benefits, benefitsData);
+            });
+
+            benefitInput.addEventListener("keypress", function (e) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    addItemToList(benefitInput, benefitsList, benefits, benefitsData);
+                }
+            });
+
+            // Set up event handlers for the Skills section
+            const skillInput = document.getElementById("skillInput");
+            const addSkillBtn = document.getElementById("addSkillBtn");
+            const skillsList = document.getElementById("skillsList");
+            const skillsData = document.getElementById("skillsData");
+
+            addSkillBtn.addEventListener("click", function () {
+                addItemToList(skillInput, skillsList, skills, skillsData);
+            });
+
+            skillInput.addEventListener("keypress", function (e) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    addItemToList(skillInput, skillsList, skills, skillsData);
+                }
+            });
+
+            // Function to add an item to a list
+            function addItemToList(inputElement, listElement, itemsArray, hiddenInput) {
+                const value = inputElement.value.trim();
+                if (value) {
+                    // Add to our array
+                    itemsArray.push(value);
+
+                    // Update the hidden input with JSON data
+                    hiddenInput.value = JSON.stringify(itemsArray);
+
+                    // Create a visual representation
+                    const itemChip = document.createElement("div");
+                    itemChip.classList.add("item-chip");
+                    itemChip.innerHTML = `
+                        ${value}
+                        <span class="remove-item" data-value="${value}">×</span>
+                    `;
+                    listElement.appendChild(itemChip);
+
+                    // Add event listener to remove item
+                    itemChip.querySelector(".remove-item").addEventListener("click", function () {
+                        const valueToRemove = this.getAttribute("data-value");
+                        const index = itemsArray.indexOf(valueToRemove);
+                        if (index !== -1) {
+                            itemsArray.splice(index, 1);
+                            hiddenInput.value = JSON.stringify(itemsArray);
+                            itemChip.remove();
+                        }
+                    });
+
+                    // Clear the input
+                    inputElement.value = "";
+                    inputElement.focus();
+                }
+            }
+
+            const jobForm = document.getElementById("jobPostingForm");
+
+            jobForm.addEventListener("submit", async function (event) {
+                event.preventDefault(); // Prevent page reload
+
+                // Collect form data
+                const jobData = {
+                    title: document.getElementById("jobTitle").value,
+                    description: document.getElementById("jobDescription").value,
+                    requirements: requirements,
+                    benefits: benefits,
+                    required_skills: skills,
+                    category: document.getElementById("category").value,
+                    contract_type: document.getElementById("contractType").value,
+                    experience: document.getElementById("experience").value,
+                    education_level: document.getElementById("education").value,
+                    region: document.getElementById("region").value,
+                    city: document.getElementById("city").value,
+                    no_of_vacancies: parseInt(document.getElementById("vacancies").value),
+                    salary: document.getElementById("salary").value,
+                    is_active: "1",
+                    company_name: CompanyName,
+                    employer_id: employer_id
+                };
+                console.log("JobData: ", jobData)
+                // const user = JSON.parse(localStorage.getItem("user"));
+                try {
+                    const response = await fetch(`${apiEndpoints.addJob}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Token ${user?.token}`
+                        },
+                        body: JSON.stringify(jobData),
+                        mode: "cors"
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.status_code === "AR00") {
+                        alert("Job posted successfully!");
+
+                        // Ensure JobDataService is available before calling it
+                        try {
+                            if (window.JobDataService && typeof window.JobDataService.updateJobList === 'function') {
+                                window.JobDataService.updateJobList(result.job);
+                            }
+                        } catch (error) {
+                            console.error("Error updating job list:", error);
+                            // Continue with redirect even if updating job list fails
+                        }
+
+
+                        jobForm.reset(); // Clear the form after success
+
+                        requirements = [];
+                        benefits = [];
+                        skills = [];
+                        requirementsList.innerHTML = "";
+                        benefitsList.innerHTML = "";
+                        skillsList.innerHTML = "";
+                        requirementsData.value = "";
+                        benefitsData.value = "";
+                        skillsData.value = "";
+
+                        // Redirect to job listings page
+                        window.location.href = "employer-job-listings.html";
+                    } else {
+                        alert(`Failed to post job: ${result.message}`);
+                    }
+                } catch (error) {
+                    console.error("Error posting job:", error);
+                    alert("An error occurred. Please try again.");
+                }
+            });
+        });
+
+    </script>
+</body>
+
+</html>

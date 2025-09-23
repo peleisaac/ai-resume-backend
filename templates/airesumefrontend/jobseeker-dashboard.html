@@ -1,0 +1,269 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | AI Resume Screening</title>
+    <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jobseekers-dashboard.css' %}">
+</head>
+
+<body data-role="jobseeker">
+    <div class="dashboard-container">
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" title="Open mobile menu" aria-label="Open mobile menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </button>
+        <!-- Sidebar Navigation -->
+        <div id="sidebar"></div>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="top-bar">
+                <h1>Dashboard</h1>
+                <div class="user-actions">
+                    <button class="notification-btn" title="Notifications">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M15 17H9M9 17H8.5C7.11929 17 6 15.8807 6 14.5V9.5C6 8.11929 7.11929 7 8.5 7H15.5C16.8807 7 18 8.11929 18 9.5V14.5C18 15.8807 16.8807 17 15.5 17H15M9 17V18C9 19.1046 9.89543 20 11 20H13C14.1046 20 15 19.1046 15 18V17M12 3V7"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div class="user-avatar">
+                        <img src="/static/assets/lady.jpg" alt="User Avatar">
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="card-header">
+                    <h2>Welcome to your Dashboard</h2>
+                    <p>Your job search at a glance</p>
+                </div>
+
+                <div class="dashboard-metrics">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M9 5H7C5.89543 5 5 5.89543 5 7V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V7C19 5.89543 18.1046 5 17 5H15M9 5C9 6.10457 9.89543 7 11 7H13C14.1046 7 15 6.10457 15 5M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                        </div>
+                        <div class="metric-info">
+                            <h3>Applications Sent</h3>
+                            <p class="metric-value applied-jobs">0</p>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M17 20H7C5.89543 20 5 19.1046 5 18V9C5 7.89543 5.89543 7 7 7H17C18.1046 7 19 7.89543 19 9V18C19 19.1046 18.1046 20 17 20Z"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                                <path d="M16 3.5V7M8 3.5V7M5 10.5H19" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" />
+                            </svg>
+                        </div>
+                        <div class="metric-info">
+                            <h3>Jobs Saved</h3>
+                            <p class="metric-value saved-jobs">0</p>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                        </div>
+                        <div class="metric-info">
+                            <h3>Interviews Scheduled</h3>
+                            <p class="metric-value interviews">0</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="job-recommendations">
+                    <h3>Recommended Jobs For You</h3>
+                    <div class="job-cards">
+                        <div class="job-card">
+                            <div class="job-card-header">
+                                <div class="company-logo">
+                                    <img src="/static/assets/landing-page-image.png" alt="Company Logo">
+                                </div>
+                                <div class="job-info">
+                                    <h4 class="job-title">Frontend Developer</h4>
+                                    <p class="company-name">TechCorp Solutions</p>
+                                </div>
+                            </div>
+                            <div class="job-details">
+                                <div class="job-detail">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
+                                            stroke="currentColor" stroke-width="2" />
+                                        <path d="M12 7V12H16" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" />
+                                    </svg>
+                                    <span>Full-time</span>
+                                </div>
+                                <div class="job-detail">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M12 12.5C13.6569 12.5 15 11.1569 15 9.5C15 7.84315 13.6569 6.5 12 6.5C10.3431 6.5 9 7.84315 9 9.5C9 11.1569 10.3431 12.5 12 12.5Z"
+                                            stroke="currentColor" stroke-width="2" />
+                                        <path d="M19 19.5C19 16.4624 15.866 14 12 14C8.13401 14 5 16.4624 5 19.5"
+                                            stroke="currentColor" stroke-width="2" />
+                                    </svg>
+                                    <span>Remote</span>
+                                </div>
+                                <div class="job-detail">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M6 9V18.8C6 19.9201 6 20.4802 6.21799 20.908C6.40973 21.2843 6.71569 21.5903 7.09202 21.782C7.51984 22 8.07989 22 9.2 22H14.8C15.9201 22 16.4802 22 16.908 21.782C17.2843 21.5903 17.5903 21.2843 17.782 20.908C18 20.4802 18 19.9201 18 18.8V9M6 9H18M6 9C6 7.93913 6.42143 6.92172 7.17157 6.17157C7.92172 5.42143 8.93913 5 10 5H14C15.0609 5 16.0783 5.42143 16.8284 6.17157C17.5786 6.92172 18 7.93913 18 9"
+                                            stroke="currentColor" stroke-width="2" />
+                                        <path
+                                            d="M14 5V4.2C14 3.0799 14 2.51984 13.782 2.09202C13.5903 1.71569 13.2843 1.40973 12.908 1.21799C12.4802 1 11.9201 1 10.8 1H10.2C9.07989 1 8.51984 1 8.09202 1.21799C7.71569 1.40973 7.40973 1.71569 7.21799 2.09202C7 2.51984 7 3.0799 7 4.2V5"
+                                            stroke="currentColor" stroke-width="2" />
+                                    </svg>
+                                    <span>$80K - $110K</span>
+                                </div>
+                            </div>
+                            <div class="job-card-footer">
+                                <div class="match-score">
+                                    <span>95% Match</span>
+                                </div>
+                                <button class="apply-btn">Apply Now</button>
+                            </div>
+                        </div>
+
+                        <div class="job-card">
+                            <div class="job-card-header">
+                                <div class="company-logo">
+                                    <img src="/static/assets/landing-page-image.png" alt="Company Logo">
+                                </div>
+                                <div class="job-info">
+                                    <h4 class="job-title">React Developer</h4>
+                                    <p class="company-name">Innovate Digital</p>
+                                </div>
+                            </div>
+                            <div class="job-details">
+                                <div class="job-detail">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
+                                            stroke="currentColor" stroke-width="2" />
+                                        <path d="M12 7V12H16" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" />
+                                    </svg>
+                                    <span>Contract</span>
+                                </div>
+                                <div class="job-detail">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M12 12.5C13.6569 12.5 15 11.1569 15 9.5C15 7.84315 13.6569 6.5 12 6.5C10.3431 6.5 9 7.84315 9 9.5C9 11.1569 10.3431 12.5 12 12.5Z"
+                                            stroke="currentColor" stroke-width="2" />
+                                        <path d="M19 19.5C19 16.4624 15.866 14 12 14C8.13401 14 5 16.4624 5 19.5"
+                                            stroke="currentColor" stroke-width="2" />
+                                    </svg>
+                                    <span>Hybrid</span>
+                                </div>
+                                <div class="job-detail">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M6 9V18.8C6 19.9201 6 20.4802 6.21799 20.908C6.40973 21.2843 6.71569 21.5903 7.09202 21.782C7.51984 22 8.07989 22 9.2 22H14.8C15.9201 22 16.4802 22 16.908 21.782C17.2843 21.5903 17.5903 21.2843 17.782 20.908C18 20.4802 18 19.9201 18 18.8V9M6 9H18M6 9C6 7.93913 6.42143 6.92172 7.17157 6.17157C7.92172 5.42143 8.93913 5 10 5H14C15.0609 5 16.0783 5.42143 16.8284 6.17157C17.5786 6.92172 18 7.93913 18 9"
+                                            stroke="currentColor" stroke-width="2" />
+                                        <path
+                                            d="M14 5V4.2C14 3.0799 14 2.51984 13.782 2.09202C13.5903 1.71569 13.2843 1.40973 12.908 1.21799C12.4802 1 11.9201 1 10.8 1H10.2C9.07989 1 8.51984 1 8.09202 1.21799C7.71569 1.40973 7.40973 1.71569 7.21799 2.09202C7 2.51984 7 3.0799 7 4.2V5"
+                                            stroke="currentColor" stroke-width="2" />
+                                    </svg>
+                                    <span>$90K - $120K</span>
+                                </div>
+                            </div>
+                            <div class="job-card-footer">
+                                <div class="match-score">
+                                    <span>87% Match</span>
+                                </div>
+                                <button class="apply-btn">Apply Now</button>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="/pages/jobseeker-browse-jobs.html" class="view-all-link">
+                        View All Jobs
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- <script src="../js/jobseeker-sidebar.js"></script> -->
+    <script src="{% static 'js/jobseekerSidebar.js' %}"></script>
+    <script src="{% static 'js/jobseekerDashboard.js' %}"></script>
+
+    <!-- <script src="../js/jobseeker-dashboard.js"></script> -->
+    <script src="{% static 'context/constants/apiEndpoints.js' %}"></script>
+
+    <script type="module">
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const user = JSON.parse(localStorage.getItem("user"));
+
+            if (!user || !user.token) {
+                console.error("User or token missing for dashboard metrics");
+                return;
+            }
+            fetch(`${apiEndpoints.jobseekerDashboardMetrics}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    Authorization: `Token ${user.token}`
+                },
+                body: JSON.stringify({ "user_id": user.user_id }),
+                mode: "cors"
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Fetched metrics:", data); // Debugging log
+
+                    const appliedJobsElement = document.querySelector(".metric-value.applied-jobs");
+                    const savedJobsElement = document.querySelector(".metric-value.saved-jobs");
+                    const interviewsElement = document.querySelector(".metric-value.interviews");
+
+                    if (appliedJobsElement) appliedJobsElement.textContent = data.data.all_applications_count || 0;
+                    if (savedJobsElement) savedJobsElement.textContent = data.data.saved_jobs_count || 0;
+                    if (interviewsElement) interviewsElement.textContent = data.interviewsScheduled || 0;
+                })
+                .catch(error => console.error("Error fetching metrics:", error));
+        });
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,314 @@
+[
+    {
+      "id": 1,
+      "title": "Senior Full Stack Developer",
+      "company": "TechNova Solutions",
+      "location": "San Francisco, CA (Remote)",
+      "type": "Full-Time",
+      "experience": "Senior Level (5+ years)",
+      "salary": "$120,000 - $150,000",
+      "shortDescription": "We're looking for a senior full-stack developer to join our product team. You'll be working on our core platform and helping to scale our infrastructure.",
+      "fullDescription": "<p>TechNova Solutions is looking for a Senior Full Stack Developer to join our rapidly growing team. In this role, you'll have the opportunity to work on challenging projects and help shape the future of our flagship product.</p><p>As a Senior Full Stack Developer, you'll collaborate with cross-functional teams to design, develop, and implement new features and improvements to our platform. You'll be responsible for both front-end and back-end development, ensuring high performance, responsiveness, and scalability.</p><p>This is a remote position with occasional team meetups at our San Francisco headquarters.</p>",
+      "requirements": [
+        "5+ years of experience in full-stack development",
+        "Proficiency in JavaScript, TypeScript, and modern frameworks (React, Angular, or Vue)",
+        "Strong knowledge of Node.js, Express, and RESTful API design",
+        "Experience with SQL and NoSQL databases",
+        "Familiarity with CI/CD pipelines and DevOps practices",
+        "Excellent problem-solving skills and attention to detail",
+        "Ability to work independently and as part of a team"
+      ],
+      "benefits": [
+        "Competitive salary and equity package",
+        "Comprehensive health, dental, and vision insurance",
+        "Flexible work schedule and remote work options",
+        "Professional development budget",
+        "Home office stipend",
+        "Unlimited PTO policy",
+        "401(k) matching"
+      ],
+      "skills": ["JavaScript", "TypeScript", "React", "Node.js", "AWS", "MongoDB", "Redis", "Docker"],
+      "postedDate": "2025-02-20T12:00:00Z"
+    },
+    {
+      "id": 2,
+      "title": "UX/UI Designer",
+      "company": "CreativeIQ",
+      "location": "New York, NY",
+      "type": "Full-Time",
+      "experience": "Mid Level (2-4 years)",
+      "salary": "$85,000 - $110,000",
+      "shortDescription": "Join our design team and help create beautiful, intuitive user experiences for our clients in the finance and healthcare industries.",
+      "fullDescription": "<p>CreativeIQ is seeking a talented UX/UI Designer to join our growing design team. In this role, you'll work directly with clients and our internal team to create user-centered designs for web and mobile applications.</p><p>You'll be responsible for the entire design process, from research and wireframing to creating high-fidelity prototypes and collaborating with developers during implementation. Your designs will directly impact the user experience of products used by thousands of people daily.</p><p>This position is based in our New York office, with hybrid work options available.</p>",
+      "requirements": [
+        "2-4 years of experience in UX/UI design",
+        "Strong portfolio demonstrating your design process and problem-solving abilities",
+        "Proficiency in design tools such as Figma, Adobe XD, or Sketch",
+        "Experience conducting user research and usability testing",
+        "Knowledge of accessibility standards and best practices",
+        "Excellent communication and presentation skills",
+        "Ability to work collaboratively with cross-functional teams"
+      ],
+      "benefits": [
+        "Competitive salary",
+        "Health, dental, and vision insurance",
+        "Flexible hybrid work model",
+        "Design conference and workshop stipend",
+        "Creative workspace with the latest tools and equipment",
+        "Regular team activities and events",
+        "Career growth opportunities"
+      ],
+      "skills": ["UI Design", "UX Research", "Figma", "Wireframing", "Prototyping", "User Testing", "Design Systems"],
+      "postedDate": "2025-02-28T09:30:00Z"
+    },
+    {
+      "id": 3,
+      "title": "Data Scientist",
+      "company": "AnalyticsMind",
+      "location": "Remote",
+      "type": "Full-Time",
+      "experience": "Entry Level (0-2 years)",
+      "salary": "$70,000 - $90,000",
+      "shortDescription": "Entry-level opportunity for a data scientist to work on machine learning models and help extract insights from our vast dataset of consumer behavior.",
+      "fullDescription": "<p>AnalyticsMind is seeking a motivated Data Scientist to join our remote-first team. This is an excellent opportunity for someone starting their career in data science who wants to make an immediate impact.</p><p>In this role, you'll work on developing and implementing machine learning models, analyzing large datasets, and communicating findings to stakeholders. You'll collaborate with our product and engineering teams to integrate data-driven insights into our platform.</p><p>We offer a supportive environment for growth and learning, with mentorship from experienced data scientists.</p>",
+      "requirements": [
+        "Bachelor's or Master's degree in Computer Science, Statistics, or related field",
+        "Proficiency in Python and data analysis libraries (NumPy, Pandas, Scikit-learn)",
+        "Knowledge of machine learning concepts and techniques",
+        "Experience with SQL and database querying",
+        "Ability to communicate complex findings in a clear, non-technical manner",
+        "Strong problem-solving skills and attention to detail",
+        "Eagerness to learn and adapt to new technologies"
+      ],
+      "benefits": [
+        "Competitive salary with performance bonuses",
+        "Comprehensive health benefits",
+        "Fully remote work environment",
+        "Learning and development budget",
+        "Home office setup allowance",
+        "Flexible work hours",
+        "Regular virtual team events"
+      ],
+      "skills": ["Python", "Machine Learning", "SQL", "Data Visualization", "Statistical Analysis", "Pandas", "TensorFlow"],
+      "postedDate": "2025-03-05T14:45:00Z"
+    },
+    {
+      "id": 4,
+      "title": "DevOps Engineer",
+      "company": "CloudScale Solutions",
+      "location": "Austin, TX (Hybrid)",
+      "type": "Full-Time",
+      "experience": "Senior Level (5+ years)",
+      "salary": "$130,000 - $160,000",
+      "shortDescription": "Join our infrastructure team to build and maintain our cloud-based platform. You'll be responsible for CI/CD pipelines, automation, and system reliability.",
+      "fullDescription": "<p>CloudScale Solutions is looking for an experienced DevOps Engineer to join our infrastructure team. In this role, you'll be responsible for building and maintaining our cloud infrastructure, implementing CI/CD pipelines, and ensuring the reliability and security of our systems.</p><p>You'll work closely with development teams to streamline deployment processes, automate routine tasks, and optimize system performance. Your expertise will be crucial in scaling our platform to meet growing customer demands.</p><p>This is a hybrid position based in our Austin office, with the flexibility to work remotely 3 days per week.</p>",
+      "requirements": [
+        "5+ years of experience in DevOps or Site Reliability Engineering",
+        "Strong knowledge of cloud platforms (AWS, Azure, or GCP)",
+        "Experience with containerization technologies (Docker, Kubernetes)",
+        "Proficiency in infrastructure as code (Terraform, CloudFormation)",
+        "Familiarity with CI/CD tools (Jenkins, GitHub Actions, CircleCI)",
+        "Understanding of security best practices",
+        "Problem-solving skills and ability to handle incidents"
+      ],
+      "benefits": [
+        "Highly competitive salary",
+        "Comprehensive health, dental, and vision coverage",
+        "401(k) with generous company match",
+        "Stock options",
+        "Flexible hybrid work schedule",
+        "Professional development allowance",
+        "Regular team outings and events",
+        "Wellness program"
+      ],
+      "skills": ["AWS", "Kubernetes", "Terraform", "Docker", "CI/CD", "Python", "Linux", "Security"],
+      "postedDate": "2025-03-01T10:15:00Z"
+    },
+    {
+      "id": 5,
+      "title": "Marketing Specialist",
+      "company": "Growth Accelerator",
+      "location": "Chicago, IL",
+      "type": "Full-Time",
+      "experience": "Mid Level (2-4 years)",
+      "salary": "$60,000 - $75,000",
+      "shortDescription": "Help our clients grow their digital presence through strategic marketing campaigns, content creation, and data-driven decision making.",
+      "fullDescription": "<p>Growth Accelerator is seeking a talented Marketing Specialist to join our client services team. In this role, you'll help plan and execute marketing campaigns for a diverse portfolio of clients across various industries.</p><p>You'll be responsible for creating engaging content, managing social media accounts, analyzing campaign performance, and making data-driven recommendations. This is an opportunity to work with a creative team and develop your skills across multiple marketing channels.</p><p>This position is based in our Chicago office, with some flexibility for remote work.</p>",
+      "requirements": [
+        "2-4 years of experience in digital marketing",
+        "Knowledge of SEO, social media marketing, and email campaigns",
+        "Experience with marketing analytics tools",
+        "Strong writing and content creation skills",
+        "Basic understanding of graphic design principles",
+        "Excellent communication and client service abilities",
+        "Ability to manage multiple projects simultaneously"
+      ],
+      "benefits": [
+        "Competitive salary",
+        "Health and dental insurance",
+        "Flexible PTO policy",
+        "Professional development opportunities",
+        "Creative and collaborative work environment",
+        "Regular team building events",
+        "Downtown office location with great amenities"
+      ],
+      "skills": ["Digital Marketing", "Content Creation", "SEO", "Social Media", "Analytics", "Email Marketing", "Campaign Management"],
+      "postedDate": "2025-02-25T11:00:00Z"
+    },
+    {
+      "id": 6,
+      "title": "Frontend Developer",
+      "company": "WebVision",
+      "location": "Remote",
+      "type": "Contract",
+      "experience": "Mid Level (2-4 years)",
+      "salary": "$70 - $90 per hour",
+      "shortDescription": "6-month contract role for a frontend developer with React expertise to help rebuild our client portal with modern technologies and improved UX.",
+      "fullDescription": "<p>WebVision is looking for a talented Frontend Developer to join our team on a 6-month contract basis. You'll be working on rebuilding our client portal with modern technologies and improved user experience.</p><p>In this role, you'll collaborate with our design and backend teams to implement responsive, accessible, and performant user interfaces. You'll be responsible for writing clean, maintainable code and ensuring cross-browser compatibility.</p><p>This is a fully remote position with flexible working hours, but you should be available for team meetings during US Eastern business hours.</p>",
+      "requirements": [
+        "2-4 years of experience in frontend development",
+        "Strong proficiency with React.js and modern JavaScript",
+        "Experience with state management (Redux, Context API)",
+        "Knowledge of responsive design and CSS preprocessors",
+        "Familiarity with frontend build tools and testing frameworks",
+        "Understanding of web accessibility standards",
+        "Ability to work independently and communicate effectively"
+      ],
+      "benefits": [
+        "Competitive hourly rate",
+        "Fully remote work environment",
+        "Flexible working hours",
+        "Possibility of contract extension or full-time conversion",
+        "Collaborative team with modern development practices",
+        "Exposure to cutting-edge technologies and methodologies"
+      ],
+      "skills": ["React", "JavaScript", "TypeScript", "CSS/SASS", "Redux", "Jest", "Responsive Design", "Webpack"],
+      "postedDate": "2025-03-08T16:30:00Z"
+    },
+    {
+      "id": 7,
+      "title": "Product Manager",
+      "company": "InnovateTech",
+      "location": "Boston, MA (Hybrid)",
+      "type": "Full-Time",
+      "experience": "Senior Level (5+ years)",
+      "salary": "$125,000 - $145,000",
+      "shortDescription": "Lead the development of our flagship SaaS product, working with cross-functional teams to define the roadmap and deliver features that delight our customers.",
+      "fullDescription": "<p>InnovateTech is seeking an experienced Product Manager to lead the development of our flagship SaaS product. In this role, you'll be responsible for defining the product vision, strategy, and roadmap based on market research, customer feedback, and business objectives.</p><p>You'll work closely with engineering, design, marketing, and sales teams to ensure the successful delivery of new features and enhancements. Your role will involve prioritizing requirements, creating detailed specifications, and coordinating product launches.</p><p>This is a hybrid position based in our Boston office, with the flexibility to work remotely 2-3 days per week.</p>",
+      "requirements": [
+        "5+ years of experience in product management, preferably in SaaS or B2B products",
+        "Strong technical background with the ability to understand complex systems",
+        "Experience with agile development methodologies",
+        "Exceptional communication and stakeholder management skills",
+        "Analytical mindset with data-driven decision making",
+        "Strategic thinking and problem-solving abilities",
+        "Bachelor's degree in Business, Computer Science, or related field"
+      ],
+      "benefits": [
+        "Competitive salary and performance bonuses",
+        "Comprehensive benefits package",
+        "Stock options",
+        "Flexible hybrid work arrangement",
+        "Professional development budget",
+        "Modern office in downtown Boston",
+        "Team retreats and social events",
+        "Parental leave policy"
+      ],
+      "skills": ["Product Strategy", "Agile Methodologies", "User Stories", "Market Research", "Data Analysis", "Stakeholder Management", "Product Roadmapping"],
+      "postedDate": "2025-02-15T13:20:00Z"
+    },
+    {
+      "id": 8,
+      "title": "Machine Learning Intern",
+      "company": "AI Innovations",
+      "location": "Seattle, WA",
+      "type": "Internship",
+      "experience": "Entry Level",
+      "salary": "$30 - $35 per hour",
+      "shortDescription": "Summer internship opportunity for students interested in applying machine learning to solve real-world problems in healthcare and finance.",
+      "fullDescription": "<p>AI Innovations is offering a summer internship program for students passionate about machine learning and its applications. As an ML Intern, you'll work alongside our team of experienced data scientists and engineers on real-world projects in the healthcare and finance domains.</p><p>You'll have the opportunity to design, implement, and evaluate machine learning models, participate in research discussions, and present your findings to the team. This internship is designed to provide hands-on experience and mentorship in a collaborative environment.</p><p>This is a 12-week, full-time internship based in our Seattle office.</p>",
+      "requirements": [
+        "Currently pursuing a degree in Computer Science, Statistics, or related field",
+        "Strong foundation in machine learning concepts and algorithms",
+        "Programming experience in Python and ML libraries (TensorFlow, PyTorch)",
+        "Knowledge of data structures and algorithms",
+        "Ability to work in a team and communicate technical concepts clearly",
+        "Passion for learning and problem-solving",
+        "Previous project experience (academic or personal) is a plus"
+      ],
+      "benefits": [
+        "Competitive hourly pay",
+        "Flexible work hours",
+        "Networking opportunities with industry professionals",
+        "Mentorship from experienced data scientists",
+        "Social events with other interns",
+        "Modern office with amenities",
+        "Possibility of full-time employment after graduation"
+      ],
+      "skills": ["Python", "Machine Learning", "TensorFlow", "Data Analysis", "Statistics", "Neural Networks", "Natural Language Processing"],
+      "postedDate": "2025-03-02T09:00:00Z"
+    },
+    {
+      "id": 9,
+      "title": "Technical Support Specialist",
+      "company": "SupportHero",
+      "location": "Remote",
+      "type": "Part-Time",
+      "experience": "Entry Level (0-2 years)",
+      "salary": "$22 - $28 per hour",
+      "shortDescription": "Part-time remote role providing technical support to customers of our SaaS platform. Help troubleshoot issues and ensure an excellent customer experience.",
+      "fullDescription": "<p>SupportHero is looking for a Technical Support Specialist to join our customer success team on a part-time basis. In this role, you'll be the first point of contact for customers experiencing technical issues with our SaaS platform.</p><p>You'll provide support via email, chat, and occasionally phone, helping users troubleshoot problems, answering questions, and escalating complex issues to the appropriate teams. Your goal will be to ensure a positive customer experience and contribute to our high satisfaction ratings.</p><p>This is a remote position requiring 20-25 hours per week, with flexible scheduling options.</p>",
+      "requirements": [
+        "0-2 years of experience in customer support or related field",
+        "Technical aptitude and ability to learn software platforms quickly",
+        "Excellent written and verbal communication skills",
+        "Problem-solving mindset and attention to detail",
+        "Patience and empathy when dealing with frustrated users",
+        "Ability to work independently with minimal supervision",
+        "High school diploma required, associate or bachelor's degree preferred"
+      ],
+      "benefits": [
+        "Competitive hourly rate",
+        "Fully remote work environment",
+        "Flexible scheduling",
+        "Paid training and onboarding",
+        "Opportunity for advancement to full-time roles",
+        "Supportive team culture",
+        "Employee discount program"
+      ],
+      "skills": ["Customer Support", "Troubleshooting", "Technical Communication", "SaaS", "Problem Resolution", "Documentation", "Help Desk"],
+      "postedDate": "2025-03-07T15:15:00Z"
+    },
+    {
+      "id": 10,
+      "title": "Cybersecurity Analyst",
+      "company": "SecureDefense",
+      "location": "Washington, DC",
+      "type": "Full-Time",
+      "experience": "Mid Level (2-4 years)",
+      "salary": "$95,000 - $120,000",
+      "shortDescription": "Join our security team to protect our clients' digital assets from cyber threats. You'll monitor systems, respond to incidents, and implement security measures.",
+      "fullDescription": "<p>SecureDefense is seeking a Cybersecurity Analyst to join our team in Washington, DC. In this role, you'll be responsible for protecting our clients' digital infrastructure from cyber threats and ensuring compliance with security standards.</p><p>You'll monitor security systems, perform vulnerability assessments, respond to security incidents, and implement defensive measures. You'll also contribute to developing security policies and procedures, and provide recommendations for improving our clients' security posture.</p><p>This position requires a security clearance and is based in our Washington, DC office.</p>",
+      "requirements": [
+        "2-4 years of experience in cybersecurity or information security",
+        "Knowledge of security frameworks and compliance standards (NIST, ISO 27001, etc.)",
+        "Experience with security tools (SIEM, IDS/IPS, vulnerability scanners)",
+        "Understanding of network security concepts and common attack vectors",
+        "Ability to analyze threats and develop effective countermeasures",
+        "Strong problem-solving skills and attention to detail",
+        "Security certifications (CompTIA Security+, CEH, CISSP) preferred"
+      ],
+      "benefits": [
+        "Competitive salary",
+        "Comprehensive benefits package",
+        "Professional development and certification support",
+        "Regular training on emerging threats and technologies",
+        "Collaborative and innovative work environment",
+        "Career advancement opportunities",
+        "Government contractor benefits",
+        "Metro transit subsidy"
+      ],
+      "skills": ["Network Security", "Vulnerability Assessment", "SIEM", "Incident Response", "Threat Analysis", "Compliance", "Penetration Testing", "Security Auditing"],
+      "postedDate": "2025-02-18T08:45:00Z"
+    }
+  ]

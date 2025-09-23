@@ -1,0 +1,99 @@
+@import url("variables.css");
+
+.header {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  display: flex;
+  justify-content: center;
+  font-family: var(--font-family);
+}
+
+.head-container {
+  width: 100%; 
+  max-width: 1200px; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  /* padding: 0 var(--padding-medium); */
+}
+
+.logo {
+  font-size: var(--font-size-large);
+  font-weight: bold;
+}
+
+.logo a {
+  color: var(--white-color);
+  text-decoration: none;
+}
+
+.logo a:hover {
+  color: var(--grey-color);
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--white-color);
+  text-decoration: none;
+}
+
+.nav-links a:hover {
+  color: var(--grey-color);
+}
+
+.btn {
+  padding: var(--padding-small) var(--padding-medium);
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: var(--font-size-medium);
+  border: none;
+}
+
+.secondary-white {
+  background-color: var(--white-color);
+  color: var(--black-color);
+}
+
+.danger {
+  background-color: var(--danger-color);
+  color: var(--white-color);
+}
+
+/* Mobile menu styles */
+.menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--white-color);
+  font-size: var(--font-size-large);
+  cursor: pointer;
+  margin-left: auto; /* Pushes the button to the right */
+}
+/* Hide nav-links on small screens */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 30px;
+    right: 20px;
+    background-color: var(--primary-color);
+    padding: 1rem;
+    border-radius: 5px;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+
+  .menu-btn {
+    display: block;
+  }
+}
