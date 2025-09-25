@@ -4,24 +4,62 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Home Page</title>
-    <link
-      rel="stylesheet"
-      href="{% static 'airesumefrontend/css/style.css' %}"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Resume Screening</title>
     <link rel="stylesheet" href="{% static 'css/variables.css' %}">
+    <!-- <link rel="stylesheet" href="./css/landing.css" /> -->
+    
+    <link rel="stylesheet" href="{% static 'css/landing.css' %}">
     <link rel="stylesheet" href="{% static 'css/header.css' %}">
-    <link rel="stylesheet" href="{% static 'css/footer.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/footer.css' %}">
   </head>
+
   <body>
     <!-- Dynamic Header -->
     <div id="header"></div>
 
-    <h1>Welcome to AI Resume Project</h1>
+    <!-- Landing Page Content -->
+    <section class="landing">
+      <div class="landing_container">
+        <!-- Left Side - Text Content -->
+        <div class="text-content">
+          <h1>
+            Discover New <span class="highlight">Career Opportunities</span>
+          </h1>
+          <p>
+            Create an account, complete your profile, and let the right
+            opportunities come to you!
+          </p>
+          <div class="buttons">
+            <button
+              class="btn secondary-blue"
+              onclick="navigateTo('/jobs')"
+            >
+              Explore Jobs
+            </button>
+            <button
+              class="btn danger"
+              onclick="navigateTo('/jobseeker-signin')"
+            >
+              Get Started
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Side - Image -->
+        <div class="image-content">
+          <img src="/static/assets/landing-page-image.png" alt="Job interview" />
+        </div>
+      </div>
+    </section>
+
     <!-- Dynamic Footer -->
     <div id="footer"></div>
 
     <script src="{% static 'js/header.js' %}"></script>
     <script src="{% static 'js/footer.js' %}"></script>
+    <script src="{% static 'js/navigation.js' %}"></script>
+    
+    <!-- <script src="./js/navigation.js"></script> -->
   </body>
 </html>
