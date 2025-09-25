@@ -1,7 +1,7 @@
 # AI Resume Application
 The AI Resume Application is a comprehensive web-based platform built with a Django Rest Framework backend and HTML, CSS, JavaScript frontend. It provides an intelligent matching system that connects job seekers with relevant opportunities while helping employers find qualified candidates efficiently.
 
-![Screenshot of the Landing page](https://github.com/peleisaac/ai-resume-frontend-v2/blob/main/assets/landing-page-image.png)
+![Screenshot of the Landing page](/static/assets/landing-page-image.png)
 
 ## Overview
 Our AI resume project is designed to meet the needs of two main target audiences: job seekers and employers.
@@ -315,10 +315,10 @@ Automated testing was implemented for the backend. Sample test cases can be foun
 ### Validator Testing
 
 #### Project Validation from the Official W3C Validator
-![Screenshot of the Official W3C Validator](https://github.com/peleisaac/ai-resume-frontend-v2/blob/main/assets/w3schools-validator.png)
+![Screenshot of the Official W3C Validator](static/assets/w3schools-validator.png)
 
 #### Project Validation from the Official Jigsaw Validator
-![Screenshot of the Official Jigsaw Validator](https://github.com/peleisaac/ai-resume-frontend-v2/blob/main/assets/jigsaw-validator.png)
+![Screenshot of the Official Jigsaw Validator](/static/assets/jigsaw-validator.png)
 
 ## Deployment
 
