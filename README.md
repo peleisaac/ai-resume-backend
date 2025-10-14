@@ -456,5 +456,5 @@ The backend was deployed using a Virtual Machine on Azure with the following ste
 ## Repository Links
 - **Frontend Repository**: https://github.com/peleisaac/ai-resume-frontend-v2.git
 - **Backend Repository**: https://github.com/peleisaac/ai-resume-backend.git
-- **Live Frontend**: https://peleisaac.github.io/ai-resume-frontend-v2/
+- **Live Frontend**: [https://ai-resume-project-a1df6159c7ca.herokuapp.com/](https://ai-resume-project-a1df6159c7ca.herokuapp.com/)
 
