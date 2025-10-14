@@ -143,7 +143,7 @@ function setupLogoutButton() {
             localStorage.removeItem("user");
 
             // Redirect to login page
-            // window.location.href = "/employer-signin";
+            window.location.href = "/employer-signin";
 
             console.log("User logged out successfully");
         });
