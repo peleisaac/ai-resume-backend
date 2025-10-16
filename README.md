@@ -251,7 +251,7 @@ The application follows a client-server architecture:
 
 ## Setup Instructions
 
-### Fullstack Setup
+### Setup and running of fullstack project locally
 
 1. **Clone the project repository**:
    ```bash
@@ -361,42 +361,42 @@ The backend was deployed using a Virtual Machine on Azure with the following ste
   
 8. **Set Up MySQL Database**
    - Install MySQL Server
-   - ```bash
+     ```bash
          sudo apt install mysql-server libmysqlclient-dev -y
       ```
    - Secure MySQL Installation
-   - ```bash
-   sudo mysql_secure_installation
-   ```
+     ```bash
+      sudo mysql_secure_installation
+      ```
    - Log In to MySQL
-   - ```bash
-   sudo mysql -u root -p
-   ```
+     ```bash
+      sudo mysql -u root -p
+      ```
    - Create Database and User
-   - ```bash
-   CREATE DATABASE your_db_name CHARACTER SET UTF8MB4 COLLATE UTF8MB4_GENERAL_CI;
-   CREATE USER 'your_db_user'@'localhost' IDENTIFIED BY 'your_db_password';
-   GRANT ALL PRIVILEGES ON your_db_name.* TO 'your_db_user'@'localhost';
-   FLUSH PRIVILEGES;
-   EXIT;
-   ```
+     ```bash
+         CREATE DATABASE your_db_name CHARACTER SET UTF8MB4 COLLATE UTF8MB4_GENERAL_CI;
+         CREATE USER 'your_db_user'@'localhost' IDENTIFIED BY 'your_db_password';
+         GRANT ALL PRIVILEGES ON your_db_name.* TO 'your_db_user'@'localhost';
+         FLUSH PRIVILEGES;
+         EXIT;
+      ```
    - Update Django settings.py Database Configuration
-   - ```bash
-   DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'your_db_name',
-        'USER': 'your_db_user',
-        'PASSWORD': 'your_db_password',
-        'HOST': 'localhost',
-        'PORT': '3306',
-       }
-   }
-   ```
+     ```bash
+         DATABASES = {
+          'default': {
+              'ENGINE': 'django.db.backends.mysql',
+              'NAME': 'your_db_name',
+              'USER': 'your_db_user',
+              'PASSWORD': 'your_db_password',
+              'HOST': 'localhost',
+              'PORT': '3306',
+             }
+         }
+      ```
    - Install MySQL Client for Django
-   - ```bash
-   pip install mysqlclient
-   ```
+     ```bash
+         pip install mysqlclient
+     ```
 
 9. **Collect Static Files**:
    ```bash
