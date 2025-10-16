@@ -36,6 +36,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "ai-resume-backend-v2.axxendcorp.com",
     "localhost",
+    "ai-resume-project-a1df6159c7ca.herokuapp.com"
 ]
 
 azure_storage_connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
