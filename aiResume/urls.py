@@ -18,10 +18,33 @@ from django.contrib import admin
 from django.urls import path
 from api.views import protected_view
 from rest_framework.authtoken.views import obtain_auth_token
-from api.views import sign_up, get_all_users, get_user_by_user_id, update_user, delete_user, deactivate_user, activate_user, get_inactive_users, get_active_users, get_all_jobs, get_job_by_job_id, add_new_job, delete_job, activate_job, deactivate_job, update_job, get_inactive_jobs, get_active_jobs, get_all_applications, get_application_by_application_id, add_new_application, get_applications_by_user_id, get_applications_by_job_id, update_application_status, index_view, get_employer_dashboard_metrics, get_jobseeker_dashboard_metrics, file_upload, save_job, return_saved_jobs, get_saved_jobs_by_user, get_all_jobs_by_employer, remove_saved_job
+from api.views import index_frontend_view, jobs_frontend_view, jobseeker_auth_frontend_view, jobseeker_signup_frontend_view, employer_signup_frontend_view, employer_job_listings_frontend_view, employer_auth_frontend_view, upload_cv_frontend_view, employer_dashboard_frontend_view, contact_us_frontend_view, jobseeker_dashboard_frontend_view, jobseeker_profile_second_frontend_view, employer_profile_frontend_view, jobseeker_browse_jobs_frontend_view, jobseeker_profile_frontend_view, my_jobs_frontend_view, employer_new_job_frontend_view, sign_up, get_all_users, get_user_by_user_id, update_user, delete_user, deactivate_user, activate_user, get_inactive_users, get_active_users, get_all_jobs, get_job_by_job_id, add_new_job, delete_job, activate_job, deactivate_job, update_job, get_inactive_jobs, get_active_jobs, get_all_applications, get_application_by_application_id, add_new_application, get_applications_by_user_id, get_applications_by_job_id, update_application_status, index_view, get_employer_dashboard_metrics, get_jobseeker_dashboard_metrics, file_upload, save_job, return_saved_jobs, get_saved_jobs_by_user, get_all_jobs_by_employer, remove_saved_job
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    # Frontend URLs
+    path("", index_frontend_view, name="home"),
+    path("jobs/", jobs_frontend_view, name="jobs"),
+    path("jobseeker-signin/", jobseeker_auth_frontend_view, name="jobseeker-signin"),
+    path("employer-signin/", employer_auth_frontend_view, name="employer-signin"),
+    path("contact-us/", contact_us_frontend_view, name="contact-us"),
+    path("jobseeker-dashboard/", jobseeker_dashboard_frontend_view, name="jobseeker-dashboard"),
+    path("jobseeker-browse-jobs/", jobseeker_browse_jobs_frontend_view, name="jobseeker-browse-jobs"),
+    path("my-profile/", jobseeker_profile_frontend_view, name="my-profile"),
+    path("my-jobs/", my_jobs_frontend_view, name="my-jobs"),
+    path("employer-dashboard/", employer_dashboard_frontend_view, name="employer-dashboard"),
+    path("employer-new-job/", employer_new_job_frontend_view, name="employer-new-job"),
+    path("employer-job-listings/", employer_job_listings_frontend_view, name="employer-job-listings"),
+    path("employer-signup/", employer_signup_frontend_view, name="employer-signup"),
+    path("jobseeker-signup/", jobseeker_signup_frontend_view, name="jobseeker-signup"),
+    path("employer-profile/", employer_profile_frontend_view, name="employer-profile"),
+    path("jobseeker-profile/", jobseeker_profile_second_frontend_view, name="jobseeker-profile"),
+    path("upload-cv/", upload_cv_frontend_view, name="upload-cv"),
+    
+    
+    # Backend URLs
+
     path('api/v1/', index_view),
     path('api/v1/protected/', protected_view),
     path('api/v1/login', obtain_auth_token, name='api_token_auth'),
@@ -45,12 +68,11 @@ urlpatterns = [
     path('api/v1/job/activate/<str:job_id>', activate_job, name='activate_job'),
     path('api/v1/jobs/saved/<str:user_id>', get_saved_jobs_by_user, name='get_saved_jobs_by_user'),
     path('api/v1/job/save', save_job, name='save_job'),
+    path('api/v1/saved-job/remove', remove_saved_job, name='remove_saved_job'),
     path('api/v1/jobs/saved/all/', return_saved_jobs, name='return_saved_jobs'),
     path('api/v1/job/<str:job_id>', update_job, name='update_job'),
     path('api/v1/jobs/active/', get_active_jobs, name='get_active_jobs'),
     path('api/v1/jobs/inactive/', get_inactive_jobs, name='get_inactive_jobs'),
-    path('api/v1/saved-job/remove', remove_saved_job, name='remove_saved_job'),
-
 
     # Applications APIs
     path('api/v1/applications', get_all_applications, name='get_all_applications'),
