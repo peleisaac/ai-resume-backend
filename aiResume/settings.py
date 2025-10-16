@@ -15,6 +15,8 @@ import pymysql
 pymysql.install_as_MySQLdb()
 import os
 from dotenv import load_dotenv
+import django_heroku
+import dj_database_url
 
 # Load the .env file
 load_dotenv()
@@ -34,9 +36,8 @@ SECRET_KEY = 'django-insecure-kzp)6adm+83_^r9#vp_xsuu7_4*9h+om6^kx1l1twne^1)^5l1
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "ai-resume-backend-v2.axxendcorp.com",
+    "ai-resume-backend.axxendcorp.com",
     "localhost",
-    "ai-resume-project-a1df6159c7ca.herokuapp.com"
 ]
 
 azure_storage_connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
@@ -64,8 +65,6 @@ INSTALLED_APPS = [
 
 AUTH_USER_MODEL = 'api.Users'
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -88,7 +87,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
 ROOT_URLCONF = 'aiResume.urls'
@@ -96,7 +94,7 @@ ROOT_URLCONF = 'aiResume.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -123,12 +121,12 @@ port = os.getenv("PORT")
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DATABASE_NAME', 'default_db_name'),
-        'USER': os.environ.get('DATABASE_USER', 'default_user'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'default_password'),
-        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
-        'PORT': os.environ.get('DATABASE_PORT', '5432'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': database,
+        'USER': username,
+        'PASSWORD': password,
+        'HOST': server,  # or '127.0.0.1'
+        'PORT': port, 
     }
 }
 
@@ -169,6 +167,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),   # tell Django where your /static folder is
+]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -195,8 +197,11 @@ CORS_ALLOW_HEADERS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
+
 # CORS_ALLOWED_ORIGINS = [
 #     "http://localhost:3000",  # React/Next.js local dev
 #     "https://yourfrontenddomain.com",  # Production frontend
 # ]
 
+
+django_heroku.settings(locals())
