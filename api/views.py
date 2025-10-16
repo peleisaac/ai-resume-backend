@@ -18,10 +18,61 @@ from azure.storage.blob import BlobServiceClient
 from django.conf import settings
 
 # Create your views here.
+
+def index_frontend_view(request):
+    return render(request, "airesumefrontend/index.html") 
+
+def jobs_frontend_view(request):
+    return render(request, "airesumefrontend/jobs.html") 
+
+def jobseeker_auth_frontend_view(request):
+    return render(request, "airesumefrontend/jobseeker-signin.html") 
+
+def jobseeker_signup_frontend_view(request):
+    return render(request, "airesumefrontend/jobseeker-signup.html") 
+
+def employer_auth_frontend_view(request):
+    return render(request, "airesumefrontend/employer-signin.html") 
+
+def employer_signup_frontend_view(request):
+    return render(request, "airesumefrontend/employer-signup.html") 
+
+def contact_us_frontend_view(request):
+    return render(request, "airesumefrontend/contact.html") 
+
+def jobseeker_dashboard_frontend_view(request):
+    return render(request, "airesumefrontend/jobseeker-dashboard.html") 
+
+def jobseeker_browse_jobs_frontend_view(request):
+    return render(request, "airesumefrontend/jobseeker-browse-jobs.html") 
+
+def jobseeker_profile_frontend_view(request):
+    return render(request, "airesumefrontend/my-profile.html")
+
+def employer_profile_frontend_view(request):
+    return render(request, "airesumefrontend/employer-profile.html")
+
+def jobseeker_profile_second_frontend_view(request):
+    return render(request, "airesumefrontend/jobseeker-profile.html")
+ 
+def my_jobs_frontend_view(request):
+    return render(request, "airesumefrontend/my-jobs.html") 
+
+def employer_dashboard_frontend_view(request):
+    return render(request, "airesumefrontend/employer-dashboard.html") 
+
+def employer_new_job_frontend_view(request):
+    return render(request, "airesumefrontend/employer-new-job.html") 
+
+def employer_job_listings_frontend_view(request):
+    return render(request, "airesumefrontend/employer-job-listings.html") 
+
+def upload_cv_frontend_view(request):
+    return render(request, "airesumefrontend/upload-cv.html") 
+
 @api_view(['GET'])
 def index_view(request):
     return Response({"message": "Welcome to AI Resume backend!"})
-
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -156,7 +207,7 @@ def sign_up(request):
         user.set_password(password)  # Hash password before saving
         user.save()
 
-        signed_up_user = user.get_user_by_user_id_json_format(user_id)
+        signed_up_user = user.get_user_by_user_id(user_id)
 
         if user:
             return Response({
@@ -237,7 +288,7 @@ def add_new_job(request):
 
         job.save()
 
-        added_job = job.get_job_by_job_id_json_format(job_id)
+        added_job = job.get_job_by_job_id(job_id)
 
         if job:
             return Response({
@@ -255,7 +306,6 @@ def add_new_job(request):
             "status_code": StatusCode.SERVER_ERROR,
             "message": f"An error occurred: {str(e)}"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
@@ -297,7 +347,9 @@ def add_new_application(request):
 
         job.save()
 
-        added_application = Applications.get_application_by_application_id_json_format(application_id) 
+        added_application = Applications.get_application_by_application_id(application_id)
+        
+         
 
         if job:
             return Response({
@@ -895,14 +947,10 @@ def update_application_status(request, application_id):
         
         application.status = application_status
         application.save()
-
-        updated_application = Applications.get_application_by_application_id_json_format(application_id)
-
         
         return Response({
             "status_code": StatusCode.SUCCESS,
-            "message": "Application Status updated successfully.",
-            "data": updated_application
+            "message": "Application Status updated successfully."
         }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({
@@ -1053,6 +1101,7 @@ def save_job(request):
             "status_code": StatusCode.SERVER_ERROR,
             "message": f"An error occurred: {str(e)}"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
 @api_view(['PUT'])
 @authentication_classes([TokenAuthentication])
