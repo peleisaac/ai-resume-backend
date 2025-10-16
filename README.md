@@ -298,11 +298,7 @@ Manual testing was performed on the developed frontend with the following checkl
 Automated testing was implemented for the backend. Sample test cases can be found in the `tests.py` file.
 
 ### Validator Testing
-
-#### Project Validation from the Official W3C Validator
-![Screenshot of the Official W3C Validator](static/assets/w3schools-validator.png)
-
-#### Project Validation from the Official Jigsaw Validator
+#### Project Validation from the Official W3C CSS Validation Service
 ![Screenshot of the Official Jigsaw Validator](/static/assets/jigsaw-validator.png)
 
 ## Deployment
