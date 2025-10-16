@@ -102,10 +102,10 @@ This link routes you to the initial design (Wireframes) used for the development
 
 ## Architecture
 The application follows a client-server architecture:
-- **Frontend**: Static HTML/CSS/JavaScript served via GitHub Pages
-- **Backend**: Django REST API deployed on Azure VM
+- **Frontend**: Static HTML/CSS/JavaScript served via django and deployed via Heroku
+- **Backend**: Django REST APIs deployed on Azure VM
 - **Database**: MySQL for structured data storage
-- **File Storage**: Azure Blob Storage for resume files
+- **File Storage**: Azure Blob Storage for storing and retrieving resume / CV files
 
 ## Database Schema
 
@@ -251,24 +251,9 @@ The application follows a client-server architecture:
 
 ## Setup Instructions
 
-### Frontend Setup
+### Fullstack Setup
 
-1. **Clone the Frontend Repository**:
-   ```bash
-   git clone https://github.com/peleisaac/ai-resume-frontend-v2.git
-   ```
-
-2. **Navigate to the project folder**:
-   ```bash
-   cd ai-resume-frontend-v2
-   ```
-
-3. **Open the project in a browser**: 
-   Simply open `index.html` in your preferred browser
-
-### Backend Setup
-
-1. **Clone the Backend Repository**:
+1. **Clone the project repository**:
    ```bash
    git clone https://github.com/peleisaac/ai-resume-backend.git
    ```
@@ -322,13 +307,17 @@ Automated testing was implemented for the backend. Sample test cases can be foun
 
 ## Deployment
 
-### Frontend Deployment (GitHub Pages)
-This project's frontend was deployed using GitHub Pages with the following steps:
+### Frontend Deployment (Heroku Deployment)
+This project's frontend was deployed using heroku with the following steps:
 
-- Navigate to Settings > Pages
-- Under Source, select the main branch as the branch to deploy
-- Click "Save" after selecting the branch
-- GitHub generates a link for the site: [Frontend Link](https://peleisaac.github.io/ai-resume-frontend-v2/)
+- Create an account on Heroku and login
+- Click on New > Create New App
+- Give it an app name and select location after which you click on the create app button below
+- After creating the app under the project, click on the app and click on the deploy navigation bar at the top beneath your project name
+- Under the deploy section, look for deployment method and select Heroku git
+- Follow the steps listed under the Deploy using Heroku Git section where a deployed link will be generated for you after a successful build
+- You can then click open app at the top right section to view your deployed app or copy the deployed link that is generated in the terminal after the successful build and paste it in any browser of your choice.
+- In case you encounter errors in the build during deployment, you can click on the more button at the top right in your project on heroku and select view logs to view the error logs after which you can rebuild after fixing the errors
 
 ### Backend Deployment (Azure VM)
 The backend was deployed using a Virtual Machine on Azure with the following steps:
@@ -369,24 +358,63 @@ The backend was deployed using a Virtual Machine on Azure with the following ste
    - Set `ALLOWED_HOSTS` in settings.py to include your server IP/domain
    - Set `DEBUG=False` for production
    - Configure `STATIC_ROOT` and `MEDIA_ROOT` in settings.py
+  
+8. **Set Up MySQL Database**
+   - Install MySQL Server
+   - ```bash
+   sudo apt install mysql-server libmysqlclient-dev -y
+   ```
+   - Secure MySQL Installation
+   - ```bash
+   sudo mysql_secure_installation
+   ```
+   - Log In to MySQL
+   - ```bash
+   sudo mysql -u root -p
+   ```
+   - Create Database and User
+   - ```bash
+   CREATE DATABASE your_db_name CHARACTER SET UTF8MB4 COLLATE UTF8MB4_GENERAL_CI;
+   CREATE USER 'your_db_user'@'localhost' IDENTIFIED BY 'your_db_password';
+   GRANT ALL PRIVILEGES ON your_db_name.* TO 'your_db_user'@'localhost';
+   FLUSH PRIVILEGES;
+   EXIT;
+   ```
+   - Update Django settings.py Database Configuration
+   - ```bash
+   DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'your_db_name',
+        'USER': 'your_db_user',
+        'PASSWORD': 'your_db_password',
+        'HOST': 'localhost',
+        'PORT': '3306',
+       }
+   }
+   ```
+   - Install MySQL Client for Django
+   - ```bash
+   pip install mysqlclient
+   ```
 
-8. **Collect Static Files**:
+9. **Collect Static Files**:
    ```bash
    python manage.py collectstatic
    ```
 
-9. **Apply Database Migrations**:
+10. **Apply Database Migrations**:
    ```bash
    python manage.py migrate
    ```
 
-10. **Set Up Gunicorn as Application Server**:
+11. **Set Up Gunicorn as Application Server**:
     ```bash
     pip install gunicorn
     gunicorn --bind 0.0.0.0:8000 your_project_name.wsgi:application
     ```
 
-11. **Configure Supervisor to Manage Gunicorn**:
+12. **Configure Supervisor to Manage Gunicorn**:
     ```bash
     sudo apt install supervisor
     sudo nano /etc/supervisor/conf.d/your_project.conf
@@ -404,7 +432,7 @@ The backend was deployed using a Virtual Machine on Azure with the following ste
     stderr_logfile=/var/log/your_project/gunicorn_error.log
     ```
 
-12. **Create Log Directories & Reload Supervisor**:
+13. **Create Log Directories & Reload Supervisor**:
     ```bash
     sudo mkdir -p /var/log/your_project/
     sudo chown -R your_username:your_username /var/log/your_project/
@@ -413,7 +441,7 @@ The backend was deployed using a Virtual Machine on Azure with the following ste
     sudo supervisorctl status
     ```
 
-13. **Configure Nginx as Reverse Proxy**:
+14. **Configure Nginx as Reverse Proxy**:
     ```bash
     sudo nano /etc/nginx/sites-available/your_project
     ```
@@ -440,21 +468,20 @@ The backend was deployed using a Virtual Machine on Azure with the following ste
     }
     ```
 
-14. **Enable the Config**:
+15. **Enable the Config**:
     ```bash
     sudo ln -s /etc/nginx/sites-available/your_project /etc/nginx/sites-enabled
     sudo nginx -t
     sudo systemctl restart nginx
     ```
 
-15. **Secure with HTTPS (Optional but Recommended)**:
+16. **Secure with HTTPS (Optional but Recommended)**:
     ```bash
     sudo apt install certbot python3-certbot-nginx -y
     sudo certbot --nginx -d your_domain.com
     ```
 
 ## Repository Links
-- **Frontend Repository**: https://github.com/peleisaac/ai-resume-frontend-v2.git
-- **Backend Repository**: https://github.com/peleisaac/ai-resume-backend.git
-- **Live Frontend**: [https://ai-resume-project-a1df6159c7ca.herokuapp.com/](https://ai-resume-project-a1df6159c7ca.herokuapp.com/)
+- **Fullstack Project Repository**: https://github.com/peleisaac/ai-resume-backend.git
+- **Live Full stack project**: [https://ai-resume-project-a1df6159c7ca.herokuapp.com/](https://ai-resume-project-a1df6159c7ca.herokuapp.com/)
 
