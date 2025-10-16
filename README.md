@@ -1,5 +1,5 @@
 # AI Resume Application
-The AI Resume Application is a comprehensive web-based platform built with a Django Rest Framework backend and HTML, CSS, JavaScript frontend. It provides an intelligent matching system that connects job seekers with relevant opportunities while helping employers find qualified candidates efficiently.
+The AI Resume Application is a comprehensive web-based platform built with a Django Rest Framework backend and HTML, CSS, JavaScript frontend served as static files on Django. It provides an intelligent matching system that connects job seekers with relevant opportunities while helping employers find qualified candidates efficiently.
 
 ![Screenshot of the Landing page](/static/assets/landing-page-image.png)
 
@@ -340,7 +340,7 @@ The backend was deployed using a Virtual Machine on Azure with the following ste
 
 5. **Set Up Virtual Environment**:
    ```bash
-   python3 -m venv venv
+   python3 -m venv venv # Use python for windows systems
    source venv/bin/activate
    ```
 
@@ -391,22 +391,22 @@ The backend was deployed using a Virtual Machine on Azure with the following ste
       ```
    - Install MySQL Client for Django
      ```bash
-         pip install mysqlclient
+         pip install mysqlclient # Use pip3 for Linux and Mac systems
      ```
 
 9. **Collect Static Files**:
    ```bash
-   python manage.py collectstatic
+   python manage.py collectstatic # Use python3 for Linux and Mac systems
    ```
 
 10. **Apply Database Migrations**:
    ```bash
-   python manage.py migrate
+   python manage.py migrate # Use python3 for Linux and Mac systems
    ```
 
 11. **Set Up Gunicorn as Application Server**:
     ```bash
-    pip install gunicorn
+    pip install gunicorn # Use pip3 for Linux and Mac systems
     gunicorn --bind 0.0.0.0:8000 your_project_name.wsgi:application
     ```
 
