@@ -362,8 +362,8 @@ The backend was deployed using a Virtual Machine on Azure with the following ste
 8. **Set Up MySQL Database**
    - Install MySQL Server
    - ```bash
-   sudo apt install mysql-server libmysqlclient-dev -y
-   ```
+         sudo apt install mysql-server libmysqlclient-dev -y
+      ```
    - Secure MySQL Installation
    - ```bash
    sudo mysql_secure_installation
