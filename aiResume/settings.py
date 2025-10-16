@@ -122,15 +122,12 @@ port = os.getenv("PORT")
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ['DATABASE'],
-        'USER': os.environ['DB_USER'],
-        'PASSWORD': os.environ['DB_PASSWORD'],
-        'HOST': os.environ['SERVER'],
-        'PORT': os.environ.get('PORT', '3306'),
-        'OPTIONS': {
-            'connect_timeout': 20,
-        },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DATABASE_NAME', 'default_db_name'),
+        'USER': os.environ.get('DATABASE_USER', 'default_user'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'default_password'),
+        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
+        'PORT': os.environ.get('DATABASE_PORT', '5432'),
     }
 }
 
