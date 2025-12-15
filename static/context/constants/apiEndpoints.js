@@ -1,6 +1,6 @@
 // Guard against double execution when pages are dynamically loaded
 if (!window.apiEndpoints) {
-  const baseUrl = "http://127.0.0.1:8000/api/v1";
+  const baseUrl = "https://ai-resume-backend-v2.axxendcorp.com/api/v1";
   window.apiEndpoints = {
     base: baseUrl,
     users: `${baseUrl}/users`,
