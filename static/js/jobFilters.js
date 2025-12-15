@@ -5,17 +5,23 @@ const JobFilters = {
         console.log("Filtering jobs...");
         
         try {
-            // Get all jobs from the data service
+            // Get all jobs from the cache (reload only if missing)
             const allJobs = await JobDataService.loadJobs();
+            if (!Array.isArray(allJobs)) return;
             
-            // Get filter values
-            const searchTerm = document.getElementById("searchJobs").value.toLowerCase();
-            const categoryFilter = document.getElementById("categoryFilter").value;
-            const statusFilter = document.getElementById("statusFilter").value;
-            const dateFilter = document.getElementById("dateFilter").value;
+            // Get filter values (defensive checks for missing DOM nodes)
+            const searchInput = document.getElementById("searchJobs");
+            const categorySelect = document.getElementById("categoryFilter");
+            const statusSelect = document.getElementById("statusFilter");
+            const dateSelect = document.getElementById("dateFilter");
+
+            const searchTerm = (searchInput?.value || '').toLowerCase();
+            const categoryFilter = categorySelect?.value || 'all';
+            const statusFilter = statusSelect?.value || 'all';
+            const dateFilter = dateSelect?.value || 'all';
             
             // Apply filters
-            let filteredJobs = allJobs.filter(job => {
+            const filteredJobs = allJobs.filter(job => {
                 // Search term filter
                 const matchesSearch = 
                     (job.jobTitle && job.jobTitle.toLowerCase().includes(searchTerm)) ||
@@ -35,17 +41,17 @@ const JobFilters = {
                 if (dateFilter !== 'all' && job.datePosted) {
                     const jobDate = new Date(job.datePosted);
                     const today = new Date();
-                    const todayStart = new Date(today.setHours(0, 0, 0, 0));
+                    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
                     
                     if (dateFilter === 'today') {
                         matchesDate = jobDate >= todayStart;
                     } else if (dateFilter === 'week') {
-                        const weekStart = new Date(today);
-                        weekStart.setDate(today.getDate() - 7);
+                        const weekStart = new Date(todayStart);
+                        weekStart.setDate(todayStart.getDate() - 7);
                         matchesDate = jobDate >= weekStart;
                     } else if (dateFilter === 'month') {
-                        const monthStart = new Date(today);
-                        monthStart.setMonth(today.getMonth() - 1);
+                        const monthStart = new Date(todayStart);
+                        monthStart.setMonth(todayStart.getMonth() - 1);
                         matchesDate = jobDate >= monthStart;
                     }
                 }
