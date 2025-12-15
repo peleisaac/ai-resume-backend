@@ -129,7 +129,7 @@ class Jobs(models.Model):
     job_id = models.CharField(unique=True, max_length=200)
     employer_id = models.CharField(max_length=200)
     title = models.CharField(max_length=100)
-    description = models.CharField(max_length=500)
+    description = models.TextField()
     category = models.CharField(max_length=50)
     contract_type = models.CharField(max_length=100)
     company_name = models.CharField(max_length=100)
