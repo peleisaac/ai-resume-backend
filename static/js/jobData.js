@@ -1,202 +1,158 @@
-// Job data management service
+// Job data management service (API-first)
 
-const JobDataService = {
+if (!window.JobDataService) {
+    const JobDataService = {
+        cachedJobs: null,
 
-    showToast: function (message, type) {
-        const toast = document.createElement("div");
-        toast.className = `toast ${type}`;
-        toast.textContent = message;
-        document.body.appendChild(toast);
+        showToast: function (message, type) {
+            const toast = document.createElement("div");
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
 
-        setTimeout(() => {
-            toast.classList.add("fade-out");
-            setTimeout(() => toast.remove(), 500);
-        }, 3000);
-    },
+            setTimeout(() => {
+                toast.classList.add("fade-out");
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        },
 
-    loadJobs: async function () {
-        try {
-            const user = JSON.parse(localStorage.getItem("user"));
-            if (!user || !user.token) {
-                console.warn("User not logged in or token missing. Falling back to mock data.");
-                return this.getMockJobs();
-            }
-            console.log("User: ", user);
-            employer_id = user.user_id;
+        loadJobs: async function (forceReload = false) {
+            try {
+                if (!forceReload && Array.isArray(this.cachedJobs)) {
+                    return this.cachedJobs;
+                }
 
-            const response = await fetch(`${apiEndpoints.jobsByEmployer}/${employer_id}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Token ${user.token}`
-                },
-                mode: "cors"
-            });
+                const user = JSON.parse(localStorage.getItem("user"));
+                if (!user || !user.token) {
+                    console.warn("User not logged in or token missing. Cannot load jobs.");
+                    return [];
+                }
+                console.log("User: ", user);
+                const employer_id = user.user_id;
 
-            const result = await response.json();
+                const response = await fetch(`${apiEndpoints.jobsByEmployer}/${employer_id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Token ${user.token}`
+                    },
+                    mode: "cors"
+                });
 
-            if (response.ok && result.status_code === "AR00") {
-                // this.showToast("Jobs loaded successfully!", "success");
-                return this.formatApiJobs(result.jobs);
-            } else {
-                this.showToast("Failed to load jobs. Using demo data.", "error");
-                return this.getMockJobs();
-            }
-        } catch (error) {
-            this.showToast("Error connecting to server. Using demo data.", "error");
-            return this.getMockJobs();
-        }
-    },
-
-    formatApiJobs: function (apiJobs) {
-        return apiJobs.map(job => ({
-            id: job.job_id,
-            jobTitle: job.title || "Untitled Position",
-            category: job.category || "other",
-            city: job.city || "Not specified",
-            region: job.region || "Not specified",
-            applications: job.no_of_applications || 0,
-            datePosted: job.date_posted || new Date().toISOString().split('T')[0],
-            status: job.status || "active"
-        }));
-    },
-
-    updateJobList: function (newJob) {
-        console.log("Updating job list with new job:", newJob);
-        console.log("Job added successfully, will refresh job list on next view");
-
-        return true;
-    },
-    getMockJobs: function () {
-        return [
-            {
-                id: 1,
-                jobTitle: "Senior Software Engineer",
-                category: "technology",
-                city: "San Francisco",
-                region: "west",
-                applications: 24,
-                datePosted: "2025-03-05",
-                status: "active"
-            },
-            {
-                id: 2,
-                jobTitle: "Marketing Manager",
-                category: "marketing",
-                city: "New York",
-                region: "northeast",
-                applications: 15,
-                datePosted: "2025-03-08",
-                status: "active"
-            },
-            {
-                id: 3,
-                jobTitle: "Data Analyst",
-                category: "technology",
-                city: "Remote",
-                region: "remote",
-                applications: 8,
-                datePosted: "2025-03-01",
-                status: "active"
-            },
-            {
-                id: 4,
-                jobTitle: "Financial Advisor",
-                category: "finance",
-                city: "Chicago",
-                region: "midwest",
-                applications: 6,
-                datePosted: "2025-02-20",
-                status: "paused"
-            },
-            {
-                id: 5,
-                jobTitle: "HR Specialist",
-                category: "other",
-                city: "Denver",
-                region: "west",
-                applications: 12,
-                datePosted: "2025-03-10",
-                status: "active"
-            }
-        ];
-    },
-
-    getAllJobs: async function () {
-        return await this.loadJobs();
-    },
-
-    updateJobStatus: async function (jobId, newStatus) {
-        try {
-            const user = JSON.parse(localStorage.getItem("user"));
-            if (!user || !user.token) {
-                console.warn("User not logged in or token missing. Cannot update job status.");
-                return false;
-            }
-
-            const response = await fetch(`${apiEndpoints.applicationStatus}/${jobId}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Token ${user.token}`
-                },
-                body: JSON.stringify({ status: newStatus }),
-                mode: "cors"
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                this.showToast(`Job status updated to ${newStatus}!`, "success");
-                // Re-fetch and re-render the jobs table
-                const jobs = await this.loadJobs();
-                window.JobListings.renderJobs(jobs);
-                return true;
-            } else {
-                this.showToast("Failed to update job status.", "error");
-                return false;
-            }
-        } catch (error) {
-            this.showToast("Network error when updating job status.", "error");
-            return false;
-        }
-    },
-
-    deleteJob: async function (jobId) {
-        try {
-            const user = JSON.parse(localStorage.getItem("user"));
-            if (!user || !user.token) {
-                console.warn("User not logged in or token missing. Cannot delete job.");
-                return false;
-            }
-            console.log("User: ", user);
-
-            const response = await fetch(`${apiEndpoints.deleteJob}/${jobId}`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Token ${user.token}`
-                },
-                mode: "cors"
-            });
-
-            if (response.ok) {
-                this.showToast("Job deleted successfully!", "success");
-                // Re-fetch and re-render the jobs table
-                const jobs = await this.loadJobs();
-                window.JobListings.renderJobs(jobs);
-                return true;
-            } else {
                 const result = await response.json();
-                this.showToast("Failed to delete job.", "error");
+
+                if (response.ok && (result.status_code === "AR00" || result.status_code === 200 || result.status_code === "200")) {
+                    const formatted = this.formatApiJobs(result.jobs || []);
+                    this.cachedJobs = formatted;
+                    return formatted;
+                }
+
+                this.showToast(result.message || "Failed to load jobs from API.", "error");
+                return [];
+            } catch (error) {
+                this.showToast("Error connecting to server.", "error");
+                return [];
+            }
+        },
+
+        formatApiJobs: function (apiJobs) {
+            return apiJobs.map(job => ({
+                id: job.job_id,
+                jobTitle: job.title || "Untitled Position",
+                description: job.description || "",
+                category: job.category || "other",
+                contract_type: job.contract_type || "",
+                experience: job.experience || "",
+                education_level: job.education_level || "",
+                city: job.city || "Not specified",
+                region: job.region || "Not specified",
+                applications: job.no_of_applications || 0,
+                datePosted: job.created_at || job.updated_at || new Date().toISOString(),
+                status: job.is_active === 0 || job.is_active === false ? "paused" : "active",
+                salary: job.salary || "",
+                company_name: job.company_name || "",
+                requirements: job.requirements || [],
+                required_skills: job.required_skills || [],
+                benefits: job.benefits || [],
+                no_of_vacancies: job.no_of_vacancies || "",
+            }));
+        },
+
+        updateJobStatus: async function (jobId, newStatus) {
+            try {
+                const user = JSON.parse(localStorage.getItem("user"));
+                if (!user || !user.token) {
+                    console.warn("User not logged in or token missing. Cannot update job status.");
+                    return false;
+                }
+
+                const endpoint = newStatus === "active"
+                    ? `${apiEndpoints.base}/job/activate/${jobId}`
+                    : `${apiEndpoints.base}/job/deactivate/${jobId}`;
+
+                const response = await fetch(endpoint, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Token ${user.token}`
+                    },
+                    mode: "cors"
+                });
+
+                const result = await response.json().catch(() => ({}));
+
+                if (response.ok) {
+                    this.showToast(`Job status updated to ${newStatus}!`, "success");
+                    // refresh cache
+                    this.cachedJobs = null;
+                    const jobs = await this.loadJobs(true);
+                    window.JobListings.renderJobs(jobs);
+                    return true;
+                }
+
+                this.showToast(result.message || "Failed to update job status.", "error");
+                return false;
+            } catch (error) {
+                this.showToast("Network error when updating job status.", "error");
                 return false;
             }
-        } catch (error) {
-            this.showToast("Network error when deleting job.", "error");
-            return false;
-        }
-    }
-};
+        },
 
-// Make the service globally accessible
-window.JobDataService = JobDataService;
+        deleteJob: async function (jobId) {
+            try {
+                const user = JSON.parse(localStorage.getItem("user"));
+                if (!user || !user.token) {
+                    console.warn("User not logged in or token missing. Cannot delete job.");
+                    return false;
+                }
+                console.log("User: ", user);
+
+                const response = await fetch(`${apiEndpoints.deleteJob}/${jobId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Token ${user.token}`
+                    },
+                    mode: "cors"
+                });
+
+                if (response.ok) {
+                    this.showToast("Job deleted successfully!", "success");
+                    this.cachedJobs = null;
+                    const jobs = await this.loadJobs(true);
+                    window.JobListings.renderJobs(jobs);
+                    return true;
+                }
+
+                const result = await response.json();
+                this.showToast(result.message || "Failed to delete job.", "error");
+                return false;
+            } catch (error) {
+                this.showToast("Network error when deleting job.", "error");
+                return false;
+            }
+        }
+    };
+
+    window.JobDataService = JobDataService;
+}
