@@ -30,10 +30,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-kzp)6adm+83_^r9#vp_xsuu7_4*9h+om6^kx1l1twne^1)^5l1'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     "ai-resume-backend.axxendcorp.com",
@@ -203,5 +203,7 @@ CORS_ALLOW_CREDENTIALS = True
 #     "https://yourfrontenddomain.com",  # Production frontend
 # ]
 
-
-django_heroku.settings(locals())
+# Wrap django_heroku.settings(locals()) behind a DYNO check
+if 'DYNO' in os.environ:
+    import django_heroku
+    django_heroku.settings(locals())
