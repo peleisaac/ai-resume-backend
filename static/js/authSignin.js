@@ -1,4 +1,4 @@
-// import { apiEndpoints } from "../context/constants/apiEndpoints.js";
+// apiEndpoints is loaded globally from apiEndpoints.js
 import { handleApiResponse } from "./handleApiResponse.js";
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -62,19 +62,19 @@ document.addEventListener("DOMContentLoaded", function () {
   function handleSignIn(event) {
     event.preventDefault();
 
-    const email = document.getElementById("email").value.trim();
+    const username = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
     const errorMessage = document.getElementById("error-message");
 
     errorMessage.textContent = "";
 
-    if (!email || !password) {
+    if (!username || !password) {
       errorMessage.textContent = "All fields are required.";
       return;
     }
 
     const data = {
-      email: email,
+      username: username,
       password: password,
       user_role: userRole,
     };
