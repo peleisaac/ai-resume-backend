@@ -29,6 +29,55 @@ const saveJobButton = document.getElementById('save-job-button');
 const closeModalButton = document.querySelector('.close');
 const jobDetailContent = document.getElementById('job-detail-content');
 
+// Normalize job type strings (e.g., "Full-Time" -> "fulltime")
+function normalizeJobType(val) {
+    return (val || '').toString().toLowerCase().replace(/[^a-z]/g, '');
+}
+
+function normalizeLocation(val) {
+    return (val || '').toString().toLowerCase().replace(/[^a-z]/g, '');
+}
+
+function uniqueValues(list) {
+    return [...new Set((list || []).filter(Boolean))];
+}
+
+function setSelectOptions(selectEl, values, allLabel) {
+    if (!selectEl) return;
+    const unique = uniqueValues(values);
+    const options = [`<option value="">${allLabel}</option>`];
+    unique.forEach(v => {
+        const raw = v.toString();
+        const normalized = normalizeJobType(raw);
+        const label = raw
+            .replace(/([a-z])([A-Z])/g, '$1 $2')
+            .replace(/[-_]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+        const titled = label.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('-');
+        options.push(`<option value="${normalized}">${titled}</option>`);
+    });
+    selectEl.innerHTML = options.join('');
+}
+
+function setLocationOptions(selectEl, values, allLabel) {
+    if (!selectEl) return;
+    const unique = uniqueValues(values);
+    const options = [`<option value="">${allLabel}</option>`];
+    unique.forEach(v => {
+        const raw = (v || '').toString();
+        const normalized = normalizeLocation(raw);
+        const label = raw
+            .replace(/([a-z])([A-Z])/g, '$1 $2')
+            .replace(/[-_]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+        const titled = label.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('-');
+        options.push(`<option value="${normalized}">${titled}</option>`);
+    });
+    selectEl.innerHTML = options.join('');
+}
+
 
 
 // Fetch jobs from backend
@@ -47,8 +96,19 @@ async function fetchJobs() {
 
         allJobs = data.jobs.map(job => ({
             ...job,
-            shortDescription: job.description ? job.description.split('.')[0] + '.' : "No description available"
+            shortDescription: job.description ? job.description.split('.')[0] + '.' : "No description available",
+            contract_type: (job.contract_type || job.contractType || job.contract || '').toString(),
+            contract_type_normalized: normalizeJobType(job.contract_type || job.contractType || job.contract || '')
         }));
+
+        // Populate filter dropdowns dynamically from current data
+        const jobTypes = uniqueValues(allJobs.map(j => j.contract_type));
+        const locations = uniqueValues(allJobs.flatMap(j => [j.city, j.region]));
+        const experiences = uniqueValues(allJobs.map(j => j.experience));
+
+        setSelectOptions(jobTypeFilter, jobTypes, 'All Types');
+        setLocationOptions(locationFilter, locations, 'All Locations');
+        setSelectOptions(experienceFilter, experiences, 'All Levels');
 
         filteredJobs = [...allJobs];
 
@@ -231,26 +291,29 @@ function applyFilters() {
         experience: experienceFilter.value
     };
 
+    const normalizedFilterType = normalizeJobType(currentFilters.jobType);
+
     filteredJobs = allJobs.filter(job => {
         // Search filter (title, company, description)
+        const skills = Array.isArray(job.required_skills) ? job.required_skills : [];
         const searchMatch = !currentFilters.search ||
-            job.title.toLowerCase().includes(currentFilters.search) ||
-            job.company.toLowerCase().includes(currentFilters.search) ||
-            job.shortDescription.toLowerCase().includes(currentFilters.search) ||
-            job.required_skills.some(skill => skill.toLowerCase().includes(currentFilters.search));
+            (job.title || '').toLowerCase().includes(currentFilters.search) ||
+            (job.company_name || '').toLowerCase().includes(currentFilters.search) ||
+            (job.shortDescription || '').toLowerCase().includes(currentFilters.search) ||
+            skills.some(skill => (skill || '').toLowerCase().includes(currentFilters.search));
 
         // Location filter
         const locationMatch = !currentFilters.location ||
-            job.city.toLowerCase().includes(currentFilters.location) ||
-            job.region.toLowerCase().includes(currentFilters.location);
+            normalizeLocation(job.city).includes(currentFilters.location) ||
+            normalizeLocation(job.region).includes(currentFilters.location);
 
         // Job type filter
-        const jobTypeMatch = !currentFilters.jobType ||
-            job.contract_type.toLowerCase() === currentFilters.jobType;
+        const jobTypeMatch = !normalizedFilterType ||
+            normalizeJobType(job.contract_type_normalized || job.contract_type) === normalizedFilterType;
 
         // Experience filter
         const experienceMatch = !currentFilters.experience ||
-            job.experience.toLowerCase().includes(currentFilters.experience);
+            (job.experience || '').toLowerCase().includes(currentFilters.experience);
 
         return searchMatch && locationMatch && jobTypeMatch && experienceMatch;
     });
@@ -328,61 +391,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const applyButton = document.getElementById("apply-button");
     applyButton.addEventListener("click", async function () {
         const jobId = applyButton.getAttribute("data-job-id");
-
-
-        if (!jobId || jobId === "undefined") {
-            showToast("Error: No job ID found.", "error");
+        if (!jobId) {
+            window.notify.error("No job selected to apply.");
             return;
         }
 
-        // Get the job details from allJobs using the jobId
         const job = allJobs.find(job => job.job_id === jobId);
-        console.log("job details: ", job);
         if (!job) {
-            showToast("Error: Job details not found.", "error");
+            window.notify.error("Job details not found.");
             return;
         }
 
         const user = JSON.parse(localStorage.getItem("user"));
-        if (!user || !user.user_id) {
-            showToast("Please sign in to apply for jobs.", "error");
-            window.location.href = "/jobseeker-signin";
+        if (!user || !user.user_id || !user.token) {
+            window.notify.warning("Please sign in to apply for jobs");
+            setTimeout(() => {
+                window.location.href = "/jobseeker-signin/?redirect=jobs";
+            }, 800);
             return;
         }
 
-        applyButton.disabled = true; // Prevent multiple clicks
-
-
-        const applicationData = {
-            job_id: jobId,
-            user_id: user.user_id,
-            application_status: "new",
-            employer_id: job.employer_id,
-        };
-
+        applyButton.disabled = true;
+        window.notify.info("Submitting your application...");
         try {
-            const response = await fetch(`${apiEndpoints.addApplication}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Token ${user.token}`
-                },
-                body: JSON.stringify(applicationData),
-                mode: "cors"
-            });
-            
-            const data = await response.json();
-
-           
-           if (data.status_code === "AR00") {
-            showToast("Job application sent successfully!", "success");
-           } else {
-            showToast(data.message)
-           }
-           
-        } catch (error) {
-            showToast("Network error. Please try again later.", "error");
-            console.error("Error:", error);
+            const ok = await window.jobCRUD.applyForJob(jobId, job.employer_id || job.employerId || user.user_id);
+            if (ok) {
+                closeJobDetails();
+            }
         } finally {
             applyButton.disabled = false;
         }
@@ -411,54 +446,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveJobButton = document.getElementById("save-job-button");
     saveJobButton.addEventListener("click", async function () {
         const jobId = saveJobButton.getAttribute("data-job-id");
-
-        console.log("Saving the Job with Job ID:", jobId); // ✅ Debugging
-
-        if (!jobId || jobId === "undefined") {
-            console.error("No valid job ID found for application.");
-            showToast("Error: No job ID found.", "error");
+        if (!jobId) {
+            window.notify.error("No job selected to save.");
             return;
         }
 
         const user = JSON.parse(localStorage.getItem("user"));
-        if (!user || !user.user_id) {
-            showToast("Please sign in to save these jobs.", "error");
-            window.location.href = "/jobseeker-signin";
+        if (!user || !user.user_id || !user.token) {
+            window.notify.warning("Please sign in to save jobs");
+            setTimeout(() => {
+                window.location.href = "/jobseeker-signin/?redirect=jobs";
+            }, 800);
             return;
         }
 
-        saveJobButton.disabled = true; // Prevent multiple clicks
-
-        const saveData = {
-            job_id: jobId,
-            user_id: user.user_id,
-            // application_status: "new",
-        };
-
+        saveJobButton.disabled = true;
+        window.notify.info("Saving job...");
         try {
-            const response = await fetch(`${apiEndpoints.saveJob}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Token ${user.token}`
-                },
-                body: JSON.stringify(saveData),
-            });
-
-            const data = await response.json();
-            console.log("Server Response:", data); // ✅ Debug response
-
-            if (data.status_code === "AR00") {
-                showToast("Job application saved successfully!", "success");
-                fetchJobs(); // 🔄 Refresh job list after applying
-            } else if (data.status_code === "AR05") {
-                showToast("You have already saved this job.", "warning");
-            } else {
-                showToast(data.message || "Failed to save the job.", "error");
+            const ok = await window.jobCRUD.saveJob(jobId);
+            if (ok) {
+                window.notify.success("Job saved to your profile");
             }
-        } catch (error) {
-            showToast("Network error. Please try again later.", "error");
-            console.error("Error:", error);
         } finally {
             saveJobButton.disabled = false;
         }
