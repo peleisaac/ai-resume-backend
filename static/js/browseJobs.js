@@ -94,7 +94,10 @@ async function fetchJobs() {
         const data = await response.json();
         console.log("Fetched jobs from backend:", data.jobs); // 🛠 Debugging
 
-        allJobs = data.jobs.map(job => ({
+        // Only keep active jobs for public listings
+        const activeJobs = (data.jobs || []).filter(j => j.is_active !== false && j.is_active !== 0);
+
+        allJobs = activeJobs.map(job => ({
             ...job,
             shortDescription: job.description ? job.description.split('.')[0] + '.' : "No description available",
             contract_type: (job.contract_type || job.contractType || job.contract || '').toString(),
