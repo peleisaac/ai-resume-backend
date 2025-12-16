@@ -1,6 +1,6 @@
 // Guard against double execution when pages are dynamically loaded
+const baseUrl = "https://ai-resume-backend-v2.axxendcorp.com/api/v1";
 if (!window.apiEndpoints) {
-  const baseUrl = "https://ai-resume-backend-v2.axxendcorp.com/api/v1";
   window.apiEndpoints = {
     base: baseUrl,
     users: `${baseUrl}/users`,
@@ -20,6 +20,7 @@ if (!window.apiEndpoints) {
     deleteJob: `${baseUrl}/job/delete`,
     addJob: `${baseUrl}/job/add`,
     applicationStatus: `${baseUrl}/application/status`,
+    applicationsByJob: `${baseUrl}/applications/by-job`,
     jobsByEmployer: `${baseUrl}/jobs-by-employer`,
 
     addApplication: `${baseUrl}/application/add`,
@@ -29,4 +30,7 @@ if (!window.apiEndpoints) {
 
     resumeUpload: `${baseUrl}/user`,
   };
+} else {
+  // ensure new endpoints are present even if apiEndpoints was already defined
+  window.apiEndpoints.applicationsByJob = `${baseUrl}/applications/by-job`;
 }
