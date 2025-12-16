@@ -294,12 +294,39 @@ Manual testing was performed on the developed frontend with the following checkl
 
 ✅ The sensitive data are stored securely (e.g., user account data is stored in localStorage only when user is authenticated successfully)
 
+✅ Navbar hamburger toggles without console errors; search bar submits without console errors
+
+✅ Apply and save buttons complete without console errors and show notifications
+
+**Manual test cases (sample runs)**
+- Jobseeker signup/login: submit email/password → receive token, redirected to dashboard (Pass)
+- Employer create job: fill required fields, submit → job appears in listings with toast (Pass)
+- Employer edit job: open listing, edit title, save → table refresh shows new title (Pass)
+- Employer delete job: delete from listings → row removed, toast shown (Pass)
+- Jobseeker apply: open job modal, click Apply → application stored, toast shown, appears under My Jobs (Pass)
+- Jobseeker save/remove: click Save → saved list shows job; click Remove in My Jobs → removed with toast (Pass)
+- Profile update: update jobseeker profile fields, submit → toast shown, fields persist after reload (Pass)
+- UI CRUD verification (no console errors observed during checks):
+   - Jobseeker browse/search/apply/save: search filters run without console errors; Apply and Save trigger success toasts and update My Jobs/Saved state (Pass)
+   - Employer job CRUD: create/edit/toggle status/delete from employer listings; actions complete with success toasts and table updates; no console errors (Pass)
+   - Profile CRUD: view/update profile; delete (deactivate) account flow prompts confirm and clears session; toasts show success/failure (Pass)
+
 ### Backend Automated Testing
 Automated testing was implemented for the backend. Sample test cases can be found in the `tests.py` file.
+
+**Command and result**
+```
+python manage.py test
+```
+Last run (Dec 16, 2025): all tests passed.
+Command: `python manage.py test`
+Key cases covered: signup, login, profile update, job add, saved job save/remove, apply for job.
 
 ### Validator Testing
 #### Project Validation from the Official W3C CSS Validation Service
 ![Screenshot of the Official Jigsaw Validator](/static/assets/jigsaw-validator.png)
+
+HTML validation: key pages (landing, jobs, jobseeker profile, employer dashboard) validated via W3C HTML validator with no blocking errors (only benign warnings for missing favicon on localhost).
 
 ## Deployment
 
