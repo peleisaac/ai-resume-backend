@@ -10,6 +10,9 @@
     <title>Dashboard | AI Resume Screening</title>
     <link rel="stylesheet" href="{% static 'css/variables.css' %}">
     <link rel="stylesheet" href="{% static 'css/jobseekers-dashboard.css' %}">
+    <script src="{% static 'js/notifications.js' %}"></script>
+    <script src="{% static 'js/profileCRUD.js' %}"></script>
+    <script src="{% static 'js/jobCRUD.js' %}"></script>
 </head>
 
 <body data-role="jobseeker">
@@ -100,112 +103,13 @@
 
                 <div class="job-recommendations">
                     <h3>Recommended Jobs For You</h3>
-                    <div class="job-cards">
-                        <div class="job-card">
+                    <div class="job-cards" id="recommended-jobs">
+                        <div class="job-card loading">
                             <div class="job-card-header">
-                                <div class="company-logo">
-                                    <img src="/static/assets/landing-page-image.png" alt="Company Logo">
-                                </div>
                                 <div class="job-info">
-                                    <h4 class="job-title">Frontend Developer</h4>
-                                    <p class="company-name">TechCorp Solutions</p>
+                                    <h4 class="job-title">Loading recommendations...</h4>
+                                    <p class="company-name">Please wait</p>
                                 </div>
-                            </div>
-                            <div class="job-details">
-                                <div class="job-detail">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
-                                            stroke="currentColor" stroke-width="2" />
-                                        <path d="M12 7V12H16" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" />
-                                    </svg>
-                                    <span>Full-time</span>
-                                </div>
-                                <div class="job-detail">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M12 12.5C13.6569 12.5 15 11.1569 15 9.5C15 7.84315 13.6569 6.5 12 6.5C10.3431 6.5 9 7.84315 9 9.5C9 11.1569 10.3431 12.5 12 12.5Z"
-                                            stroke="currentColor" stroke-width="2" />
-                                        <path d="M19 19.5C19 16.4624 15.866 14 12 14C8.13401 14 5 16.4624 5 19.5"
-                                            stroke="currentColor" stroke-width="2" />
-                                    </svg>
-                                    <span>Remote</span>
-                                </div>
-                                <div class="job-detail">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M6 9V18.8C6 19.9201 6 20.4802 6.21799 20.908C6.40973 21.2843 6.71569 21.5903 7.09202 21.782C7.51984 22 8.07989 22 9.2 22H14.8C15.9201 22 16.4802 22 16.908 21.782C17.2843 21.5903 17.5903 21.2843 17.782 20.908C18 20.4802 18 19.9201 18 18.8V9M6 9H18M6 9C6 7.93913 6.42143 6.92172 7.17157 6.17157C7.92172 5.42143 8.93913 5 10 5H14C15.0609 5 16.0783 5.42143 16.8284 6.17157C17.5786 6.92172 18 7.93913 18 9"
-                                            stroke="currentColor" stroke-width="2" />
-                                        <path
-                                            d="M14 5V4.2C14 3.0799 14 2.51984 13.782 2.09202C13.5903 1.71569 13.2843 1.40973 12.908 1.21799C12.4802 1 11.9201 1 10.8 1H10.2C9.07989 1 8.51984 1 8.09202 1.21799C7.71569 1.40973 7.40973 1.71569 7.21799 2.09202C7 2.51984 7 3.0799 7 4.2V5"
-                                            stroke="currentColor" stroke-width="2" />
-                                    </svg>
-                                    <span>$80K - $110K</span>
-                                </div>
-                            </div>
-                            <div class="job-card-footer">
-                                <div class="match-score">
-                                    <span>95% Match</span>
-                                </div>
-                                <button class="apply-btn">Apply Now</button>
-                            </div>
-                        </div>
-
-                        <div class="job-card">
-                            <div class="job-card-header">
-                                <div class="company-logo">
-                                    <img src="/static/assets/landing-page-image.png" alt="Company Logo">
-                                </div>
-                                <div class="job-info">
-                                    <h4 class="job-title">React Developer</h4>
-                                    <p class="company-name">Innovate Digital</p>
-                                </div>
-                            </div>
-                            <div class="job-details">
-                                <div class="job-detail">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
-                                            stroke="currentColor" stroke-width="2" />
-                                        <path d="M12 7V12H16" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" />
-                                    </svg>
-                                    <span>Contract</span>
-                                </div>
-                                <div class="job-detail">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M12 12.5C13.6569 12.5 15 11.1569 15 9.5C15 7.84315 13.6569 6.5 12 6.5C10.3431 6.5 9 7.84315 9 9.5C9 11.1569 10.3431 12.5 12 12.5Z"
-                                            stroke="currentColor" stroke-width="2" />
-                                        <path d="M19 19.5C19 16.4624 15.866 14 12 14C8.13401 14 5 16.4624 5 19.5"
-                                            stroke="currentColor" stroke-width="2" />
-                                    </svg>
-                                    <span>Hybrid</span>
-                                </div>
-                                <div class="job-detail">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M6 9V18.8C6 19.9201 6 20.4802 6.21799 20.908C6.40973 21.2843 6.71569 21.5903 7.09202 21.782C7.51984 22 8.07989 22 9.2 22H14.8C15.9201 22 16.4802 22 16.908 21.782C17.2843 21.5903 17.5903 21.2843 17.782 20.908C18 20.4802 18 19.9201 18 18.8V9M6 9H18M6 9C6 7.93913 6.42143 6.92172 7.17157 6.17157C7.92172 5.42143 8.93913 5 10 5H14C15.0609 5 16.0783 5.42143 16.8284 6.17157C17.5786 6.92172 18 7.93913 18 9"
-                                            stroke="currentColor" stroke-width="2" />
-                                        <path
-                                            d="M14 5V4.2C14 3.0799 14 2.51984 13.782 2.09202C13.5903 1.71569 13.2843 1.40973 12.908 1.21799C12.4802 1 11.9201 1 10.8 1H10.2C9.07989 1 8.51984 1 8.09202 1.21799C7.71569 1.40973 7.40973 1.71569 7.21799 2.09202C7 2.51984 7 3.0799 7 4.2V5"
-                                            stroke="currentColor" stroke-width="2" />
-                                    </svg>
-                                    <span>$90K - $120K</span>
-                                </div>
-                            </div>
-                            <div class="job-card-footer">
-                                <div class="match-score">
-                                    <span>87% Match</span>
-                                </div>
-                                <button class="apply-btn">Apply Now</button>
                             </div>
                         </div>
                     </div>
