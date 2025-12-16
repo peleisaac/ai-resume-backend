@@ -39,6 +39,14 @@ document.addEventListener('DOMContentLoaded', function () {
     let savedJobs = [];
     let appliedJobs = [];
 
+    const getCurrentUser = () => {
+        try {
+            return JSON.parse(localStorage.getItem("user"));
+        } catch (e) {
+            return null;
+        }
+    };
+
     function init() {
         fetchSavedJobs();
         fetchAppliedJobs();
@@ -68,18 +76,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     async function fetchSavedJobs() {
+        savedJobsList.innerHTML = '<div class="loading-spinner"></div>';
+
+        const user = getCurrentUser();
+        if (!user || !user.user_id) {
+            savedJobs = [];
+            loadSavedJobs();
+            return;
+        }
+
         try {
-            const user = JSON.parse(localStorage.getItem("user"));
-
-            // Ensure user exists and has a valid user_id
-            if (!user || !user.user_id) {
-                return;
-            }
-
-            const user_id = user.user_id; // Extract user_id correctly
-
-            savedJobsList.innerHTML = '<div class="loading-spinner"></div>';
-            const response = await fetch(`${apiEndpoints.savedJobs}/${user_id}`, {
+            const response = await fetch(`${apiEndpoints.savedJobs}/${user.user_id}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -87,35 +94,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            if (!response.ok) throw new Error("Failed to fetch saved jobs.");
+            if (!response.ok) throw new Error(`Failed to fetch saved jobs (HTTP ${response.status})`);
 
             const data = await response.json();
-            let saved_Jobs = data.saved_jobs || [];
-            localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
-
-            const savedJobsCount = saved_Jobs.length;
-
-            // Call function to display saved jobs if needed
+            const saved_Jobs = (data.saved_jobs || []).filter(app => app.job_details);
             savedJobs = saved_Jobs.map(app => {
-                if (!app.job_details) {
-                    return {
-                        id: app.saved_job_id,
-                        job_id: app.job_details.job_id,
-                        title: "Application in Process",
-                        company_name: "Not specified",
-                        city: "Not specified",
-                        region: "Not specified",
-                        salary: "Not specified",
-                        contract_type: "Not specified",
-                        created_at: app.created_at,
-                        description: "Application is being processed.",
-                        requirements: ["No details available at this time"],
-                        required_skills: []
-                    };
-                }
-
-                // Ensure required_skills is an array
-                const required_skills = parseRequiredSkills( app.job_details.required_skills || []);
+                const required_skills = parseRequiredSkills(app.job_details.required_skills || []);
 
                 return {
                     id: app.saved_job_id,
@@ -134,25 +118,26 @@ document.addEventListener('DOMContentLoaded', function () {
                     benefits: parseRequiredSkills(app.job_details.benefits || [])
                 };
             });
-            loadSavedJobs();
-
         } catch (error) {
-            alert("Error fetching saved jobs:", error);
+            console.error("Error fetching saved jobs:", error);
+            savedJobs = [];
         }
+
+        loadSavedJobs();
     }
 
     async function fetchAppliedJobs() {
+        appliedJobsList.innerHTML = '<div class="loading-spinner"></div>';
+
+        const user = getCurrentUser();
+        if (!user || !user.user_id) {
+            appliedJobs = [];
+            loadAppliedJobs();
+            return;
+        }
+
         try {
-            const user = JSON.parse(localStorage.getItem("user"));
-            if (!user || !user.user_id) {
-                alert("Please sign in to view applied jobs.");
-                return;
-            }
-
-            const user_id = user.user_id;
-
-            appliedJobsList.innerHTML = '<div class="loading-spinner"></div>';
-            const response = await fetch(`${apiEndpoints.applicationsByUser}/${user_id}`, {
+            const response = await fetch(`${apiEndpoints.applicationsByUser}/${user.user_id}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -160,34 +145,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            if (!response.ok) throw new Error("Failed to fetch applied jobs.");
+            if (!response.ok) throw new Error(`Failed to fetch applied jobs (HTTP ${response.status})`);
             const data = await response.json();
 
-            const applied_jobs = data.applications;
-            const appliedJobCount = applied_jobs.length;
+            const applied_jobs = (data.applications || []).filter(app => app.job_details);
 
             appliedJobs = applied_jobs.map(app => {
-                if (!app.job_details) {
-                    return {
-                        id: app.application_id,
-                        job_id: app.job_details.job_id,
-                        title: "Application in Process",
-                        company_name: "Not specified",
-                        city: "Not specified",
-                        region: "Not specified",
-                        salary: "Not specified",
-                        contract_type: "Not specified",
-                        experience: "Not specified",
-                        created_at: app.created_at,
-                        status: app.status.toLowerCase(),
-                        description: "Application is being processed.",
-                        requirements: ["No details available at this time"],
-                        required_skills: [],
-                        benefits: []
-                    };
-                }
-
-                // Ensure required_skills is an array
                 const required_skills = parseRequiredSkills(app.job_details.required_skills || []);
 
                 return {
@@ -201,17 +164,50 @@ document.addEventListener('DOMContentLoaded', function () {
                     contract_type: app.job_details.contract_type || "Not specified",
                     experience: app.job_details.experience || "Not specified",
                     created_at: app.created_at,
-                    status: app.status.toLowerCase(),
+                    status: (app.status || "processing").toLowerCase(),
                     description: app.job_details.description || "No description available.",
                     requirements: parseRequiredSkills(app.job_details.requirements || []),
                     required_skills: required_skills,
                     benefits: parseRequiredSkills(app.job_details.benefits || [])
                 };
             });
-            loadAppliedJobs();
+
+            notifyApplicationStatusChanges(appliedJobs);
         } catch (error) {
-            alert("Error fetching applied jobs:", error);
+            console.error("Error fetching applied jobs:", error);
+            appliedJobs = [];
         }
+
+        loadAppliedJobs();
+    }
+
+    function notifyApplicationStatusChanges(applications) {
+        const cacheKey = "applicationStatusCache";
+        let cache = {};
+        try {
+            cache = JSON.parse(localStorage.getItem(cacheKey) || "{}");
+        } catch (e) {
+            cache = {};
+        }
+
+        const updates = [];
+        (applications || []).forEach(app => {
+            if (!app.id || !app.status) return;
+            const prev = cache[app.id];
+            const current = (app.status || "").toLowerCase();
+            if (prev && prev !== current) {
+                updates.push({ id: app.id, title: app.title || "Application", status: current });
+            }
+            cache[app.id] = current;
+        });
+
+        if (updates.length && window.notify && typeof window.notify.info === "function") {
+            updates.forEach(u => {
+                window.notify.info(`${u.title} status updated to ${u.status}`);
+            });
+        }
+
+        localStorage.setItem(cacheKey, JSON.stringify(cache));
     }
 
     function loadSavedJobs() {
@@ -250,25 +246,29 @@ document.addEventListener('DOMContentLoaded', function () {
         jobCard.className = 'job-card';
         jobCard.dataset.jobId = job.id;
 
-        // Calculate time ago for posting date
+        // Calculate time ago for saved/applied date (avoid rounding up on small deltas)
         const postedDate = new Date(job.created_at);
-        const currentDate = new Date();
-        const diffTime = Math.abs(currentDate - postedDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const now = new Date();
+        const diffMs = Math.max(0, now - postedDate);
+        const diffMinutes = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMinutes / 60);
+        const diffDays = Math.floor(diffHours / 24);
 
         let timeAgo;
-        if (diffDays === 0) {
-            timeAgo = 'Today';
-        } else if (diffDays === 1) {
-            timeAgo = '1 day ago';
+        if (diffMinutes < 1) {
+            timeAgo = 'Just now';
+        } else if (diffMinutes < 60) {
+            timeAgo = `${diffMinutes} min${diffMinutes === 1 ? '' : 's'} ago`;
+        } else if (diffHours < 24) {
+            timeAgo = `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
         } else if (diffDays < 7) {
-            timeAgo = `${diffDays} days ago`;
+            timeAgo = `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
         } else if (diffDays < 30) {
             const weeks = Math.floor(diffDays / 7);
-            timeAgo = `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+            timeAgo = `${weeks} week${weeks === 1 ? '' : 's'} ago`;
         } else {
             const months = Math.floor(diffDays / 30);
-            timeAgo = `${months} ${months === 1 ? 'month' : 'months'} ago`;
+            timeAgo = `${months} month${months === 1 ? '' : 's'} ago`;
         }
 
         // Create job description (first sentence)
@@ -421,29 +421,19 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const user = JSON.parse(localStorage.getItem("user"));
             if (!user || !user.user_id) {
-                showToast("Please sign in to remove saved jobs.", "error");
+                window.notify.error("Please sign in to remove saved jobs.");
                 return;
             }
 
-            const response = await fetch(`${apiEndpoints.removeSavedJob}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Token ${user.token}`
-                },
-                body: JSON.stringify({  job_id: jobId, user_id: user.user_id })
-            });
+            const ok = await window.jobCRUD.removeSavedJob(jobId);
+            if (!ok) return;
 
-            if (!response.ok) throw new Error("Failed to remove saved job.");
-
-            // Update the UI
             savedJobs = savedJobs.filter(job => job.id !== jobId);
             loadSavedJobs();
-            location.reload();
-            showToast('Job removed from saved list', 'success');
+            window.notify.success('Job removed from saved list');
         } catch (error) {
             console.error("Error removing saved job:", error);
-            showToast('Failed to remove job. Please try again.', 'error');
+            window.notify.error('Failed to remove job. Please try again.');
         }
     }
 
