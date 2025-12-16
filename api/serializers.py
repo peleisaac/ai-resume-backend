@@ -64,6 +64,10 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ('user_id',)
 
 class JobSerializer(serializers.ModelSerializer):
+    requirements = JSONListField(required=False)
+    required_skills = JSONListField(required=False)
+    benefits = JSONListField(required=False)
+
     class Meta:
         model = Jobs
         fields = (
@@ -78,5 +82,9 @@ class JobSerializer(serializers.ModelSerializer):
             'city',
             'no_of_vacancies',
             'salary',
+            'requirements',
+            'required_skills',
+            'benefits',
+            'company_name',
         )
         read_only_fields = ('job_id',)
