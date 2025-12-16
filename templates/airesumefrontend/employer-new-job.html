@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="{% static 'css/header.css' %}">
     <link rel="stylesheet" href="{% static 'css/footer.css' %}">
     <link rel="stylesheet" href="{% static 'css/employer-dashboard.css' %}">
+    <script src="{% static 'js/notifications.js' %}"></script>
+    <script src="{% static 'js/jobData.js' %}"></script>
+    <script src="{% static 'js/jobCRUD.js' %}"></script>
 
     <!-- <link rel="stylesheet" href="../css/header.css">
     <link rel="stylesheet" href="../css/footer.css">
@@ -203,11 +206,7 @@
     <script src="{% static 'context/constants/apiEndpoints.js' %}"></script>
     <!-- <script src="../context/constants/apiEndpoints.js"></script> -->
 
-    <!-- <script src="../js/job-listings.js"></script> -->
-    <!-- <script src="../js/job-data.js"></script> -->
-    <script src="{% static 'js/job-listings.js' %}"></script>
-    <script src="{% static 'js/job-data.js' %}"></script>
-    <!-- <script src="../js/employer-dashboard.js"></script> -->
+    <!-- Only need dashboard + endpoints; remove listing scripts to avoid 404 -->
     <script src="{% static 'js/employerDashboard.js' %}"></script>
 
 
@@ -221,14 +220,17 @@
             const employer_id = user.user_id;
             console.log("employer_id", employer_id);
 
+            const companyInput = document.getElementById("companyName");
             const CompanyName = user.company_name;
             console.log(CompanyName);
-            if (CompanyName) {
-                document.getElementById("companyName").value = user.company_name;
-            }
 
-            // Make the company name field read-only to prevent changes
-            document.getElementById("companyName").setAttribute("readonly", "true");
+            if (CompanyName && companyInput) {
+                companyInput.value = user.company_name;
+                companyInput.setAttribute("readonly", "true");
+            } else if (companyInput) {
+                companyInput.removeAttribute("readonly");
+                companyInput.placeholder = "Enter company name";
+            }
 
 
 
@@ -323,81 +325,7 @@
                 }
             }
 
-            const jobForm = document.getElementById("jobPostingForm");
-
-            jobForm.addEventListener("submit", async function (event) {
-                event.preventDefault(); // Prevent page reload
-
-                // Collect form data
-                const jobData = {
-                    title: document.getElementById("jobTitle").value,
-                    description: document.getElementById("jobDescription").value,
-                    requirements: requirements,
-                    benefits: benefits,
-                    required_skills: skills,
-                    category: document.getElementById("category").value,
-                    contract_type: document.getElementById("contractType").value,
-                    experience: document.getElementById("experience").value,
-                    education_level: document.getElementById("education").value,
-                    region: document.getElementById("region").value,
-                    city: document.getElementById("city").value,
-                    no_of_vacancies: parseInt(document.getElementById("vacancies").value),
-                    salary: document.getElementById("salary").value,
-                    is_active: "1",
-                    company_name: CompanyName,
-                    employer_id: employer_id
-                };
-                console.log("JobData: ", jobData)
-                // const user = JSON.parse(localStorage.getItem("user"));
-                try {
-                    const response = await fetch(`${apiEndpoints.addJob}`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Token ${user?.token}`
-                        },
-                        body: JSON.stringify(jobData),
-                        mode: "cors"
-                    });
-
-                    const result = await response.json();
-
-                    if (response.ok && result.status_code === "AR00") {
-                        alert("Job posted successfully!");
-
-                        // Ensure JobDataService is available before calling it
-                        try {
-                            if (window.JobDataService && typeof window.JobDataService.updateJobList === 'function') {
-                                window.JobDataService.updateJobList(result.job);
-                            }
-                        } catch (error) {
-                            console.error("Error updating job list:", error);
-                            // Continue with redirect even if updating job list fails
-                        }
-
-
-                        jobForm.reset(); // Clear the form after success
-
-                        requirements = [];
-                        benefits = [];
-                        skills = [];
-                        requirementsList.innerHTML = "";
-                        benefitsList.innerHTML = "";
-                        skillsList.innerHTML = "";
-                        requirementsData.value = "";
-                        benefitsData.value = "";
-                        skillsData.value = "";
-
-                        // Redirect to job listings page
-                        window.location.href = "employer-job-listings.html";
-                    } else {
-                        alert(`Failed to post job: ${result.message}`);
-                    }
-                } catch (error) {
-                    console.error("Error posting job:", error);
-                    alert("An error occurred. Please try again.");
-                }
-            });
+            // Submit is handled in employerDashboard.js initializeNewJobForm (works for sidebar navigation too)
         });
 
     </script>
