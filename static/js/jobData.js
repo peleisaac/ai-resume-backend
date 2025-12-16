@@ -78,6 +78,74 @@ if (!window.JobDataService) {
             }));
         },
 
+        loadApplicationsByJob: async function (jobId) {
+            try {
+                const user = JSON.parse(localStorage.getItem("user"));
+                if (!user || !user.token) {
+                    this.showToast("Please sign in to view applicants.", "error");
+                    return [];
+                }
+
+                const response = await fetch(`${apiEndpoints.applicationsByJob}/${jobId}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Token ${user.token}`
+                    },
+                    mode: "cors"
+                });
+
+                const result = await response.json();
+                if (response.ok && (result.status_code === "AR00" || result.status_code === 200 || result.status_code === "200")) {
+                    return (result.applications || []).map(app => ({
+                        id: app.application_id,
+                        status: app.status,
+                        created_at: app.created_at,
+                        applicant: app.user_details || {},
+                        job: app.job_details || {},
+                    }));
+                }
+
+                this.showToast(result.message || "Failed to load applicants.", "error");
+                return [];
+            } catch (error) {
+                this.showToast("Network error when loading applicants.", "error");
+                return [];
+            }
+        },
+
+        updateApplicationStatus: async function (applicationId, statusValue) {
+            try {
+                const user = JSON.parse(localStorage.getItem("user"));
+                if (!user || !user.token) {
+                    this.showToast("Please sign in to update applications.", "error");
+                    return false;
+                }
+
+                const response = await fetch(`${apiEndpoints.applicationStatus}/${applicationId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Token ${user.token}`
+                    },
+                    body: JSON.stringify({ application_status: statusValue }),
+                    mode: "cors"
+                });
+
+                const result = await response.json().catch(() => ({}));
+                if (response.ok) {
+                    this.showToast("Application status updated.", "success");
+                    return true;
+                }
+
+                this.showToast(result.message || "Failed to update application.", "error");
+                return false;
+            } catch (error) {
+                this.showToast("Network error when updating application.", "error");
+                return false;
+            }
+        },
+
         updateJobStatus: async function (jobId, newStatus) {
             try {
                 const user = JSON.parse(localStorage.getItem("user"));
@@ -107,6 +175,10 @@ if (!window.JobDataService) {
                     this.cachedJobs = null;
                     const jobs = await this.loadJobs(true);
                     window.JobListings.renderJobs(jobs);
+                    // re-apply current filters so the table stays in sync with UI selections
+                    if (window.JobFilters && typeof window.JobFilters.filterJobs === "function") {
+                        window.JobFilters.filterJobs();
+                    }
                     return true;
                 }
 
@@ -141,6 +213,10 @@ if (!window.JobDataService) {
                     this.cachedJobs = null;
                     const jobs = await this.loadJobs(true);
                     window.JobListings.renderJobs(jobs);
+                    // re-apply filters after deletion
+                    if (window.JobFilters && typeof window.JobFilters.filterJobs === "function") {
+                        window.JobFilters.filterJobs();
+                    }
                     return true;
                 }
 
