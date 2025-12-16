@@ -90,10 +90,44 @@ class Users(AbstractBaseUser):
     def is_profile_complete(user_id, user_role):
         """Check if a user's profile is complete."""
         user = Users.objects.filter(user_id=user_id, record_status="1", user_role=user_role).first()
+        if not user:
+            return False
+
+        def all_filled(fields):
+            return all(bool(str(field).strip()) for field in fields)
+
         if user_role == "jobseeker":
-            return user.first_name and user.last_name and user.email and user.gender and user.msisdn and user.dob and user.region and user.city and user.socials and user.user_role and user.category_of_interest and user.job_notifications and user.resume_url is not None
-        elif user_role == 'employer':
-            return user.email and user.msisdn and user.region and user.city and user.socials and user.company_name and user.contact_name and user.address and user.industry and user.company_description is not None 
+            required = [
+                user.first_name,
+                user.last_name,
+                user.email,
+                user.gender,
+                user.msisdn,
+                user.dob,
+                user.region,
+                user.city,
+                user.user_role,
+                user.category_of_interest,
+                user.job_notifications,
+                user.resume_url,
+            ]
+            return all_filled(required)
+
+        if user_role == "employer":
+            required = [
+                user.email,
+                user.msisdn,
+                user.region,
+                user.city,
+                user.company_name,
+                user.contact_name,
+                user.address,
+                user.industry,
+                user.company_description,
+            ]
+            return all_filled(required)
+
+        return False
     
     
     @staticmethod
@@ -267,7 +301,11 @@ class Applications(models.Model):
     @staticmethod
     def application_exists(user_id, job_id):
         """Check if an application exists with the given user_id and job_id."""
-        return Applications.objects.filter(user_id=user_id, job_id=job_id).exists()
+        return Applications.objects.filter(
+            user_id=user_id,
+            job_id=job_id,
+            record_status="1"
+        ).exists()
 
     @staticmethod
     def get_application_by_application_id_json_format(application_id):
