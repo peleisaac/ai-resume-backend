@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 import uuid
 from uuid import UUID
+import uuid
 from api.models import Users
 from api.models import Jobs
 from api.models import Applications
@@ -89,7 +90,23 @@ def file_upload(request, user_id):
         user = Users.get_user_by_user_id(user_id)  # Fetch user
 
         if not user:
-            return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {
+                    "status_code": StatusCode.NOT_FOUND,
+                    "message": "User not found",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Guard against missing storage configuration to avoid opaque 500s
+        if not settings.AZURE_STORAGE_CONNECTION_STRING or not settings.AZURE_CONTAINER_NAME:
+            return Response(
+                {
+                    "status_code": StatusCode.SERVER_ERROR,
+                    "message": "Storage is not configured. Please contact support.",
+                },
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
 
         if serializer.is_valid():
             file = serializer.validated_data["file"]
@@ -159,7 +176,7 @@ def sign_up(request):
         msisdn = request.data.get("msisdn", "")
         gender = request.data.get("gender", "")
         password = request.data.get("password", "")
-        dob = request.data.get("dob", "")
+        dob = request.data.get("dob") or None  # Avoid invalid empty-string dates
         region = request.data.get("region", "")
         city = request.data.get("city", "")
         socials = request.data.get("socials", "")
@@ -177,11 +194,11 @@ def sign_up(request):
 
         user_id = str(uuid.uuid4().hex)
         # Check if the user already exists
-        if Users.user_exists(email):
-            return Response({
-                "status_code": StatusCode.BAD_REQUEST,
-                "message": "User with this email already exists"
-            }, status=status.HTTP_400_BAD_REQUEST)
+        # if Users.user_exists(email):
+        #     return Response({
+        #         "status_code": StatusCode.BAD_REQUEST,
+        #         "message": "User with this email already exists"
+        #     }, status=status.HTTP_400_BAD_REQUEST)
         
         # Create and save the new user
         user = Users(
@@ -207,19 +224,103 @@ def sign_up(request):
         user.set_password(password)  # Hash password before saving
         user.save()
 
-        signed_up_user = user.get_user_by_user_id(user_id)
+        # CHANGED: Return user data as a dictionary (JSON-serializable)
+        user_data = {
+            "user_id": user.user_id,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "msisdn": user.msisdn,
+            "gender": user.gender,
+            "dob": user.dob,
+            "region": user.region,
+            "city": user.city,
+            "socials": user.socials,
+            "user_role": user.user_role,
+            "is_active": user.is_active,
+            "category_of_interest": json.loads(user.category_of_interest) if user.category_of_interest else [],
+            "job_notifications": user.job_notifications,
+            "company_name": user.company_name if user.user_role == "employer" else None,
+            "contact_name": user.contact_name if user.user_role == "employer" else None,
+            "address": user.address if user.user_role == "employer" else None,
+            "industry": user.industry if user.user_role == "employer" else None,
+            "company_description": user.company_description if user.user_role == "employer" else None,
+        }
 
-        if user:
+        return Response({
+            "status_code": StatusCode.SUCCESS,
+            "message": "User created successfully",
+            "data": user_data
+        }, status=status.HTTP_201_CREATED)
+        # signed_up_user = user.get_user_by_user_id(user_id)
+
+
+        # if user:
+        #     return Response({
+        #         "status_code": StatusCode.SUCCESS,
+        #         "message": "User created successfully",
+        #         "data": signed_up_user
+        #     }, status=status.HTTP_201_CREATED)
+        # else:
+        #     return Response({
+        #         "status_code": StatusCode.INVALID_CREDENTIALS,
+        #         "message": "Failed To Create User"
+        #     }, status=status.HTTP_401_UNAUTHORIZED) 
+    except Exception as e:
+        return Response({
+            "status_code": StatusCode.SERVER_ERROR,
+            "message": f"An error occurred: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+def login(request):
+    try:
+        username = request.data.get("username")  # This will be the email
+        password = request.data.get("password")
+        user_role = request.data.get("user_role")
+
+        if not username or not password:
+            return Response({
+                "status_code": StatusCode.BAD_REQUEST,
+                "message": "Email and password are required"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Authenticate using email (since USERNAME_FIELD = "email")
+        from django.contrib.auth import authenticate
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            # Check if user role matches
+            if user.user_role != user_role:
+                return Response({
+                    "status_code": StatusCode.INVALID_CREDENTIALS,
+                    "message": f"Invalid credentials for {user_role}"
+                }, status=status.HTTP_401_UNAUTHORIZED)
+
+            # Generate or get auth token
+            from rest_framework.authtoken.models import Token
+            token, created = Token.objects.get_or_create(user=user)
+
+            user_data = {
+                "user_id": user.user_id,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "email": user.email,
+                "user_role": user.user_role,
+                "token": token.key,
+            }
+
             return Response({
                 "status_code": StatusCode.SUCCESS,
-                "message": "User created successfully",
-                "data": signed_up_user
-            }, status=status.HTTP_201_CREATED)
+                "message": "Login successful",
+                "data": user_data
+            }, status=status.HTTP_200_OK)
         else:
             return Response({
                 "status_code": StatusCode.INVALID_CREDENTIALS,
-                "message": "Failed To Create User"
-            }, status=status.HTTP_401_UNAUTHORIZED) 
+                "message": "Invalid email or password"
+            }, status=status.HTTP_401_UNAUTHORIZED)
+
     except Exception as e:
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
@@ -231,7 +332,23 @@ def sign_up(request):
 @permission_classes([IsAuthenticated])
 def add_new_job(request):
     try:
-        required_fields = ["employer_id", "title", "description", "category", "contract_type", "experience", "education_level", "requirements", "required_skills", "benefits", "region", "city", "company_name", "no_of_vacancies", "salary"]
+        required_fields = [
+            "employer_id",
+            "title",
+            "description",
+            "category",
+            "contract_type",
+            "experience",
+            "education_level",
+            "requirements",
+            "required_skills",
+            "benefits",
+            "region",
+            "city",
+            "company_name",
+            "no_of_vacancies",
+            "salary",
+        ]
 
         missing_fields = [field for field in required_fields if not request.data.get(field)]
 
@@ -242,6 +359,13 @@ def add_new_job(request):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         employer_id = request.data.get("employer_id", "")
+
+        # Ensure the authenticated user is the job owner
+        if str(request.user.user_id) != str(employer_id):
+            return Response({
+                "status_code": StatusCode.UNAUTHORIZED,
+                "message": "You are not allowed to create jobs for this employer."
+            }, status=status.HTTP_403_FORBIDDEN)
         title = request.data.get("title", "")
         description = request.data.get("description", "")
         category = request.data.get("category", "")
@@ -288,13 +412,14 @@ def add_new_job(request):
 
         job.save()
 
-        added_job = job.get_job_by_job_id(job_id)
+        added_job = Jobs.get_job_by_job_id(job_id)
 
         if job:
+            serialized = JobSerializer(added_job).data if added_job else None
             return Response({
                 "status_code": StatusCode.SUCCESS,
                 "message": "Job created successfully",
-                "data": added_job
+                "job": serialized
             }, status=status.HTTP_201_CREATED)
         else:
             return Response({
@@ -329,12 +454,24 @@ def add_new_application(request):
         application_status = request.data.get("application_status")
 
 
-        application_id = str(uuid.uuid4().hex)
-        if Applications.application_exists(user_id, job_id):
+        existing_application = Applications.objects.filter(
+            user_id=user_id,
+            job_id=job_id,
+            record_status="1"
+        ).first()
+
+        # If an application already exists, treat the request as idempotent and return success
+        if existing_application:
+            existing_payload = Applications.get_application_by_application_id_json_format(
+                existing_application.application_id
+            )
             return Response({
-                "status_code": StatusCode.BAD_REQUEST,
-                "message": "Application already exists"
-            }, status=status.HTTP_400_BAD_REQUEST)
+                "status_code": StatusCode.SUCCESS,
+                "message": "Application already exists",
+                "data": existing_payload
+            }, status=status.HTTP_200_OK)
+
+        application_id = str(uuid.uuid4().hex)
         
         # Create and save the new job
         job = Applications(
@@ -347,7 +484,8 @@ def add_new_application(request):
 
         job.save()
 
-        added_application = Applications.get_application_by_application_id(application_id)
+        # Fetch JSON-serializable payload for the new application
+        added_application = Applications.get_application_by_application_id_json_format(application_id)
         
          
 
@@ -452,6 +590,7 @@ def get_all_jobs(request):
             "category": job.category,
             "contract_type": job.contract_type,
             "experience": job.experience,
+            "education_level": job.education_level,
             "requirements": json.loads(job.requirements) if job.requirements else [],
             "required_skills": json.loads(job.required_skills) if job.required_skills else [],
             "benefits": json.loads(job.benefits) if job.benefits else [],
@@ -475,7 +614,8 @@ def get_all_jobs(request):
 # @authentication_classes([TokenAuthentication])
 # @permission_classes([IsAuthenticated])
 def get_all_jobs_by_employer(request, employer_id):
-    jobs = Jobs.get_active_jobs_by_employer(employer_id)
+    # Return all (non-deleted) jobs for the employer so paused/active both show up
+    jobs = Jobs.get_all_jobs_posted_by_employer(employer_id)
     jobs_list = [
         {
             "employer_id": job.employer_id,
@@ -485,6 +625,7 @@ def get_all_jobs_by_employer(request, employer_id):
             "category": job.category,
             "contract_type": job.contract_type,
             "experience": job.experience,
+            "education_level": job.education_level,
             "requirements": json.loads(job.requirements) if job.requirements else [],
             "required_skills": json.loads(job.required_skills) if job.required_skills else [],
             "benefits": json.loads(job.benefits) if job.benefits else [],
@@ -690,7 +831,13 @@ def get_saved_jobs_by_user(request, user_id):
     try:
         user_id = user_id # Convert to UUID
     except ValueError:
-        return Response({"status_code": status.HTTP_400_BAD_REQUEST, "message": "Invalid user ID format"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "Invalid user ID format",
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     
     saved_jobs = SavedJobs.get_saved_jobs_by_user_id(user_id)
 
@@ -720,11 +867,23 @@ def get_user_by_user_id(request, user_id):
     try:
         user_id = user_id # Convert to UUID
     except ValueError:
-        return Response({"status_code": status.HTTP_400_BAD_REQUEST, "message": "Invalid user ID format"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "Invalid user ID format",
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     user = Users.get_user_by_user_id(user_id)  # Fetch user
     if not user:
-        return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "status_code": StatusCode.NOT_FOUND,
+                "message": "User not found",
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
 
     user_data = {
         "user_id": str(user.user_id),  # Ensure UUID is serialized as a string
@@ -761,11 +920,23 @@ def get_job_by_job_id(request, job_id):
     try:
         job_id = job_id # Convert to UUID
     except ValueError:
-        return Response({"status_code": status.HTTP_400_BAD_REQUEST, "message": "Invalid Job ID format"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "Invalid Job ID format",
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     
     job = Jobs.get_job_by_job_id(job_id)  # Fetch user
     if not job:
-        return Response({"status_code": StatusCode.NOT_FOUND, "message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "status_code": StatusCode.NOT_FOUND,
+                "message": "Job not found",
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
     
     job_data = {
             "employer_id": job.employer_id,
@@ -800,11 +971,23 @@ def get_application_by_application_id(request, application_id):
     try:
         application_id = application_id # Convert to UUID
     except ValueError:
-        return Response({"status_code": status.HTTP_400_BAD_REQUEST, "message": "Invalid Application ID format"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "Invalid Application ID format",
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     
     application = Applications.get_application_by_application_id(application_id)  # Fetch Application
     if not application:
-        return Response({"status_code": StatusCode.NOT_FOUND, "message": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {
+                "status_code": StatusCode.NOT_FOUND,
+                "message": "Application not found",
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
     
     application_data = {
             "application_id": application.application_id,
@@ -827,7 +1010,13 @@ def get_applications_by_user_id(request, user_id):
     try:
         user_id = user_id # Convert to UUID
     except ValueError:
-        return Response({"status_code": status.HTTP_400_BAD_REQUEST, "message": "Invalid User ID format"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "Invalid User ID format",
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     
     applications = Applications.get_applications_by_user_id(user_id)  # Fetch Application By the user_id
     
@@ -852,7 +1041,13 @@ def get_applications_by_job_id(request, job_id):
     try:
         job_id = job_id # Convert to UUID
     except ValueError:
-        return Response({"status_code": status.HTTP_400_BAD_REQUEST, "message": "Invalid Job ID format"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "Invalid Job ID format",
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     
     applications = Applications.get_applications_by_job_id(job_id)  # Fetch Application By the job_id
     
@@ -877,17 +1072,70 @@ def update_user(request, user_id):
     try:
         user = Users.get_user_by_user_id(user_id)  # Fetch user
         if not user:
-            return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {
+                    "status_code": StatusCode.NOT_FOUND,
+                    "message": "User not found",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
         
         # Instantiate the serializer with the current user instance and the incoming data.
         # Using partial=True allows for partial updates. If you require all fields, you can remove partial=True.
         serializer = UserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            user_obj = serializer.instance
+            # Return role-specific fields to avoid empty employer fields for jobseekers
+            if user_obj.user_role == "employer":
+                user_payload = {
+                    "user_id": user_obj.user_id,
+                    "first_name": user_obj.first_name,
+                    "last_name": user_obj.last_name,
+                    "email": user_obj.email,
+                    "msisdn": user_obj.msisdn,
+                    "gender": user_obj.gender,
+                    "dob": user_obj.dob,
+                    "region": user_obj.region,
+                    "city": user_obj.city,
+                    "socials": user_obj.socials,
+                    "user_role": user_obj.user_role,
+                    "category_of_interest": json.loads(user_obj.category_of_interest)
+                    if user_obj.category_of_interest
+                    else [],
+                    "job_notifications": user_obj.job_notifications,
+                    "resume_url": user_obj.resume_url,
+                    "company_name": user_obj.company_name,
+                    "contact_name": user_obj.contact_name,
+                    "address": user_obj.address,
+                    "industry": user_obj.industry,
+                    "company_description": user_obj.company_description,
+                    "is_active": user_obj.is_active,
+                }
+            else:
+                user_payload = {
+                    "user_id": user_obj.user_id,
+                    "first_name": user_obj.first_name,
+                    "last_name": user_obj.last_name,
+                    "email": user_obj.email,
+                    "msisdn": user_obj.msisdn,
+                    "gender": user_obj.gender,
+                    "dob": user_obj.dob,
+                    "region": user_obj.region,
+                    "city": user_obj.city,
+                    "socials": user_obj.socials,
+                    "user_role": user_obj.user_role,
+                    "category_of_interest": json.loads(user_obj.category_of_interest)
+                    if user_obj.category_of_interest
+                    else [],
+                    "job_notifications": user_obj.job_notifications,
+                    "resume_url": user_obj.resume_url,
+                    "is_active": user_obj.is_active,
+                }
             return Response({
                 "status_code": StatusCode.SUCCESS,
                 "message": "User updated successfully",
-                "user": serializer.data
+                "user": user_payload
             }, status=status.HTTP_200_OK)
         else:
             return Response({
@@ -909,7 +1157,20 @@ def update_job(request, job_id):
     try:
         job = Jobs.get_job_by_job_id(job_id)  # Fetch job
         if not job:
-            return Response({"status_code": StatusCode.NOT_FOUND, "message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {
+                    "status_code": StatusCode.NOT_FOUND,
+                    "message": "Job not found",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Only the owner can update this job
+        if str(request.user.user_id) != str(job.employer_id):
+            return Response({
+                "status_code": StatusCode.UNAUTHORIZED,
+                "message": "You are not allowed to update this job."
+            }, status=status.HTTP_403_FORBIDDEN)
         
         # Instantiate the serializer with the current job instance and the incoming data.
         # Using partial=True allows for partial updates. If you require all fields, you can remove partial=True.
@@ -941,7 +1202,13 @@ def update_application_status(request, application_id):
     try:
         application = Applications.get_application_by_application_id(application_id)  # Fetch application
         if not application:
-            return Response({"status_code": StatusCode.NOT_FOUND, "message": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {
+                    "status_code": StatusCode.NOT_FOUND,
+                    "message": "Application not found",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
         
         application_status = request.data.get('application_status')
         
@@ -965,7 +1232,13 @@ def delete_user(request, user_id):
     try:
         user = Users.get_user_by_user_id(user_id)  # Fetch user
         if not user:
-            return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {
+                    "status_code": StatusCode.NOT_FOUND,
+                    "message": "User not found",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
         
         
         # Soft delete: set record_status to 0
@@ -989,7 +1262,20 @@ def delete_job(request, job_id):
     try:
         job = Jobs.get_job_by_job_id(job_id)  # Fetch job
         if not job:
-            return Response({"status_code": StatusCode.NOT_FOUND, "message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {
+                    "status_code": StatusCode.NOT_FOUND,
+                    "message": "Job not found",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Only the owner can delete this job
+        if str(request.user.user_id) != str(job.employer_id):
+            return Response({
+                "status_code": StatusCode.UNAUTHORIZED,
+                "message": "You are not allowed to delete this job."
+            }, status=status.HTTP_403_FORBIDDEN)
         
         
         # Soft delete: set record_status to 0
@@ -1013,7 +1299,13 @@ def deactivate_user(request, user_id):
     try:
         user = Users.get_user_by_user_id(user_id)  # Fetch user
         if not user:
-            return Response({"status_code": StatusCode.NOT_FOUND, "message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {
+                    "status_code": StatusCode.NOT_FOUND,
+                    "message": "User not found",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
         
         
         # Soft delete: set record_status to 0
@@ -1139,7 +1431,9 @@ def remove_saved_job(request):
             "experience": removed_saved_job.experience,
             "education_level": removed_saved_job.education_level,
             "requirements": json.loads(removed_saved_job.requirements) if removed_saved_job.requirements else [],
-            "required_skills": json.loads(removed_saved_job.required_skills) if removed_saved_job.required_skills else [],
+            "required_skills": json.loads(removed_saved_job.required_skills)
+            if removed_saved_job.required_skills
+            else [],
             "benefits": json.loads(removed_saved_job.benefits) if removed_saved_job.benefits else [],
             "region": removed_saved_job.region,
             "city": removed_saved_job.city,
@@ -1169,7 +1463,20 @@ def deactivate_job(request, job_id):
     try:
         job = Jobs.get_job_by_job_id(job_id)  # Fetch job
         if not job:
-            return Response({"status_code": StatusCode.NOT_FOUND, "message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {
+                    "status_code": StatusCode.NOT_FOUND,
+                    "message": "Job not found",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Only the owner can deactivate this job
+        if str(request.user.user_id) != str(job.employer_id):
+            return Response({
+                "status_code": StatusCode.UNAUTHORIZED,
+                "message": "You are not allowed to deactivate this job."
+            }, status=status.HTTP_403_FORBIDDEN)
         
         
         # Soft delete: set record_status to 0
@@ -1218,6 +1525,13 @@ def activate_job(request, job_id):
         job = Jobs.get_job_by_job_id(job_id)  # Fetch job
         if not job:
             return Response({"status_code": StatusCode.NOT_FOUND, "message": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Only the owner can activate this job
+        if str(request.user.user_id) != str(job.employer_id):
+            return Response({
+                "status_code": StatusCode.UNAUTHORIZED,
+                "message": "You are not allowed to activate this job."
+            }, status=status.HTTP_403_FORBIDDEN)
         
         
         # Soft delete: set record_status to 0
