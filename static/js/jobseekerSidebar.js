@@ -273,7 +273,7 @@ function setupSidebarToggle() {
         const toggleSidebarBtn = document.querySelector(".toggle-sidebar");
         const sidebar = document.querySelector(".sidebar");
 
-        if (toggleSidebarBtn && sidebar && event.target === toggleSidebarBtn) {
+        if (toggleSidebarBtn && sidebar && (event.target === toggleSidebarBtn || toggleSidebarBtn.contains(event.target))) {
             sidebar.classList.toggle("active");
         }
     });
