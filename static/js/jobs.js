@@ -31,7 +31,15 @@ const saveJobButton = document.getElementById("save-job-btn");
 // Normalize and deduplicate filter values
 function normalizeAndDeduplicate(items) {
   const seen = new Set();
-  const normalizationMap = {
+  const normalizationMap = getTypeNormalizationMap();
+  return items
+    .map((item) => item?.toString().trim().toLowerCase().replace(/\s+/g, " "))
+    .map((item) => normalizationMap[item] || capitalizeWords(item))
+    .filter((item) => item && !seen.has(item) && seen.add(item));
+}
+
+function getTypeNormalizationMap() {
+  return {
     fulltime: "Full Time",
     "full time": "Full Time",
     "full-time": "Full Time",
@@ -46,10 +54,13 @@ function normalizeAndDeduplicate(items) {
     freelance: "Freelance",
     internship: "Internship",
   };
-  return items
-    .map((item) => item?.toString().trim().toLowerCase().replace(/\s+/g, " "))
-    .map((item) => normalizationMap[item] || capitalizeWords(item))
-    .filter((item) => item && !seen.has(item) && seen.add(item));
+}
+
+function normalizeTypeValue(value) {
+  const map = getTypeNormalizationMap();
+  const key = (value || "").toString().trim().toLowerCase().replace(/\s+/g, " ");
+  const normalized = map[key] || key;
+  return normalized.toString().toLowerCase();
 }
 
 function capitalizeWords(str) {
@@ -218,7 +229,7 @@ function applyFilters() {
       (!currentFilters.location ||
         job.region.toLowerCase() === currentFilters.location) &&
       (!currentFilters.jobType ||
-        job.contract_type.toLowerCase() === currentFilters.jobType) &&
+        normalizeTypeValue(job.contract_type) === currentFilters.jobType) &&
       (!currentFilters.category ||
         job.category?.toLowerCase() === currentFilters.category)
     );
@@ -275,105 +286,51 @@ function closeJobDetails() {
 
 // Function to check if user is logged in
 function checkUserLoggedIn() {
-  const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user"));
-  return !!(token && user?.user_id);
+  return !!(user?.token && user?.user_id);
 }
 
-// Function to apply for a job
+// Function to apply for a job (uses jobCRUD)
 async function applyForJob(jobId) {
+  const user = JSON.parse(localStorage.getItem("user"));
   if (!checkUserLoggedIn()) {
-    Toast.warning("Please sign in to apply for jobs", "Sign In Required");
-    // Add delay before navigation
+    window.notify.warning("Please sign in to apply for jobs");
     setTimeout(() => {
-      window.location.href = `../pages/jobseekers-signin.html?redirect=jobs&jobId=${jobId}`;
-    }, 1000); // 2 second delay
+      window.location.href = `/jobseeker-signin/?redirect=jobs&jobId=${jobId}`;
+    }, 800);
     return;
   }
 
-  try {
-    // Find the job to get employer_id
-    const job = allJobs.find((job) => String(job.job_id) === String(jobId));
-    if (!job) {
-      Toast.error("Job not found", "Error");
-      return;
-    }
+  const job = allJobs.find((j) => String(j.job_id) === String(jobId));
+  if (!job) {
+    window.notify.error("Job not found");
+    return;
+  }
 
-    // Show loading toast
-    Toast.info("Submitting your application...", "Please wait");
-
-    // Call the service function
-    const result = await JobService.applyForJob(jobId, job.employer_id);
-
-    // Show success toast
-    Toast.success("Application submitted successfully!", "Success");
-
-    // Optionally close the modal
+  window.notify.info("Submitting your application...");
+  const ok = await window.jobCRUD.applyForJob(jobId, job.employer_id || job.employerId || user.user_id);
+  if (ok) {
     closeJobDetails();
-  } catch (error) {
-    console.error("Error applying for job:", error);
-
-    // Show specific error message
-    if (error.message.includes("Authentication")) {
-      Toast.error("Please sign in again", "Authentication Error");
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      setTimeout(() => {
-        window.location.href = "../pages/jobseekers-signin.html";
-      }, 1000);
-    } else if (error.message.includes("already applied")) {
-      Toast.warning("You have already applied for this job", "Already Applied");
-    } else {
-      Toast.error(
-        error.message || "Failed to submit application",
-        "Application Error"
-      );
-    }
   }
 }
 
 async function saveJob(jobId) {
   if (!checkUserLoggedIn()) {
-    Toast.warning("Please sign in to save jobs", "Sign In Required");
-    // Add delay before navigation
+    window.notify.warning("Please sign in to save jobs");
     setTimeout(() => {
-      window.location.href = "../pages/jobseekers-signin.html?redirect=jobs";
-    }, 1000); // 2 second delay
+      window.location.href = `/jobseeker-signin/?redirect=jobs`;
+    }, 800);
     return;
   }
 
-  try {
-    // Show loading toast
-    Toast.info("Saving job...", "Please wait");
-
-    // Call the service function
-    const result = await JobService.saveJob(jobId);
-
-    // Show success toast
-    Toast.success("Job saved to your profile!", "Saved");
-
-    // Update the save button text/state if needed
+  window.notify.info("Saving job...");
+  const ok = await window.jobCRUD.saveJob(jobId);
+  if (ok) {
     const saveButton = document.getElementById("save-job-btn");
     if (saveButton) {
       saveButton.textContent = "Saved ✓";
       saveButton.disabled = true;
       saveButton.classList.add("saved");
-    }
-  } catch (error) {
-    console.error("Error saving job:", error);
-
-    // Show specific error message
-    if (error.message.includes("Authentication")) {
-      Toast.error("Please sign in again", "Authentication Error");
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      setTimeout(() => {
-        window.location.href = "../pages/jobseekers-signin.html";
-      }, 1000);
-    } else if (error.message.includes("already saved")) {
-      Toast.warning("Job is already in your saved list", "Already Saved");
-    } else {
-      Toast.error(error.message || "Failed to save job", "Save Error");
     }
   }
 }
