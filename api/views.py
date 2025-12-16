@@ -580,7 +580,8 @@ def get_jobseeker_dashboard_metrics(request):
 # @authentication_classes([TokenAuthentication])
 # @permission_classes([IsAuthenticated])
 def get_all_jobs(request):
-    jobs = Jobs.get_all_jobs()
+    # Only return active jobs for the public listings feed
+    jobs = Jobs.get_active_jobs()
     jobs_list = [
         {
             "employer_id": job.employer_id,
@@ -843,16 +844,19 @@ def get_saved_jobs_by_user(request, user_id):
 
 
 
-    saved_jobs_list = [
-        {
+    saved_jobs_list = []
+    for saved_job in saved_jobs:
+        job_json = Jobs.get_job_by_job_id_json_format(saved_job.job_id)
+        if not job_json:
+            # skip orphaned saved-job entries that reference deleted jobs
+            continue
+        saved_jobs_list.append({
             "saved_job_id": saved_job.saved_job_id,
             "user_id": saved_job.user_id,
-            "job_details": Jobs.get_job_by_job_id_json_format(saved_job.job_id),
+            "job_details": job_json,
             "created_at": saved_job.created_at,
             "updated_at": saved_job.updated_at,
-        }
-        for saved_job in saved_jobs
-    ]
+        })
 
     return Response({"status_code": StatusCode.SUCCESS, 
                 "message": "All Saved Jobs Retrieved successfully",
@@ -1020,15 +1024,20 @@ def get_applications_by_user_id(request, user_id):
     
     applications = Applications.get_applications_by_user_id(user_id)  # Fetch Application By the user_id
     
-    application_list = [{
+    application_list = []
+    for application in applications:
+        job_json = Jobs.get_job_by_job_id_json_format(application.job_id)
+        if not job_json:
+            # skip orphaned applications tied to deleted jobs
+            continue
+        application_list.append({
             "application_id": application.application_id,
             "user_details": Users.get_user_by_user_id_json_format(application.user_id),
-            "job_details": Jobs.get_job_by_job_id_json_format(application.job_id),
+            "job_details": job_json,
             "status": application.status,
             "created_at": application.created_at,
             "updated_at": application.updated_at,
-    } for application in applications
-    ]
+        })
 
     return Response({"status_code": StatusCode.SUCCESS, 
                 "message": "Applications Retrieved successfully",
