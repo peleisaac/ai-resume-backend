@@ -99,6 +99,38 @@ This link routes you to the initial design (Wireframes) used for the development
 - **MySQL** – Database management system
 - **Azure Blob Storage** – Resume file storage
 - **Token Authentication** – Secure user authentication
+## Design System
+
+### Colors
+- **Primary**: Blue variants used for calls-to-action and highlights (see `static/css/variables.css`).
+- **Secondary**: Neutral grays for backgrounds and text; accent red for alerts.
+- **Status**: Success (green), Warning (amber), Error (red) applied to toasts and badges.
+
+### Typography
+- **Base font**: Sans-serif stack for readability across devices.
+- **Scale**: Clear hierarchy using headings, body, and small text sizes for labels.
+- **Weights**: Regular for body, semi-bold for key labels, bold for headings.
+
+### Spacing & Components
+- **Spacing**: Consistent padding/margins for cards, modals, and list items.
+- **Components**: Buttons (primary/secondary), badges, chips/tags, modals, cards.
+
+## Agile Planning Details
+
+### User Story Acceptance Criteria (samples)
+- Jobseeker applies for a job:
+   - Given I am logged in, when I click Apply on a job, then an application is created and I see a success notification; unauthorized users are prompted to sign in.
+- Employer posts a job:
+   - Given I am an authenticated employer, when I submit a valid job form, then the job appears in listings and I see a success toast; invalid forms show field errors.
+- Jobseeker saves a job:
+   - Given I am logged in, when I click Save on a job, then it appears under My Jobs; clicking Remove deletes it with confirmation and a success toast.
+
+### MoSCoW Prioritisation
+- **Must**: Auth (signup/login), job posting, browse/search, apply/save flows, secure config via env vars.
+- **Should**: Employer edit/toggle/delete, jobseeker dashboard metrics, recommendations.
+- **Could**: Enhanced filtering (skills-based), richer analytics, resume parsing improvements.
+- **Won’t (for now)**: Advanced AI screening explanations and recruiter collaboration tools.
+
 
 ## Architecture
 The application follows a client-server architecture:
