@@ -14,6 +14,9 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchUserDetails();
 
     setTimeout(highlightActiveLink, 100); // Short delay to ensure sidebar is loaded
+
+    // Add sticky top-bar shadow behavior across pages (including browse jobs)
+    setupStickyTopBar();
 });
 
 function loadJobseekerSidebar() {
@@ -252,29 +255,104 @@ function updateActiveLink(activeLink, allLinks) {
 }
 
 function highlightActiveLink() {
-    // Get the current path (e.g., "/ai-resume-frontend-v2/pages/jobseeker-profile.html")
-    const currentPath = window.location.pathname;
-    const sidebarLinks = document.querySelectorAll(".nav-item");
+    const normalize = (p) => {
+        if (!p) return "";
+        const u = new URL(p, window.location.origin);
+        return u.pathname.replace(/\/+$/, "");
+    };
+
+    const currentPath = normalize(window.location.pathname);
+    const sidebarLinks = document.querySelectorAll("a.nav-item");
 
     sidebarLinks.forEach(link => {
         link.classList.remove("active");
-        // Get the href value (e.g., "/ai-resume-frontend-v2/pages/jobseeker-profile.html")
-        const linkPath = link.getAttribute("href");
+        link.removeAttribute("aria-current");
+        const linkPath = normalize(link.getAttribute("href"));
 
-        // Check if the current path ends with or matches the link path
-        if (currentPath === linkPath || currentPath.endsWith(linkPath.split('/').pop())) {
+        if (currentPath === linkPath) {
             link.classList.add("active");
+            link.setAttribute("aria-current", "page");
         }
     });
 }
 
 function setupSidebarToggle() {
-    document.addEventListener("click", function (event) {
-        const toggleSidebarBtn = document.querySelector(".toggle-sidebar");
-        const sidebar = document.querySelector(".sidebar");
+    // Prevent double-binding across multiple scripts
+    if (window.__sidebarToggleInitialized) {
+        return;
+    }
 
-        if (toggleSidebarBtn && sidebar && (event.target === toggleSidebarBtn || toggleSidebarBtn.contains(event.target))) {
-            sidebar.classList.toggle("active");
+    const sidebarContainer = document.getElementById("sidebar");
+    const mobileToggle = document.getElementById("mobileMenuToggle");
+    const toggleSidebarBtn = document.querySelector(".toggle-sidebar");
+
+    // Ensure overlay exists once
+    let overlay = document.getElementById("sidebarOverlay");
+    if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.id = "sidebarOverlay";
+        overlay.className = "sidebar-overlay";
+        document.body.appendChild(overlay);
+    }
+
+    const openSidebar = () => {
+        if (!sidebarContainer) return;
+        sidebarContainer.classList.add("active");
+        overlay.classList.add("active");
+        document.body.classList.add("sidebar-open");
+    };
+
+    const closeSidebar = () => {
+        if (!sidebarContainer) return;
+        sidebarContainer.classList.remove("active");
+        overlay.classList.remove("active");
+        document.body.classList.remove("sidebar-open");
+    };
+
+    const toggleSidebar = () => {
+        if (!sidebarContainer) return;
+        if (sidebarContainer.classList.contains("active")) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    };
+
+    if (mobileToggle && sidebarContainer) {
+        mobileToggle.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            toggleSidebar();
+        });
+    }
+
+    document.addEventListener("click", function (event) {
+        if (toggleSidebarBtn && sidebarContainer && (event.target === toggleSidebarBtn || toggleSidebarBtn.contains(event.target))) {
+            toggleSidebar();
         }
     });
+
+    // Clicking overlay closes the sidebar
+    overlay.addEventListener("click", function () {
+        closeSidebar();
+    });
+
+    // Mark as initialized
+    window.__sidebarToggleInitialized = true;
+}
+
+function setupStickyTopBar() {
+    const apply = () => {
+        const topBar = document.querySelector('.top-bar');
+        if (!topBar) return;
+        if (window.scrollY > 0) {
+            topBar.classList.add('stuck');
+        } else {
+            topBar.classList.remove('stuck');
+        }
+    };
+    // Initial state
+    apply();
+    // Update on scroll
+    window.addEventListener('scroll', apply, { passive: true });
 }
