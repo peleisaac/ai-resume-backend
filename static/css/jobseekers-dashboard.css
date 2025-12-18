@@ -48,10 +48,7 @@
   /* Mobile Menu Toggle Enhancements */
   .mobile-menu-toggle {
     display: none;
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1001;
+    position: static;
     background: var(--primary-color);
     color: white;
     border: none;
@@ -60,6 +57,7 @@
     cursor: pointer;
     box-shadow: var(--shadow-md);
     transition: all 0.3s ease;
+    z-index: 950; /* below sidebar and overlay */
   }
   
   .mobile-menu-toggle:hover {
@@ -79,7 +77,7 @@
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+    z-index: 1190;
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -95,7 +93,7 @@
     border-right: 1px solid var(--border-color);
     position: fixed;
     height: 100vh;
-    z-index: 1000;
+    z-index: 1200;
     transition: transform 0.3s ease;
   }
   
@@ -222,9 +220,24 @@
   /* Top Bar */
   .top-bar {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    position: sticky;
+    top: 0;
+    z-index: 900; /* below sidebar and overlay */
+    background: var(--bg-light);
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 24px;
+    margin-bottom: 0;
+    min-height: 64px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Subtle elevation when stuck */
+  .top-bar.stuck {
+    box-shadow: var(--shadow-sm);
   }
   
   .top-bar h1 {
@@ -237,23 +250,6 @@
     display: flex;
     align-items: center;
     gap: 16px;
-  }
-  
-  .notification-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-medium);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px;
-    border-radius: 50%;
-    transition: background-color 0.2s;
-  }
-  
-  .notification-btn:hover {
-    background-color: var(--border-color);
   }
   
   .user-avatar {
@@ -806,9 +802,20 @@
   
   /* Responsive styles */
   @media (max-width: 768px) {
-    .mobile-menu-toggle {
-      display: block;
-    }
+      .top-bar {
+        position: sticky;
+        top: 0;
+        z-index: 900;
+        padding: 12px 16px;
+        min-height: 56px;
+      }
+      .mobile-menu-toggle {
+        display: block;
+        position: static;
+        margin-left: 0;
+        margin-top: 0;
+        z-index: 950;
+      }
   
     #sidebar {
       transform: translateX(-100%);
@@ -856,7 +863,7 @@
   
     /* Adjust top bar for mobile */
     .top-bar {
-      padding-left: 60px; /* Space for toggle button */
+      padding-left: 0;
     }
   
     .filters {
@@ -915,9 +922,9 @@
     }
   
     .top-bar {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
+      flex-direction: row;
+      align-items: center;
+      gap: 0;
     }
   
     .user-actions {
@@ -939,8 +946,8 @@
     }
   
     .top-bar {
-      align-items: flex-start;
-      gap: 12px;
+      align-items: center;
+      gap: 0;
     }
   
     .top-bar h1 {
