@@ -613,12 +613,17 @@ def get_employer_dashboard_metrics(request):
 def get_jobseeker_dashboard_metrics(request):
     user_id = request.data.get("user_id", "")
 
-    all_applications_count = Applications.get_applications_by_user_id(user_id)
+    all_applications = Applications.get_applications_by_user_id(user_id)
     saved_jobs_count = SavedJobs.get_saved_jobs_by_user_id(user_id)
-    
+
+    # Applications in review: status is 'pending' or 'review'
+    in_review_statuses = ["pending", "review"]
+    applications_in_review = [a for a in all_applications if getattr(a, 'status', '').lower() in in_review_statuses]
+
     dashboard_metrics_data = {
-        "all_applications_count": len(all_applications_count),
-        "saved_jobs_count": len(saved_jobs_count)
+        "all_applications_count": len(all_applications),
+        "saved_jobs_count": len(saved_jobs_count),
+        "applications_in_review": len(applications_in_review)
     }
     return Response({"status_code": StatusCode.SUCCESS, 
                 "message": "Job Seeker Dashboard Metrics Retrieved successfully",
