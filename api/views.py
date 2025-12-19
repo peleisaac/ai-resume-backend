@@ -20,6 +20,47 @@ from django.conf import settings
 
 # Create your views here.
 
+def _serialize_job(job, include_application_count=False):
+    """Serialize a Job into a compact dict to keep lines short and PEP8-compliant."""
+    requirements = (
+        json.loads(job.requirements) if job.requirements else []
+    )
+    required_skills = (
+        json.loads(job.required_skills) if job.required_skills else []
+    )
+    benefits = (
+        json.loads(job.benefits) if job.benefits else []
+    )
+
+    payload = {
+        "employer_id": job.employer_id,
+        "job_id": job.job_id,
+        "title": job.title,
+        "description": job.description,
+        "category": job.category,
+        "contract_type": job.contract_type,
+        "experience": job.experience,
+        "education_level": job.education_level,
+        "requirements": requirements,
+        "required_skills": required_skills,
+        "benefits": benefits,
+        "region": job.region,
+        "city": job.city,
+        "company_name": job.company_name,
+        "no_of_vacancies": job.no_of_vacancies,
+        "salary": job.salary,
+        "created_at": job.created_at,
+        "updated_at": job.updated_at,
+        "is_active": job.is_active,
+    }
+
+    if include_application_count:
+        payload["no_of_applications"] = (
+            Applications.get_number_of_applications_by_job_id(job.job_id)
+        )
+
+    return payload
+
 def index_frontend_view(request):
     return render(request, "airesumefrontend/index.html") 
 
@@ -551,9 +592,16 @@ def get_employer_dashboard_metrics(request):
     active_jobs = Jobs.get_active_jobs_by_employer(employer_id=employer_id)
     all_applications_count = Applications.get_all_applications_count_for_employer(employer_id=employer_id)
     
+    qualified_count = Applications.objects.filter(
+        employer_id=employer_id,
+        status__in=["shortlisted", "hired"],
+        record_status="1"
+    ).count()
+
     dashboard_metrics_data = {
         "active_jobs": len(active_jobs),
-        "all_applications_count": all_applications_count
+        "all_applications_count": all_applications_count,
+        "qualified_candidates": qualified_count
     }
     return Response({"status_code": StatusCode.SUCCESS, 
                 "message": "Employer Dashboard Metrics Retrieved successfully",
@@ -582,31 +630,7 @@ def get_jobseeker_dashboard_metrics(request):
 def get_all_jobs(request):
     # Only return active jobs for the public listings feed
     jobs = Jobs.get_active_jobs()
-    jobs_list = [
-        {
-            "employer_id": job.employer_id,
-            "job_id": job.job_id,
-            "title": job.title,
-            "description": job.description,
-            "category": job.category,
-            "contract_type": job.contract_type,
-            "experience": job.experience,
-            "education_level": job.education_level,
-            "requirements": json.loads(job.requirements) if job.requirements else [],
-            "required_skills": json.loads(job.required_skills) if job.required_skills else [],
-            "benefits": json.loads(job.benefits) if job.benefits else [],
-            "region": job.region,
-            "city": job.city,
-            "company_name": job.company_name,
-            "no_of_vacancies": job.no_of_vacancies,
-            "salary": job.salary,
-            "created_at": job.created_at,
-            "updated_at": job.updated_at,
-            "is_active": job.is_active,
-            "no_of_applications": Applications.get_number_of_applications_by_job_id(job.job_id)
-        }
-        for job in jobs
-    ]
+    jobs_list = [_serialize_job(job, include_application_count=True) for job in jobs]
     return Response({"status_code": StatusCode.SUCCESS, 
                 "message": "All Jobs Retrieved successfully",
                 "jobs": jobs_list}, status=status.HTTP_200_OK)
@@ -617,31 +641,7 @@ def get_all_jobs(request):
 def get_all_jobs_by_employer(request, employer_id):
     # Return all (non-deleted) jobs for the employer so paused/active both show up
     jobs = Jobs.get_all_jobs_posted_by_employer(employer_id)
-    jobs_list = [
-        {
-            "employer_id": job.employer_id,
-            "job_id": job.job_id,
-            "title": job.title,
-            "description": job.description,
-            "category": job.category,
-            "contract_type": job.contract_type,
-            "experience": job.experience,
-            "education_level": job.education_level,
-            "requirements": json.loads(job.requirements) if job.requirements else [],
-            "required_skills": json.loads(job.required_skills) if job.required_skills else [],
-            "benefits": json.loads(job.benefits) if job.benefits else [],
-            "region": job.region,
-            "city": job.city,
-            "company_name": job.company_name,
-            "no_of_vacancies": job.no_of_vacancies,
-            "salary": job.salary,
-            "created_at": job.created_at,
-            "updated_at": job.updated_at,
-            "is_active": job.is_active,
-            "no_of_applications": Applications.get_number_of_applications_by_job_id(job.job_id)
-        }
-        for job in jobs
-    ]
+    jobs_list = [_serialize_job(job, include_application_count=True) for job in jobs]
     return Response({"status_code": StatusCode.SUCCESS, 
                 "message": "All Jobs Retrieved successfully",
                 "jobs": jobs_list}, status=status.HTTP_200_OK)
@@ -706,30 +706,7 @@ def get_active_users(request):
 @permission_classes([IsAuthenticated])
 def get_active_jobs(request):
     jobs = Jobs.get_active_jobs()
-    jobs_list = [
-        {
-            "employer_id": job.employer_id,
-            "job_id": job.job_id,
-            "title": job.title,
-            "description": job.description,
-            "category": job.category,
-            "contract_type": job.contract_type,
-            "experience": job.experience,
-            "education_level": job.education_level,
-            "requirements": json.loads(job.requirements) if job.requirements else [],
-            "required_skills": json.loads(job.required_skills) if job.required_skills else [],
-            "benefits": json.loads(job.benefits) if job.benefits else [],
-            "region": job.region,
-            "city": job.city,
-            "company_name": job.company_name,
-            "no_of_vacancies": job.no_of_vacancies,
-            "salary": job.salary,
-            "created_at": job.created_at,
-            "updated_at": job.updated_at,
-            "is_active": job.is_active,
-        }
-        for job in jobs
-    ]
+    jobs_list = [_serialize_job(job, include_application_count=False) for job in jobs]
     return Response({"status_code": StatusCode.SUCCESS, 
                 "message": "All Active Jobs Retrieved successfully",
                 "jobs": jobs_list}, status=status.HTTP_200_OK)
