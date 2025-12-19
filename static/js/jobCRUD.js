@@ -246,18 +246,27 @@ class JobCRUD {
                 if (window.JobDataService) {
                     window.JobDataService.cachedJobs = null;
                 }
-                return data.job;
+                return {
+                    success: true,
+                    job: data.job
+                };
             }
 
             const message = data.message || `Failed to post job (HTTP ${response.status}).`;
             window.notify.error(message);
             console.error('Job post failed:', { status: response.status, data: data || raw });
-            return null;
+            return {
+                success: false,
+                error: message
+            };
         } catch (error) {
             // Network or other error: fall back to local mock
             console.error('Add job error:', error);
             window.notify.error('Network issue while posting job.');
-            return null;
+            return {
+                success: false,
+                error: 'Network issue while posting job.'
+            };
         }
     }
 
