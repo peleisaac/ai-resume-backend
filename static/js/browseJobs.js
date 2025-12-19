@@ -257,7 +257,7 @@ function openJobDetails(jobId) {
         </div>
     `;
 
-    jobModal.style.display = 'block';
+    jobModal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
     // Update apply button
     applyButton.setAttribute('data-job-id', job.job_id);
