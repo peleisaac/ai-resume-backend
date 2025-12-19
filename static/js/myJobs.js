@@ -428,7 +428,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const ok = await window.jobCRUD.removeSavedJob(jobId);
             if (!ok) return;
 
-            savedJobs = savedJobs.filter(job => job.id !== jobId);
+            savedJobs = savedJobs.filter(job => job.job_id !== jobId);
             loadSavedJobs();
             window.notify.success('Job removed from saved list');
         } catch (error) {
