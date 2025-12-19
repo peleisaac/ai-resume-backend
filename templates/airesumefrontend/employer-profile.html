@@ -26,7 +26,7 @@
       <form id="employer-form">
         <div class="company-contact-info row">
           <div>
-            <label for="company-name">Company Name</label>
+            <label for="company-name">Company Name <span style="color:red">*</span></label>
             <input
               type="text"
               id="company-name"
@@ -36,7 +36,7 @@
           </div>
 
           <div>
-            <label for="contact-name">Contact Name</label>
+            <label for="contact-name">Contact Name <span style="color:red">*</span></label>
             <input
               type="text"
               id="contact-name"
@@ -47,7 +47,7 @@
         </div>
 
         <div>
-          <label for="business-email">Business Email</label>
+          <label for="business-email">Business Email <span style="color:red">*</span></label>
           <input
             type="email"
             id="business-email"
@@ -57,7 +57,7 @@
         </div>
 
         <div>
-          <label for="company-description">Company Description</label>
+          <label for="company-description">Company Description <span style="color:red">*</span></label>
           <textarea
             id="company-description"
             placeholder="Company Description"
@@ -67,7 +67,7 @@
 
         <div class="row">
           <div>
-            <label for="industry-sector">Industry/Business Sector</label>
+            <label for="industry-sector">Industry/Business Sector <span style="color:red">*</span></label>
             <select id="industry-sector" required>
               <option value="">Select Industry</option>
               <option value="IT">Information Technology</option>
@@ -90,7 +90,7 @@
           </div>
 
           <div>
-            <label for="region">Region</label>
+            <label for="region">Region <span style="color:red">*</span></label>
             <select id="region" required>
               <option value="">Select Region</option>
               <option value="Greater Accra">Greater Accra</option>
@@ -109,19 +109,19 @@
 
         <div class="row">
           <div>
-            <label for="city">City</label>
+            <label for="city">City <span style="color:red">*</span></label>
             <input type="text" id="city" placeholder="City" required />
           </div>
 
           <div>
-            <label for="address">Address</label>
+            <label for="address">Address <span style="color:red">*</span></label>
             <input type="text" id="address" placeholder="Address" required />
           </div>
         </div>
 
         <div class="row">
           <div>
-            <label for="phone-number">Phone Number</label>
+            <label for="phone-number">Phone Number <span style="color:red">*</span></label>
             <input
               type="text"
               id="phone-number"
@@ -213,13 +213,39 @@
         jobseekerForm.addEventListener("submit", async function (event) {
           event.preventDefault(); // Prevent page refresh
 
+          // Validate required fields
+          const requiredFields = [
+            { id: "company-name", name: "Company Name" },
+            { id: "contact-name", name: "Contact Name" },
+            { id: "business-email", name: "Business Email" },
+            { id: "company-description", name: "Company Description" },
+            { id: "industry-sector", name: "Industry/Business Sector" },
+            { id: "region", name: "Region" },
+            { id: "city", name: "City" },
+            { id: "address", name: "Address" },
+            { id: "phone-number", name: "Phone Number" }
+          ];
+          let missing = [];
+          requiredFields.forEach(field => {
+            const el = document.getElementById(field.id);
+            if (!el.value || el.value.trim() === "") {
+              missing.push(field.name);
+              el.classList.add("input-error");
+            } else {
+              el.classList.remove("input-error");
+            }
+          });
+          if (missing.length > 0) {
+            alert("Please fill in all required fields: " + missing.join(", "));
+            return;
+          }
+
           // Collecting form data
           const formData = {
             company_name: document.getElementById("company-name").value.trim(),
             contact_name: document.getElementById("contact-name").value.trim(),
             email: document.getElementById("business-email").value.trim(),
-            company_description: document.getElementById("company-description")
-              .value,
+            company_description: document.getElementById("company-description").value,
             industry: document.getElementById("industry-sector").value,
             region: document.getElementById("region").value.trim(),
             city: document.getElementById("city").value.trim(),
