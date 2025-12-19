@@ -17,28 +17,21 @@
 
 <body data-role="jobseeker">
     <div class="dashboard-container">
-        <!-- Mobile Menu Toggle -->
-        <button class="mobile-menu-toggle" id="mobileMenuToggle" title="Open mobile menu" aria-label="Open mobile menu">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
-            </svg>
-        </button>
         <!-- Sidebar Navigation -->
         <div id="sidebar"></div>
 
         <!-- Main Content Area -->
         <main class="main-content">
             <div class="top-bar">
-                <h1>Dashboard</h1>
-                <div class="user-actions">
-                    <button class="notification-btn" title="Notifications">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle" title="Open mobile menu" aria-label="Open mobile menu">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M15 17H9M9 17H8.5C7.11929 17 6 15.8807 6 14.5V9.5C6 8.11929 7.11929 7 8.5 7H15.5C16.8807 7 18 8.11929 18 9.5V14.5C18 15.8807 16.8807 17 15.5 17H15M9 17V18C9 19.1046 9.89543 20 11 20H13C14.1046 20 15 19.1046 15 18V17M12 3V7"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
+                    <h1 style="margin: 0;">Dashboard</h1>
+                </div>
+                <div class="user-actions">
                     <div class="user-avatar">
                         <img src="/static/assets/lady.jpg" alt="User Avatar">
                     </div>
@@ -71,6 +64,20 @@
                         <div class="metric-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="currentColor" stroke-width="2" />
+                                <path d="M12 7V12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                        </div>
+                        <div class="metric-info">
+                            <h3>Applications in Review</h3>
+                            <p class="metric-value in-review">0</p>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
                                 <path
                                     d="M17 20H7C5.89543 20 5 19.1046 5 18V9C5 7.89543 5.89543 7 7 7H17C18.1046 7 19 7.89543 19 9V18C19 19.1046 18.1046 20 17 20Z"
                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -84,20 +91,7 @@
                         </div>
                     </div>
 
-                    <div class="metric-card">
-                        <div class="metric-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                            </svg>
-                        </div>
-                        <div class="metric-info">
-                            <h3>Interviews Scheduled</h3>
-                            <p class="metric-value interviews">0</p>
-                        </div>
-                    </div>
+                    <!-- Interviews Scheduled metric removed to match backend -->
 
                 </div>
 
@@ -156,11 +150,10 @@
 
                     const appliedJobsElement = document.querySelector(".metric-value.applied-jobs");
                     const savedJobsElement = document.querySelector(".metric-value.saved-jobs");
-                    const interviewsElement = document.querySelector(".metric-value.interviews");
-
+                    const inReviewElement = document.querySelector(".metric-value.in-review");
                     if (appliedJobsElement) appliedJobsElement.textContent = data.data.all_applications_count || 0;
                     if (savedJobsElement) savedJobsElement.textContent = data.data.saved_jobs_count || 0;
-                    if (interviewsElement) interviewsElement.textContent = data.interviewsScheduled || 0;
+                    if (inReviewElement) inReviewElement.textContent = data.data.applications_in_review || 0;
                 })
                 .catch(error => console.error("Error fetching metrics:", error));
         });
