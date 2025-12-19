@@ -118,6 +118,13 @@ async function fetchJobs() {
         updateJobCount();
         renderJobs();
         renderPagination();
+
+        // Check for deep link jobId
+        const urlParams = new URLSearchParams(window.location.search);
+        const deepLinkJobId = urlParams.get('jobId');
+        if (deepLinkJobId) {
+            openJobDetails(deepLinkJobId);
+        }
     } catch (error) {
         console.error('Error fetching jobs:', error);
         jobsListElement.innerHTML = `<div class="error-message"><p>Failed to load jobs. Please try again later.</p></div>`;
@@ -167,7 +174,7 @@ function renderJobs() {
                     <div class="company-name">${job.company_name || "No Company"}</div>
                 </div>
 
-                <div class="salary">${job.salary ? `$${job.salary}` : "Not specified"}</div>
+                <div class="salary">${job.salary ? `$${Number(job.salary).toLocaleString()}` : "Not specified"}</div>
             </div>
             <div class="job-details">
                 <div class="job-detail">
@@ -223,7 +230,7 @@ function openJobDetails(jobId) {
                     <div class="company-location">${job.city}, ${job.region}</div>
                 </div>
                 <div class="job-highlight">
-                    <div class="salary">${job.salary ? `$${job.salary}` : "Not specified"}</div>
+                    <div class="salary">${job.salary ? `$${Number(job.salary).toLocaleString()}` : "Not specified"}</div>
                     <div class="job-type">${job.contract_type}</div>
                     <div class="experience-level">${job.experience}</div>
                 </div>
