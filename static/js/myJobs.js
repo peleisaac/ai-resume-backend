@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const appliedSearchInput = document.getElementById('applied-search');
     const appliedSearchBtn = document.getElementById('applied-search-btn');
     const statusFilter = document.getElementById('status-filter');
-    const dateFilterElement = document.getElementById('date-filter'); 
+    const dateFilterElement = document.getElementById('date-filter');
     const filterBtn = document.getElementById('filter-btn');
     const modal = document.getElementById('job-modal');
     const closeModal = document.querySelector('.modal .close');
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     experience: app.job_details.experience || "Not specified",
                     created_at: app.created_at,
                     description: app.job_details.description || "No description available.",
-                    requirements: parseRequiredSkills(app.job_details.requirements ||  []),
+                    requirements: parseRequiredSkills(app.job_details.requirements || []),
                     required_skills: required_skills,
                     benefits: parseRequiredSkills(app.job_details.benefits || [])
                 };
@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <h3 class="job-title">${job.title || "No Title"}</h3>
                     <div class="company-name">${job.company_name || "No Company"}</div>
                 </div>
-                <div class="salary">${job.salary ? `${job.salary}` : "Not specified"}</div>
+                <div class="salary">${job.salary ? `$${Number(job.salary).toLocaleString()}` : "Not specified"}</div>
             </div>
             <div class="job-details">
                 <div class="job-detail">
@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function openJobDetails(job, type) {
-        
+
         jobDetailContent.innerHTML = `
             <div class="job-wrapper">
                 <div class="job-detail-header">
@@ -344,14 +344,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="company-location">${job.city}, ${job.region}</div>
                     </div>
                     <div class="job-highlight">
-                        <div class="salary">${job.salary ? `$${job.salary}` : "Not specified"}</div>
+                        <div class="salary">${job.salary ? `$${Number(job.salary).toLocaleString()}` : "Not specified"}</div>
                         <div class="job-type">${job.contract_type}</div>
                         <div class="experience-level">${job.experience || "Not specified"}</div>
                         ${type === 'applied' && job.status ?
-                    `<div class="application-status">
+                `<div class="application-status">
                                 <span class="status-badge ${job.status}">${capitalizeFirstLetter(job.status.replace('_', ' '))}</span>
                             </div>` :
-                    ''}
+                ''}
                     </div>
                 </div>
     
@@ -364,8 +364,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     <h3>Requirements</h3>
                     <ul>
                     ${Array.isArray(job.requirements) && job.requirements.length ?
-                    job.requirements.map(req => `<li>${req}</li>`).join('') :
-                    '<li>Not specified</li>'}
+                job.requirements.map(req => `<li>${req}</li>`).join('') :
+                '<li>Not specified</li>'}
                     </ul>
                 </div>
     
@@ -373,8 +373,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     <h3>Benefits</h3>
                     <ul>
                     ${Array.isArray(job.benefits) && job.benefits.length ?
-                    job.benefits.map(benefit => `<li>${benefit}</li>`).join('') :
-                    '<li>Not specified</li>'}
+                job.benefits.map(benefit => `<li>${benefit}</li>`).join('') :
+                '<li>Not specified</li>'}
                     </ul>
                 </div>
     
@@ -382,8 +382,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     <h3>Required Skills</h3>
                     <div class="job-tags">
                     ${Array.isArray(job.required_skills) && job.required_skills.length ?
-                    job.required_skills.map(skill => `<span class="skill job-tag">${skill}</span>`).join('') :
-                    'Not specified'}
+                job.required_skills.map(skill => `<span class="skill job-tag">${skill}</span>`).join('') :
+                'Not specified'}
                     </div>
                 </div>
             </div>
@@ -394,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function () {
             applyButton.style.display = 'block';
             removeSavedButton.style.display = 'block';
             applyButton.onclick = () => {
-                window.location.href = `../pages/jobseeker-browse-jobs.html?jobId=${job.job_id}`;
+                window.location.href = `/jobseeker-browse-jobs?jobId=${job.job_id}`;
             };
             removeSavedButton.onclick = () => {
                 removeSavedJob(job.job_id);
