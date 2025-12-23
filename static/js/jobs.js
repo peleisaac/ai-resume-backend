@@ -150,7 +150,7 @@ function renderJobs() {
         <div class="job-header">
           <div><h3 class="job-title">${job.title
         }</h3><div class="company-name">${job.company_name}</div></div>
-          <div class="salary">${job.salary}</div>
+          <div class="salary">${formatSalary(job.salary)}</div>
         </div>
         <div class="job-details">
           <div class="job-detail">${job.region}</div>
@@ -215,15 +215,12 @@ function applyFilters() {
     category: categoryFilter.value,
   };
 
-  filteredJobs = allJobs.filter((job) => {
+  // Calculate scores if there is a search term
+  const searchTerm = currentFilters.search;
+
+  // First filter by non-search criteria
+  let candidates = allJobs.filter(job => {
     return (
-      (!currentFilters.search ||
-        job.title.toLowerCase().includes(currentFilters.search) ||
-        job.company_name.toLowerCase().includes(currentFilters.search) ||
-        job.description.toLowerCase().includes(currentFilters.search) ||
-        job.required_skills.some((skill) =>
-          skill.toLowerCase().includes(currentFilters.search)
-        )) &&
       (!currentFilters.location ||
         job.region.toLowerCase() === currentFilters.location) &&
       (!currentFilters.jobType ||
@@ -233,10 +230,64 @@ function applyFilters() {
     );
   });
 
+  if (searchTerm) {
+    // Score each candidate
+    filteredJobs = candidates.map(job => {
+      let score = 0;
+      const title = job.title.toLowerCase();
+      const company = job.company_name.toLowerCase();
+      const desc = job.description.toLowerCase();
+
+      // Exact title match gets huge bonus
+      if (title === searchTerm) score += 200;
+      // Title contains search term
+      else if (title.includes(searchTerm)) score += 100;
+
+      // Skills match
+      if (job.required_skills.some(skill => skill.toLowerCase().includes(searchTerm))) {
+        score += 50;
+      }
+
+      // Company match
+      if (company.includes(searchTerm)) score += 30;
+
+      // Description match
+      if (desc.includes(searchTerm)) score += 10;
+
+      return { ...job, _score: score };
+    })
+      .filter(job => job._score > 0) // Remove non-matches
+      .sort((a, b) => b._score - a._score); // Sort by score descending
+  } else {
+    // No search term, just return filtered candidates sorted by date (newest first)
+    filteredJobs = candidates.sort((a, b) => {
+      const dateA = new Date(a.created_at || a.datePosted);
+      const dateB = new Date(b.created_at || b.datePosted);
+      return dateB - dateA;
+    });
+  }
+
   currentPage = 1;
   updateJobCount();
   renderJobs();
   renderPagination();
+}
+
+
+function formatSalary(salary) {
+  if (!salary) return "Not specified";
+  // Check if it's a range (e.g. "50000-60000" or "50000 - 60000")
+  const rangeMatch = salary.toString().match(/^(\d+)\s*-\s*(\d+)$/);
+  if (rangeMatch) {
+    return `${Number(rangeMatch[1]).toLocaleString()} - ${Number(rangeMatch[2]).toLocaleString()}`;
+  }
+  // Check if it's a single number
+  const num = Number(salary);
+  if (!isNaN(num)) {
+    return num.toLocaleString();
+  }
+  // Return as is if it's already formatted or non-numeric
+  return salary;
 }
 
 function openJobDetails(jobId) {
@@ -248,7 +299,7 @@ function openJobDetails(jobId) {
       <h2>${job.title}</h2>
       <div class="company-detail"><div class="company-name">${job.company_name
     }</div><div class="company-location">${job.region}</div></div>
-      <div class="job-highlight"><div class="salary">${job.salary
+      <div class="job-highlight"><div class="salary">${formatSalary(job.salary)
     }</div><div class="job-type">${job.contract_type
     }</div><div class="experience-level">${job.experience}</div></div>
     </div>
@@ -267,9 +318,8 @@ function openJobDetails(jobId) {
       )
       .join("")}</div></div>`;
 
-  applyButton.setAttribute("data-job-id", job.job_id);
   saveJobButton.setAttribute("data-job-id", job.job_id);
-  jobModal.style.display = "block";
+  jobModal.style.display = "flex";
   document.body.style.overflow = "hidden";
 }
 
