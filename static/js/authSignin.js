@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Processed login result:", result);
 
         if (result.success) {
-          Toast.success(`${responseData.message}`);
+          window.notify.success(`${responseData.message}`);
           // Store user data in localStorage
           localStorage.setItem("user", JSON.stringify(result.data));
 
@@ -148,58 +148,65 @@ document.addEventListener("DOMContentLoaded", function () {
 
               // Check if profile fetch was successful
               if (profileResult.success && profileResult.data) {
-                const profileCompleted =
-                  profileResult.data.profile_complete === true;
+                const profileCompleted = profileResult.data.profile_complete;
                 console.log("Profile completed status:", profileCompleted);
-                Toast.success(`${profileResult.message}`);
+                window.notify.success(`${profileResult.message}`);
 
                 // Redirect based on profile completion status
                 if (profileCompleted) {
                   console.log("Redirecting to dashboard");
-                  Toast.success("Redirecting to dashboard");
-                  window.location.href =
-                    userRole === "employer"
-                      ? "/employer-dashboard"
-                      : "/jobseeker-dashboard";
-                } 
+                  window.notify.success("Redirecting to dashboard");
+                  setTimeout(() => {
+                    window.location.href =
+                      userRole === "employer"
+                        ? "/employer-dashboard"
+                        : "/jobseeker-dashboard";
+                  }, 2000);
+                }
                 else {
                   console.log("Redirecting to profile - incomplete profile");
-                  Toast.error("Redirecting to profile - incomplete profile");
-                  window.location.href =
-                    userRole === "employer"
-                      ? "/employer-profile"
-                      : "/jobseeker-profile";
+                  window.notify.warning("Redirecting to profile - incomplete profile");
+                  setTimeout(() => {
+                    window.location.href =
+                      userRole === "employer"
+                        ? "/employer-profile"
+                        : "/jobseeker-profile";
+                  }, 2000);
                 }
-              } 
+              }
               // else {
               //   console.log("Profile data issue, redirecting to profile page");
-              //   Toast.error("Profile data issue, redirecting to profile page");
+              //   window.notify.error("Profile data issue, redirecting to profile page");
               //   window.location.href =
               //     userRole === "employer"
               //       ? "/employer-profile"
               //       : "/jobseeker-profile";
-              //   Toast.error(profileResult.message);
+              //   window.notify.error(profileResult.message);
               // }
             })
             .catch((profileError) => {
-              Toast.error("Profile fetch error:", profileError);
+              window.notify.error("Profile fetch error:", profileError);
               console.error("Profile fetch error:", profileError);
               // If there's an error fetching the profile, redirect to profile page
-              window.location.href =
-                userRole === "employer"
-                  ? "/employer-profile"
-                  : "/jobseeker-profile";
+              setTimeout(() => {
+                window.location.href =
+                  userRole === "employer"
+                    ? "/employer-profile"
+                    : "/jobseeker-profile";
+              }, 2000);
             });
         } else {
           document.getElementById("email").value = "";
           document.getElementById("password").value = "";
-          Toast.error(`${responseData.non_field_errors}`);
-          errorMessage.textContent = responseData.message || result.message;
+
+          const msg = responseData.message || result.message || "Login failed";
+          window.notify.error(msg);
+          errorMessage.textContent = msg;
         }
       })
       .catch((error) => {
         console.error("Login error:", error);
-        Toast.error(`${error.message}`);
+        window.notify.error(`${error.message}`);
 
         document.getElementById("email").value = "";
         document.getElementById("password").value = "";
