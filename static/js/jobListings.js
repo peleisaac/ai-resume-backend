@@ -63,7 +63,6 @@ async function initializeJobListings() {
         if (jobs && Array.isArray(jobs)) {
             jobs.sort((a, b) => new Date(b.datePosted) - new Date(a.datePosted));
         }
-        console.log("Jobs loaded:", jobs);
 
         // Make sure JobListings functions are available
         if (typeof window.JobListings === 'undefined' ||
@@ -107,7 +106,7 @@ async function initializeJobListings() {
 
 // Functions for rendering jobs and setting up action buttons
 function renderJobs(jobs) {
-    console.log("Rendering jobs:", jobs);
+
     const tableBody = document.getElementById("jobsTableBody");
 
     // cache current jobs for modal/actions
@@ -200,9 +199,7 @@ function renderJobs(jobs) {
 
 
     // Add event listeners to action buttons
-    console.log("✅ renderJobs() about to call setupActionButtons");
     setupActionButtons();
-    console.log("✅ renderJobs() COMPLETED");
 }
 
 async function setupActionButtons() {
