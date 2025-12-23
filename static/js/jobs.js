@@ -86,6 +86,10 @@ async function fetchJobs() {
 
     const data = await response.json();
     allJobs = data.jobs || [];
+
+    // Sort by created_at descending (newest first)
+    allJobs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
     filteredJobs = [...allJobs];
 
     const contractTypes = normalizeAndDeduplicate(
