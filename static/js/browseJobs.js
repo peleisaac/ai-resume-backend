@@ -338,9 +338,8 @@ function applyFilters() {
 }
 
 
-// Save job
 function saveJob(jobId) {
-    alert('Job saved to your profile!');
+    window.notify.success('Job saved to your profile!');
 }
 
 
@@ -417,7 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.notify.warning("Please sign in to apply for jobs");
             setTimeout(() => {
                 window.location.href = "/jobseeker-signin/?redirect=jobs";
-            }, 800);
+            }, 2000);
             return;
         }
 
@@ -439,18 +438,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    // Function to show toast messages
-    function showToast(message, type) {
-        const toast = document.createElement("div");
-        toast.className = `toast ${type}`;
-        toast.textContent = message;
-        document.body.appendChild(toast);
-
-        setTimeout(() => {
-            toast.classList.add("fade-out");
-            setTimeout(() => toast.remove(), 500);
-        }, 3000);
-    }
+    /* function showToast(message, type) {
+        // Deprecated: Using window.notify instead
+    } */
 
 
     const saveJobButton = document.getElementById("save-job-button");
@@ -466,7 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.notify.warning("Please sign in to save jobs");
             setTimeout(() => {
                 window.location.href = "/jobseeker-signin/?redirect=jobs";
-            }, 800);
+            }, 2000);
             return;
         }
 
