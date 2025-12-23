@@ -105,12 +105,12 @@ async function fetchJobs() {
     renderPagination();
 
     // Success toast
-    Toast.success(`${data.message}`);
+    window.notify.success(`${data.message}`);
   } catch (error) {
     console.error("Error fetching jobs:", error);
 
     // Error toast
-    Toast.error("Failed to load jobs. Please try again later.", "Error");
+    window.notify.error("Failed to load jobs. Please try again later.");
 
     jobsListElement.innerHTML = `
       <div class="error-message">
@@ -143,14 +143,13 @@ function renderJobs() {
         diffDays === 0
           ? "Today"
           : diffDays < 7
-          ? `${diffDays} day(s) ago`
-          : `${Math.floor(diffDays / 7)} week(s) ago`;
+            ? `${diffDays} day(s) ago`
+            : `${Math.floor(diffDays / 7)} week(s) ago`;
       return `
       <div class="job-card" data-job-id="${job.job_id}">
         <div class="job-header">
-          <div><h3 class="job-title">${
-            job.title
-          }</h3><div class="company-name">${job.company_name}</div></div>
+          <div><h3 class="job-title">${job.title
+        }</h3><div class="company-name">${job.company_name}</div></div>
           <div class="salary">${job.salary}</div>
         </div>
         <div class="job-details">
@@ -194,9 +193,8 @@ function renderPagination() {
   if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
 
   for (let i = startPage; i <= endPage; i++) {
-    pagesHTML += `<span class="${
-      i === currentPage ? "current" : ""
-    }">${i}</span>`;
+    pagesHTML += `<span class="${i === currentPage ? "current" : ""
+      }">${i}</span>`;
   }
   pageNumbersElement.innerHTML = pagesHTML;
   document.querySelectorAll(".page-numbers span").forEach((span) => {
@@ -248,17 +246,13 @@ function openJobDetails(jobId) {
   jobDetailContent.innerHTML = `
     <div class="job-detail-header">
       <h2>${job.title}</h2>
-      <div class="company-detail"><div class="company-name">${
-        job.company_name
-      }</div><div class="company-location">${job.region}</div></div>
-      <div class="job-highlight"><div class="salary">${
-        job.salary
-      }</div><div class="job-type">${
-    job.contract_type
-  }</div><div class="experience-level">${job.experience}</div></div>
+      <div class="company-detail"><div class="company-name">${job.company_name
+    }</div><div class="company-location">${job.region}</div></div>
+      <div class="job-highlight"><div class="salary">${job.salary
+    }</div><div class="job-type">${job.contract_type
+    }</div><div class="experience-level">${job.experience}</div></div>
     </div>
-    <div class="job-description-full"><h3>Job Description</h3>${
-      job.description
+    <div class="job-description-full"><h3>Job Description</h3>${job.description
     }</div>
     <div class="job-requirements"><h3>Requirements</h3><ul>${job.requirements
       .map((req) => `<li>${req}</li>`)
