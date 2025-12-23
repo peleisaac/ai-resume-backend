@@ -55,6 +55,12 @@ document.addEventListener("DOMContentLoaded", function () {
   if (authContainer) {
     authContainer.innerHTML = loadSignUpForm(userRole);
 
+    // Apply validations
+    if (window.ValidationUtils) {
+      window.ValidationUtils.attach(['fname', 'lname', 'company_name', 'contact_name'], window.ValidationUtils.restrictToName);
+    }
+
+
     // Attach event listeners for navigation buttons
     document
       .getElementById("signin-btn")
@@ -173,20 +179,22 @@ document.addEventListener("DOMContentLoaded", function () {
           localStorage.setItem("user", JSON.stringify(result.data));
           console.log(`${responseData.data}`);
           // alert(result.message);
-          Toast.success(`${responseData.message}`);
+          window.notify.success(`${responseData.message}`);
 
-          window.location.href =
-            userRole === "employer"
-              ? "/employer-signin"
-              : "/jobseeker-signin";
+          setTimeout(() => {
+            window.location.href =
+              userRole === "employer"
+                ? "/employer-signin"
+                : "/jobseeker-signin";
+          }, 2000);
         } else {
           errorMessage.textContent = responseData.message || result.message;
-          Toast.error(`${responseData.message}`);
+          window.notify.error(`${responseData.message}`);
         }
       })
       .catch((error) => {
         console.error("Error:", error);
-        Toast.error("An error occurred. Please try again.");
+        window.notify.error("An error occurred. Please try again.");
         errorMessage.textContent = "An error occurred. Please try again.";
       });
   }
