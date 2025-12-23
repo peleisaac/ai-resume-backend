@@ -113,7 +113,11 @@ async function fetchJobs() {
         setLocationOptions(locationFilter, locations, 'All Locations');
         setSelectOptions(experienceFilter, experiences, 'All Levels');
 
-        filteredJobs = [...allJobs];
+        filteredJobs = [...allJobs].sort((a, b) => {
+            const dateA = new Date(a.created_at || a.datePosted);
+            const dateB = new Date(b.created_at || b.datePosted);
+            return dateB - dateA;
+        });
 
         updateJobCount();
         renderJobs();
