@@ -113,13 +113,13 @@ function loadSidebar() {
 async function fetchUserDetails() {
     const user = JSON.parse(localStorage.getItem("user"));
     console.log(user);
-    
+
     if (!user) {
         console.warn("No user object found in localStorage");
         // window.location.href = "/employer-signin";
         return;
     }
-    
+
     // If company_name missing, attempt to refresh user profile from API
     if (!user.company_name && user.user_id && user.token) {
         try {
@@ -141,16 +141,16 @@ async function fetchUserDetails() {
 
     if (nameElement && contactElement) {
         nameElement.textContent = user.company_name || "Tech Inc";
-        contactElement.textContent =  user.contact_name || "Jane Doe";
+        contactElement.textContent = user.contact_name || "Jane Doe";
     }
-    
+
     // Only redirect if essential user properties are missing
     if (!user.user_id) {
         console.warn("No user_id found in user object");
         // window.location.href = "/employer-signin";
         return;
     }
-    
+
     // Log token missing but don't redirect
     if (!user.token) {
         console.warn("No token found in user object");
@@ -300,6 +300,13 @@ function initializeCurrentPageContent() {
     if (window.location.pathname.includes("/employer-new-job")) {
         console.log("Initializing new job page");
         updateCompanyNameField();
+
+        // Attach validation
+        if (window.ValidationUtils) {
+            window.ValidationUtils.attach(['salary'], window.ValidationUtils.restrictToCurrency);
+            window.ValidationUtils.attach(['vacancies'], window.ValidationUtils.restrictToNumbers);
+        }
+
         loadJobFormScripts().then(() => {
             initializeNewJobForm();
         }).catch((e) => console.error("Failed to load job form scripts", e));
@@ -667,7 +674,9 @@ function initializeNewJobForm() {
                 requirementsData.value = '';
                 benefitsData.value = '';
                 skillsData.value = '';
-                window.location.href = '/employer-job-listings/';
+                setTimeout(() => {
+                    window.location.href = '/employer-job-listings/';
+                }, 2000);
             }
         } catch (error) {
             console.error('Error posting job:', error);
@@ -797,4 +806,3 @@ window.addEventListener('popstate', function () {
         highlightActiveLink();
     }
 });
-
