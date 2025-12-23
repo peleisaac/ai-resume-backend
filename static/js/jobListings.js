@@ -18,6 +18,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     initializeJobListings();
 
+    // Trigger filter/sort after initial load completes
+    setTimeout(() => {
+        if (typeof JobFilters !== 'undefined' && typeof JobFilters.filterJobs === 'function') {
+            JobFilters.filterJobs();
+        }
+    }, 500);
+
     // Setup filter event listeners (defensive for missing nodes)
     document.getElementById("searchJobs")?.addEventListener("input", JobFilters.filterJobs);
     document.querySelector(".search-btn")?.addEventListener("click", function (e) {
@@ -52,6 +59,10 @@ async function initializeJobListings() {
         }
 
         const jobs = await JobDataService.loadJobs();
+        // Sort jobs by datePosted descending (latest first)
+        if (jobs && Array.isArray(jobs)) {
+            jobs.sort((a, b) => new Date(b.datePosted) - new Date(a.datePosted));
+        }
         console.log("Jobs loaded:", jobs);
 
         // Make sure JobListings functions are available
@@ -63,7 +74,20 @@ async function initializeJobListings() {
 
         window.JobListings.renderJobs(jobs);
         // apply current filters (e.g., if Status dropdown already changed)
-        JobFilters.filterJobs();
+        console.log("About to call JobFilters.filterJobs()");
+        console.log("JobFilters exists?", typeof JobFilters !== 'undefined');
+        console.log("JobFilters.filterJobs exists?", typeof JobFilters?.filterJobs === 'function');
+
+        if (typeof JobFilters !== 'undefined' && typeof JobFilters.filterJobs === 'function') {
+            try {
+                await JobFilters.filterJobs();
+                console.log("JobFilters.filterJobs() completed");
+            } catch (error) {
+                console.error("Error calling JobFilters.filterJobs():", error);
+            }
+        } else {
+            console.warn("JobFilters not available - sorting will not be applied after initial render");
+        }
         console.log("Jobs rendered successfully");
     } catch (error) {
         console.error("Error initializing job listings:", error);
@@ -174,8 +198,11 @@ function renderJobs(jobs) {
         tableBody.appendChild(jobRow);
     });
 
+
     // Add event listeners to action buttons
+    console.log("✅ renderJobs() about to call setupActionButtons");
     setupActionButtons();
+    console.log("✅ renderJobs() COMPLETED");
 }
 
 async function setupActionButtons() {
