@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const jobDetailContent = document.getElementById('job-detail-content');
     const applyButton = document.getElementById('apply-button');
     const removeSavedButton = document.getElementById('remove-saved-button');
-    const toastContainer = document.getElementById('toast-container');
+    // const toastContainer = document.getElementById('toast-container');
 
 
     // Tab Switching
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     required_skills: required_skills,
                     benefits: parseRequiredSkills(app.job_details.benefits || [])
                 };
-            });
+            }).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         } catch (error) {
             console.error("Error fetching saved jobs:", error);
             savedJobs = [];
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     required_skills: required_skills,
                     benefits: parseRequiredSkills(app.job_details.benefits || [])
                 };
-            });
+            }).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
             notifyApplicationStatusChanges(appliedJobs);
         } catch (error) {
@@ -438,25 +438,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Show toast notification
-    function showToast(message, type = '') {
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.textContent = message;
-        toastContainer.appendChild(toast);
-
-        // Show the toast
-        setTimeout(() => {
-            toast.classList.add('show');
-        }, 10);
-
-        // Remove the toast after 3 seconds
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => {
-                toastContainer.removeChild(toast);
-            }, 300);
-        }, 3000);
-    }
+    /* function showToast(message, type = '') {
+        // Deprecated: Using window.notify instead
+    } */
 
     // Helper Functions
     function jobMatchesSearch(job, searchTerm) {
