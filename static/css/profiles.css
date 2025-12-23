@@ -54,6 +54,11 @@ body {
     font-weight: bold;
     margin-top: 10px;
   }
+
+  label.required::after {
+    content: " *";
+    color: var(--danger-color);
+  }
    
   input,
   select,
