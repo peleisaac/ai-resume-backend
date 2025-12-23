@@ -225,7 +225,7 @@ async function setupActionButtons() {
             try {
                 // Update job in data service
                 const success = await JobDataService.updateJobStatus(jobId, newStatus);
-                
+
                 if (!success) {
                     alert("Failed to update job status. Please try again.");
                 }
@@ -244,14 +244,14 @@ async function setupActionButtons() {
         btn.addEventListener('click', async function () {
             const jobId = this.getAttribute('data-id');
 
-            if (confirm("Are you sure you want to delete this job listing? This action cannot be undone.")) {
+            if (await showDeleteConfirmation()) {
                 // Disable the button while deleting
                 this.disabled = true;
 
                 try {
                     // Delete job using data service
                     const success = await JobDataService.deleteJob(jobId);
-                    
+
                     if (!success) {
                         alert("Failed to delete job. Please try again.");
                     }
@@ -296,6 +296,87 @@ function ensureModalContainer() {
         modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
     }
     return modal;
+}
+
+function ensureDeleteConfirmationModal() {
+    let modal = document.getElementById('delete-confirmation-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'delete-confirmation-modal';
+        modal.style.cssText = `
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 12000;
+            padding: 16px;
+        `;
+
+        modal.innerHTML = `
+            <div style="background:#fff; max-width: 400px; width: 100%; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); overflow:hidden; transform: scale(1); transition: transform 0.2s;">
+                <div style="padding: 24px;">
+                    <div style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; margin: 0 auto 16px; background-color: #fee2e2; border-radius: 50%;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 9V14M12 17.01L12.01 16.998M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22Z" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3 style="margin: 0 0 8px; font-size: 18px; font-weight: 600; color: #111827; text-align: center;">Delete Job Listing</h3>
+                    <p style="margin: 0; font-size: 14px; color: #6b7280; text-align: center; line-height: 1.5;">Are you sure you want to delete this job listing? This action cannot be undone.</p>
+                </div>
+                <div style="background-color: #f9fafb; padding: 16px 24px; display: flex; gap: 12px; justify-content: center;">
+                    <button id="cancel-delete-btn" style="flex: 1; padding: 8px 16px; background: #fff; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; font-weight: 500; color: #374151; cursor: pointer; transition: all 0.2s;">Cancel</button>
+                    <button id="confirm-delete-btn" style="flex: 1; padding: 8px 16px; background: #dc2626; border: 1px solid transparent; border-radius: 6px; font-size: 14px; font-weight: 500; color: #fff; cursor: pointer; transition: all 0.2s;">Delete</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Hover effects via JS since inline CSS is used
+        const cancelBtn = modal.querySelector('#cancel-delete-btn');
+        cancelBtn.onmouseenter = () => cancelBtn.style.backgroundColor = '#f3f4f6';
+        cancelBtn.onmouseleave = () => cancelBtn.style.backgroundColor = '#fff';
+
+        const confirmBtn = modal.querySelector('#confirm-delete-btn');
+        confirmBtn.onmouseenter = () => confirmBtn.style.backgroundColor = '#b91c1c';
+        confirmBtn.onmouseleave = () => confirmBtn.style.backgroundColor = '#dc2626';
+    }
+    return modal;
+}
+
+function showDeleteConfirmation() {
+    return new Promise((resolve) => {
+        const modal = ensureDeleteConfirmationModal();
+        const cancelBtn = modal.querySelector('#cancel-delete-btn');
+        const confirmBtn = modal.querySelector('#confirm-delete-btn');
+
+        const cleanup = () => {
+            modal.style.display = 'none';
+            cancelBtn.onclick = null;
+            confirmBtn.onclick = null;
+            modal.onclick = null;
+        };
+
+        cancelBtn.onclick = () => {
+            cleanup();
+            resolve(false);
+        };
+
+        modal.onclick = (e) => {
+            if (e.target === modal) {
+                cleanup();
+                resolve(false);
+            }
+        };
+
+        confirmBtn.onclick = () => {
+            cleanup();
+            resolve(true);
+        };
+
+        modal.style.display = 'flex';
+    });
 }
 
 function ensureApplicantsModal() {
@@ -367,7 +448,7 @@ async function showApplicantsModal(jobId) {
                         </div>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <select data-app-id="${app.id}" class="app-status-select" style="padding:6px 8px; border:1px solid #d1d5db; border-radius:6px; font-size:12px; color:#111827;">
-                                ${['pending','review','shortlisted','rejected','hired','withdrawn'].map(opt => `<option value="${opt}" ${status === opt ? 'selected' : ''}>${capitalizeFirstLetter(opt)}</option>`).join('')}
+                                ${['pending', 'review', 'shortlisted', 'rejected', 'hired', 'withdrawn'].map(opt => `<option value="${opt}" ${status === opt ? 'selected' : ''}>${capitalizeFirstLetter(opt)}</option>`).join('')}
                             </select>
                             <button class="action-btn save-app-status" data-app-id="${app.id}" style="padding:6px 10px; background:#4f46e5; color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:12px;">Save</button>
                         </div>
@@ -379,7 +460,7 @@ async function showApplicantsModal(jobId) {
                 <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; align-items:center;">
                     <div style="font-weight:600; color:#111827;">Applicants (${state.filtered.length}/${state.all.length})</div>
                     <select id="applicant-status-filter" style="padding:6px 8px; border:1px solid #d1d5db; border-radius:6px; font-size:12px; color:#111827;">
-                        ${['all','pending','review','shortlisted','rejected','hired','withdrawn'].map(opt => `<option value="${opt}" ${state.status === opt ? 'selected' : ''}>${capitalizeFirstLetter(opt)}</option>`).join('')}
+                        ${['all', 'pending', 'review', 'shortlisted', 'rejected', 'hired', 'withdrawn'].map(opt => `<option value="${opt}" ${state.status === opt ? 'selected' : ''}>${capitalizeFirstLetter(opt)}</option>`).join('')}
                     </select>
                     <input id="applicant-search" type="search" placeholder="Search name or email" value="${state.search || ''}" style="padding:6px 8px; border:1px solid #d1d5db; border-radius:6px; font-size:12px; min-width:200px;">
                 </div>
@@ -481,9 +562,11 @@ function showJobDetailsModal(job) {
         { label: 'Status', value: capitalizeFirstLetter(job.status) },
         { label: 'Contract', value: formatContract(job.contract_type || job.contractType) },
         { label: 'Experience', value: job.experience },
-        { label: 'Education', value: formatEducation(
-            job.education_level || job.education || job.educationLevel || job.educationlevel || ''
-        ) },
+        {
+            label: 'Education', value: formatEducation(
+                job.education_level || job.education || job.educationLevel || job.educationlevel || ''
+            )
+        },
         { label: 'Location', value: [job.city, job.region].filter(Boolean).join(', ') },
         { label: 'Salary', value: job.salary },
         { label: 'Vacancies', value: job.no_of_vacancies },
@@ -497,7 +580,7 @@ function showJobDetailsModal(job) {
         </div>
     `;
 
-    const chipList = (title, values=[]) => {
+    const chipList = (title, values = []) => {
         if (!values || !values.length) return '';
         const chips = values.map(v => `<span style="display:inline-block; background:#eef2ff; color:#4338ca; padding:4px 8px; border-radius:9999px; margin:4px 6px 0 0; font-size:12px;">${v}</span>`).join('');
         return `<div style="margin:12px 0;"><div style="font-weight:600; color:#374151; margin-bottom:6px;">${title}</div><div>${chips}</div></div>`;
@@ -524,7 +607,7 @@ function capitalizeFirstLetter(string) {
 }
 
 // Handle page visibility changes (when user comes back to the tab)
-document.addEventListener('visibilitychange', function() {
+document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'visible') {
         console.log("Page is now visible, reinitializing job listings");
         initializeJobListings();
@@ -532,7 +615,7 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // Handle page reload/refresh events more explicitly
-window.addEventListener('pageshow', function(event) {
+window.addEventListener('pageshow', function (event) {
     if (event.persisted) {
         console.log("Page was restored from back-forward cache, reinitializing");
         initializeJobListings();
@@ -541,7 +624,7 @@ window.addEventListener('pageshow', function(event) {
 
 
 
-window.loadJobListings = async function() {
+window.loadJobListings = async function () {
     console.log("loadJobListings called");
     try {
         // Make sure JobDataService is available
