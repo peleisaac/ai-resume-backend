@@ -122,16 +122,16 @@ server   = os.getenv("SERVER")
 database = os.getenv("DATABASE")
 port = os.getenv("PORT")
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': database,
-        'USER': username,
-        'PASSWORD': password,
-        'HOST': server,  # or '127.0.0.1'
-        'PORT': port, 
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': database,
+#         'USER': username,
+#         'PASSWORD': password,
+#         'HOST': server,  # or '127.0.0.1'
+#         'PORT': port, 
+#     }
+# }
 
 
 # Password validation
@@ -173,6 +173,14 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),   # tell Django where your /static folder is
 ]
+
+# Enable WhiteNoise storage for compression and caching
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Database configuration (Heroku uses Postgres)
+DATABASES = {
+    'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
