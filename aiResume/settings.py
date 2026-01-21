@@ -36,6 +36,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
+    "https://ai-resume-project-a1df6159c7ca.herokuapp.com/",
     "ai-resume-backend.axxendcorp.com",
     "localhost",
     "127.0.0.1",
