@@ -1,5 +1,5 @@
 // Guard against double execution when pages are dynamically loaded
-const baseUrl = "https://ai-resume-backend-v2.axxendcorp.com/api/v1";
+const baseUrl = "postgres://uebroi7mi1719s:pcab294e8297db75020683db7f38bae12606e2ed1c28792dfca6bc9c9b3af9761@c18qegamsgjut6.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d3248bqti57enm/api/v1";
 if (!window.apiEndpoints) {
   window.apiEndpoints = {
     base: baseUrl,
