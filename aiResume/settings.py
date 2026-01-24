@@ -30,24 +30,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY', '723843898437')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
-    "https://ai-resume-project-a1df6159c7ca.herokuapp.com/",
+    "https://ai-resume-project-a1df6159c7ca.herokuapp.com",
     "ai-resume-backend.axxendcorp.com",
     "localhost",
     "127.0.0.1",
 ]
 
-azure_storage_connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
-azure_container_name = os.getenv("AZURE_CONTAINER_NAME")
+azure_storage_connection_string = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
+azure_container_name = os.environ.get("AZURE_CONTAINER_NAME")
 
 
-AZURE_STORAGE_CONNECTION_STRING = azure_storage_connection_string
-AZURE_CONTAINER_NAME = azure_container_name
+# AZURE_STORAGE_CONNECTION_STRING = azure_storage_connection_string
+# AZURE_CONTAINER_NAME = azure_container_name
 
 
 # Application definition
@@ -116,11 +116,11 @@ WSGI_APPLICATION = 'aiResume.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-username = os.getenv("DB_USER")
-password = os.getenv("DB_PASSWORD")
-server   = os.getenv("SERVER")
-database = os.getenv("DATABASE")
-port = os.getenv("PORT")
+# username = os.getenv("DB_USER")
+# password = os.getenv("DB_PASSWORD")
+# server   = os.getenv("SERVER")
+# database = os.getenv("DATABASE")
+# port = os.getenv("PORT")
 
 # DATABASES = {
 #     'default': {
@@ -179,7 +179,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Database configuration (Heroku uses Postgres)
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+    'default': dj_database_url.config(default='sqlite:///db.sqlite3', conn_max_age=600)
 }
 
 # Default primary key field type
