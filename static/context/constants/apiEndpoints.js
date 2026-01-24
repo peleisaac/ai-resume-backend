@@ -1,5 +1,5 @@
 // Guard against double execution when pages are dynamically loaded
-const baseUrl = "";
+const baseUrl = "/api/v1";
 if (!window.apiEndpoints) {
   window.apiEndpoints = {
     base: baseUrl,
@@ -13,7 +13,7 @@ if (!window.apiEndpoints) {
     validateOtp: `${baseUrl}/auth/validate-otp`,
     resendOtp: `${baseUrl}/otp/resend`,
 
-    jobs: `/jobs`,
+    jobs: `${baseUrl}/jobs`,
     saveJob: `${baseUrl}/job/save`,
     savedJobs: `${baseUrl}/jobs/saved`,
     removeSavedJob: `${baseUrl}/saved-job/remove`,
