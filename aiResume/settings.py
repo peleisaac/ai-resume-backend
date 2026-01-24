@@ -33,7 +33,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', '723843898437')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = os.environ.get('DEBUG', 'False') == 'False'
 
 ALLOWED_HOSTS = [
     "ai-resume-project-a1df6159c7ca.herokuapp.com",
@@ -77,6 +77,8 @@ AUTHENTICATION_BACKENDS = [
     'api.authentication.EmailBackend',  # Replace `your_app` with your actual app name
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
