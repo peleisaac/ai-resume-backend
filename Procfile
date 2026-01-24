@@ -1,1 +1,1 @@
-web gunicorn aiResume.wsgi
+web: gunicorn aiResume.wsgi --log-file -
