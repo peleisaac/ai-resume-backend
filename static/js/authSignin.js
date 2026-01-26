@@ -1,5 +1,6 @@
 // apiEndpoints is loaded globally from apiEndpoints.js
 import { handleApiResponse } from "./handleApiResponse.js";
+import { notify } from "./notifications.js";
 
 document.addEventListener("DOMContentLoaded", function () {
   // Get user role from the body tag
@@ -100,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Processed login result:", result);
 
         if (result.success) {
-          window.notify.success(`${responseData.message}`);
+          notify.success(`${responseData.message}`);
           // Store user data in localStorage
           localStorage.setItem("user", JSON.stringify(result.data));
 
@@ -150,12 +151,12 @@ document.addEventListener("DOMContentLoaded", function () {
               if (profileResult.success && profileResult.data) {
                 const profileCompleted = profileResult.data.profile_complete;
                 console.log("Profile completed status:", profileCompleted);
-                window.notify.success(`${profileResult.message}`);
+                notify.success(`${profileResult.message}`);
 
                 // Redirect based on profile completion status
                 if (profileCompleted) {
                   console.log("Redirecting to dashboard");
-                  window.notify.success("Redirecting to dashboard");
+                  notify.success("Redirecting to dashboard");
                   setTimeout(() => {
                     window.location.href =
                       userRole === "employer"
@@ -165,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 else {
                   console.log("Redirecting to profile - incomplete profile");
-                  window.notify.warning("Redirecting to profile - incomplete profile");
+                  notify.warning("Redirecting to profile - incomplete profile");
                   setTimeout(() => {
                     window.location.href =
                       userRole === "employer"
@@ -176,16 +177,16 @@ document.addEventListener("DOMContentLoaded", function () {
               }
               // else {
               //   console.log("Profile data issue, redirecting to profile page");
-              //   window.notify.error("Profile data issue, redirecting to profile page");
+              //   notify.error("Profile data issue, redirecting to profile page");
               //   window.location.href =
               //     userRole === "employer"
               //       ? "/employer-profile"
               //       : "/jobseeker-profile";
-              //   window.notify.error(profileResult.message);
+              //   notify.error(profileResult.message);
               // }
             })
             .catch((profileError) => {
-              window.notify.error("Profile fetch error:", profileError);
+              notify.error("Profile fetch error:", profileError);
               console.error("Profile fetch error:", profileError);
               // If there's an error fetching the profile, redirect to profile page
               setTimeout(() => {
@@ -200,13 +201,13 @@ document.addEventListener("DOMContentLoaded", function () {
           document.getElementById("password").value = "";
 
           const msg = responseData.message || result.message || "Login failed";
-          window.notify.error(msg);
+          notify.error(msg);
           errorMessage.textContent = msg;
         }
       })
       .catch((error) => {
         console.error("Login error:", error);
-        window.notify.error(`${error.message}`);
+        notify.error(`${error.message}`);
 
         document.getElementById("email").value = "";
         document.getElementById("password").value = "";
