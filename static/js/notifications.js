@@ -86,10 +86,10 @@ class NotificationManager {
         }
     }
 
-    show(message, type = 'info', duration = 4000) {
+    show(message, type = 'info', duration = 6000) {
         const notification = document.createElement('div');
         notification.style.pointerEvents = 'auto';
-        
+
         // Inline SVGs with clearer shapes
         const icons = {
             success: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10Z" fill="currentColor" opacity="0.12"/><path d="M9.5 12.8l2 2 3.5-4.6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -178,4 +178,7 @@ class NotificationManager {
 }
 
 // Create global instance
-window.notify = new NotificationManager();
+// Create global instance
+export const notify = new NotificationManager();
+window.notify = notify;
+export default NotificationManager;
