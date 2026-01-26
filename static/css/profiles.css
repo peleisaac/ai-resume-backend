@@ -1,218 +1,249 @@
 /* General Styles */
 body {
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    background-color: var(--ash-color);
-    font-family: var(--font-family);
-  }
-   
-  .profile_container {
-    background: var(--white-color);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    max-width: 800px; /* Added max-width for larger screens */
-    gap: 0.9375rem;
-    padding: 1.875rem;
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    margin-top: 2rem;
-    box-sizing: border-box; /* Added for proper sizing */
-  }
-   
-  /* Ensures form rows space out */
-  .row {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    width: 100%;
-  }
-   
-  .row > div {
-    flex: 1;
-  }
-   
-  h2 {
-    color: var(--secondary-color);
-    font-size: 22px;
-    text-align: center;
-  }
-   
-  p {
-    text-align: center;
-  }
-   
-  /* Proper input styling */
-  label {
-    font-weight: bold;
-    margin-top: 10px;
+  min-height: 100vh;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--ash-color);
+  font-family: var(--font-family);
+}
+
+.profile_container {
+  background: var(--white-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  max-width: 1000px;
+  /* Increased width */
+  gap: 0.9375rem;
+  padding: 1.875rem;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  /* Add margin bottom */
+  box-sizing: border-box;
+}
+
+.user-avatar img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.top-bar {
+  width: 90%;
+  max-width: 1000px;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Ensures form rows space out */
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+
+.row>div {
+  flex: 1;
+}
+
+h2 {
+  color: var(--secondary-color);
+  font-size: 22px;
+  text-align: center;
+}
+
+p {
+  text-align: center;
+}
+
+/* Proper input styling */
+label {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+label.required::after {
+  content: " *";
+  color: var(--danger-color);
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0 15px 0;
+  border: 1px solid var(--ash-border-color);
+  border-radius: 5px;
+  box-sizing: border-box;
+  /* Prevents width issues */
+  min-height: 44px;
+  /* Touch-friendly minimum height */
+  font-size: 16px;
+  /* Prevents zoom on iOS */
+}
+
+textarea {
+  height: 9.375rem;
+  min-height: 9.375rem;
+  /* Ensure minimum height */
+}
+
+/* Button styles */
+.profile_button {
+  width: 100%;
+  background-color: var(--danger-color);
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  min-height: 48px;
+  /* Touch-friendly button height */
+}
+
+button:hover {
+  background-color: var(--darker-red-color);
+}
+
+#header,
+#footer {
+  width: 100%;
+}
+
+#footer {
+  margin-top: auto;
+}
+
+/* Categories */
+#category-list {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill,
+      minmax(200px, 1fr));
+  /* Adjust width */
+  gap: 15px 40px;
+  align-items: center;
+  max-width: 800px;
+  width: 100%;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  /* Clickable */
+}
+
+.category-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  /* Prevent shrinking */
+  accent-color: var(--danger-color);
+  /* Brand color */
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  margin: var(--margin-large) 0;
+}
+
+.checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  margin: 0;
+  vertical-align: middle;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+    height: auto;
+    min-height: 100vh;
   }
 
-  label.required::after {
-    content: " *";
-    color: var(--danger-color);
-  }
-   
-  input,
-  select,
-  textarea {
+  .profile_container {
     width: 100%;
-    padding: 10px;
-    margin: 5px 0 15px 0;
-    border: 1px solid var(--ash-border-color);
-    border-radius: 5px;
-    box-sizing: border-box; /* Prevents width issues */
-    min-height: 44px; /* Touch-friendly minimum height */
-    font-size: 16px; /* Prevents zoom on iOS */
+    max-width: none;
+    padding: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
   }
-   
-  textarea {
-    height: 9.375rem;
-    min-height: 9.375rem; /* Ensure minimum height */
+
+  /* Stack form rows vertically on mobile */
+  .row {
+    flex-direction: column;
+    gap: 0;
   }
-   
-  /* Button styles */
-  .profile_button {
-    width: 100%;
-    background-color: var(--danger-color);
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    min-height: 48px; /* Touch-friendly button height */
-  }
-   
-  button:hover {
-    background-color: var(--darker-red-color);
-  }
-   
-  #header,
-  #footer {
+
+  .row>div {
     width: 100%;
   }
-  #footer {
-    margin-top: auto;
+
+  h2 {
+    font-size: 20px;
   }
-   
-  /* Categories */
+
+  p {
+    font-size: 14px;
+  }
+
+  /* Make category grid single column on mobile */
   #category-list {
-    margin-top: 10px;
-    display: grid;
-    grid-template-columns: repeat(
-      auto-fill,
-      minmax(200px, 1fr)
-    ); /* Adjust width */
-    gap: 15px 40px;
-    align-items: center;
-    max-width: 800px;
-    width: 100%;
-  }
-   
-  .category-item {
-    display: flex;
-    align-items: center;
+    grid-template-columns: 1fr;
     gap: 10px;
-    font-size: 16px;
+    max-width: none;
   }
-   
-  .category-item input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    margin: 0;
-    padding: 0;
-    cursor: pointer;
+
+  .category-item {
+    justify-content: flex-start;
   }
-   
-  .checkbox {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: bold;
-    font-size: 16px;
-    margin: var(--margin-large) 0;
+}
+
+/* Tablet Styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .profile_container {
+    width: 90%;
+    max-width: 700px;
+    padding: 2rem;
   }
-   
-  .checkbox input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    margin: 0;
-    vertical-align: middle;
+
+  #category-list {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   }
-   
-  /* Mobile Responsive Styles */
-  @media (max-width: 768px) {
-    body {
-      padding: 10px;
-      height: auto;
-      min-height: 100vh;
-    }
-   
-    .profile_container {
-      width: 100%;
-      max-width: none;
-      padding: 1rem;
-      margin-top: 1rem;
-      margin-bottom: 1rem;
-    }
-   
-    /* Stack form rows vertically on mobile */
-    .row {
-      flex-direction: column;
-      gap: 0;
-    }
-   
-    .row > div {
-      width: 100%;
-    }
-   
-    h2 {
-      font-size: 20px;
-    }
-   
-    p {
-      font-size: 14px;
-    }
-   
-    /* Make category grid single column on mobile */
-    #category-list {
-      grid-template-columns: 1fr;
-      gap: 10px;
-      max-width: none;
-    }
-   
-    .category-item {
-      justify-content: flex-start;
-    }
+}
+
+/* Large Desktop Styles */
+@media (min-width: 1025px) {
+  .profile_container {
+    width: 80%;
+    max-width: 800px;
+    padding: 2.5rem;
   }
-   
-  /* Tablet Styles */
-  @media (min-width: 769px) and (max-width: 1024px) {
-    .profile_container {
-      width: 90%;
-      max-width: 700px;
-      padding: 2rem;
-    }
-   
-    #category-list {
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    }
-  }
-   
-  /* Large Desktop Styles */
-  @media (min-width: 1025px) {
-    .profile_container {
-      width: 80%;
-      max-width: 800px;
-      padding: 2.5rem;
-    }
-  }
+}
