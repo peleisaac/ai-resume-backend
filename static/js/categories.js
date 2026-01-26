@@ -10,7 +10,7 @@ function loadCategories() {
             categoryList.innerHTML = "";
 
             data.categories.forEach(category => {
-                const categoryItem = document.createElement("div");
+                const categoryItem = document.createElement("label"); // Changed to label
                 categoryItem.classList.add("category-item");
 
                 const checkbox = document.createElement("input");
@@ -18,11 +18,7 @@ function loadCategories() {
                 checkbox.name = "categories";
                 checkbox.value = category;
                 checkbox.classList.add("category-checkbox");
-                checkbox.onclick = limitSelection; 
-
-                const label = document.createElement("label");
-                label.appendChild(checkbox);
-                label.appendChild(document.createTextNode(" " + category));
+                checkbox.onclick = limitSelection;
 
                 categoryItem.appendChild(checkbox);
                 categoryItem.appendChild(document.createTextNode(category));
