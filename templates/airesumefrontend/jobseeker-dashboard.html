@@ -10,7 +10,7 @@
     <title>Dashboard | AI Resume Screening</title>
     <link rel="stylesheet" href="{% static 'css/variables.css' %}">
     <link rel="stylesheet" href="{% static 'css/jobseekers-dashboard.css' %}">
-    <script src="{% static 'js/notifications.js' %}"></script>
+    <script type="module" src="{% static 'js/notifications.js' %}"></script>
     <script src="{% static 'js/profileCRUD.js' %}"></script>
     <script src="{% static 'js/jobCRUD.js' %}"></script>
 </head>
@@ -24,9 +24,11 @@
         <main class="main-content">
             <div class="top-bar">
                 <div style="display: flex; align-items: center; gap: 16px;">
-                    <button class="mobile-menu-toggle" id="mobileMenuToggle" title="Open mobile menu" aria-label="Open mobile menu">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle" title="Open mobile menu"
+                        aria-label="Open mobile menu">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </button>
                     <h1 style="margin: 0;">Dashboard</h1>
@@ -64,7 +66,9 @@
                         <div class="metric-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="currentColor" stroke-width="2" />
+                                <path
+                                    d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
+                                    stroke="currentColor" stroke-width="2" />
                                 <path d="M12 7V12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                             </svg>
                         </div>
