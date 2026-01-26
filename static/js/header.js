@@ -81,9 +81,9 @@ document.addEventListener("DOMContentLoaded", function () {
     let buttons = "";
 
     if (role === "jobseeker") {
-        buttons = `<button class="btn danger" data-target="/jobseeker-signin">Employers</button>`;
+        buttons = `<button class="btn danger" data-target="/employer-signin">Employers</button>`;
     } else if (role === "employer") {
-        buttons = `<button class="btn danger" data-target="/employer-signin">Jobseekers</button>`;
+        buttons = `<button class="btn danger" data-target="/jobseeker-signin">Jobseekers</button>`;
     } else {
         buttons = `
             <button class="btn secondary-white" data-target="/jobseeker-signin">Jobseekers</button>
