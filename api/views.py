@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db import IntegrityError
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -183,13 +184,18 @@ def file_upload(request, user_id):
                 }, status=status.HTTP_201_CREATED)
 
             except Exception as e:
-                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                # Ideally log the error here
+                return Response({
+                    "status_code": StatusCode.SERVER_ERROR,
+                    "message": "An internal error occurred during file upload."
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
+        # Ideally log the error here
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
-            "message": f"An error occurred: {str(e)}"
+            "message": "An internal error occurred during file upload."
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
@@ -234,12 +240,11 @@ def sign_up(request):
 
 
         user_id = str(uuid.uuid4().hex)
-        # Check if the user already exists
-        # if Users.user_exists(email):
-        #     return Response({
-        #         "status_code": StatusCode.BAD_REQUEST,
-        #         "message": "User with this email already exists"
-        #     }, status=status.HTTP_400_BAD_REQUEST)
+        if Users.user_exists(email):
+             return Response({
+                 "status_code": StatusCode.BAD_REQUEST,
+                 "message": "User with this email already exists"
+             }, status=status.HTTP_400_BAD_REQUEST)
         
         # Create and save the new user
         user = Users(
@@ -307,6 +312,12 @@ def sign_up(request):
         #         "status_code": StatusCode.INVALID_CREDENTIALS,
         #         "message": "Failed To Create User"
         #     }, status=status.HTTP_401_UNAUTHORIZED) 
+
+    except IntegrityError as e:
+         return Response({
+            "status_code": StatusCode.BAD_REQUEST,
+            "message": "User with this email or phone number already exists."
+        }, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
@@ -365,7 +376,7 @@ def login(request):
     except Exception as e:
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
-            "message": f"An error occurred: {str(e)}"
+            "message": "An internal error occurred during login."
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
@@ -470,7 +481,7 @@ def add_new_job(request):
     except Exception as e:
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
-            "message": f"An error occurred: {str(e)}"
+            "message": "An internal error occurred while adding the job."
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
@@ -544,7 +555,7 @@ def add_new_application(request):
     except Exception as e:
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
-            "message": f"An error occurred: {str(e)}"
+            "message": "An internal error occurred while creating the application."
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
@@ -1137,7 +1148,7 @@ def update_user(request, user_id):
     except Exception as e:
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
-            "message": f"An error occurred: {str(e)}"
+            "message": "An internal error occurred while updating the user."
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -1182,7 +1193,7 @@ def update_job(request, job_id):
     except Exception as e:
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
-            "message": f"An error occurred: {str(e)}"
+            "message": "An internal error occurred while updating the job."
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -1213,7 +1224,7 @@ def update_application_status(request, application_id):
     except Exception as e:
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
-            "message": f"An error occurred: {str(e)}"
+            "message": "An internal error occurred while updating application status."
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['DELETE'])
@@ -1243,7 +1254,7 @@ def delete_user(request, user_id):
     except Exception as e:
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
-            "message": f"An error occurred: {str(e)}"
+            "message": "An internal error occurred while deleting the user."
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['DELETE'])
@@ -1280,7 +1291,7 @@ def delete_job(request, job_id):
     except Exception as e:
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
-            "message": f"An error occurred: {str(e)}"
+            "message": "An internal error occurred while deleting the job."
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['PUT'])
@@ -1310,7 +1321,7 @@ def deactivate_user(request, user_id):
     except Exception as e:
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
-            "message": f"An error occurred: {str(e)}"
+            "message": "An internal error occurred while deactivating the user."
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -1382,7 +1393,7 @@ def save_job(request):
     except Exception as e:
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
-            "message": f"An error occurred: {str(e)}"
+            "message": "An internal error occurred while saving the job."
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
@@ -1444,7 +1455,7 @@ def remove_saved_job(request):
     except Exception as e:
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
-            "message": f"An error occurred: {str(e)}"
+            "message": "An internal error occurred while removing the saved job."
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['PUT'])
@@ -1481,7 +1492,7 @@ def deactivate_job(request, job_id):
     except Exception as e:
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
-            "message": f"An error occurred: {str(e)}"
+            "message": "An internal error occurred while deactivating the job."
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['PUT'])
@@ -1505,7 +1516,7 @@ def activate_user(request, user_id):
     except Exception as e:
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
-            "message": f"An error occurred: {str(e)}"
+            "message": "An internal error occurred while activating the user."
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['PUT'])
@@ -1536,7 +1547,7 @@ def activate_job(request, job_id):
     except Exception as e:
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
-            "message": f"An error occurred: {str(e)}"
+            "message": "An internal error occurred while activating the job."
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     
