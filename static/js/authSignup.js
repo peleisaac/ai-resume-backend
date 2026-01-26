@@ -1,4 +1,5 @@
 import { handleApiResponse } from "./handleApiResponse.js";
+import { notify } from "./notifications.js";
 
 document.addEventListener("DOMContentLoaded", function () {
   // Get user role from the body tag
@@ -179,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
           localStorage.setItem("user", JSON.stringify(result.data));
           console.log(`${responseData.data}`);
           // alert(result.message);
-          window.notify.success(`${responseData.message}`);
+          notify.success(`${responseData.message}`);
 
           setTimeout(() => {
             window.location.href =
@@ -189,12 +190,12 @@ document.addEventListener("DOMContentLoaded", function () {
           }, 2000);
         } else {
           errorMessage.textContent = responseData.message || result.message;
-          window.notify.error(`${responseData.message}`);
+          notify.error(`${responseData.message}`);
         }
       })
       .catch((error) => {
         console.error("Error:", error);
-        window.notify.error("An error occurred. Please try again.");
+        notify.error("An error occurred. Please try again.");
         errorMessage.textContent = "An error occurred. Please try again.";
       });
   }
