@@ -17,6 +17,7 @@ from .serializers import UserSerializer, JobSerializer, JSONListField, FileUploa
 import json
 from rest_framework.parsers import MultiPartParser, FormParser
 from azure.storage.blob import BlobServiceClient
+from azure.core.exceptions import AzureError
 from django.conf import settings
 
 # Create your views here.
@@ -163,6 +164,9 @@ def file_upload(request, user_id):
                     container=settings.AZURE_CONTAINER_NAME, blob=file_name
                 )
 
+                # Ensure we are at the beginning of the file
+                file.seek(0)
+
                 # Upload the file
                 blob_client.upload_blob(file.read(), overwrite=True)
 
@@ -183,11 +187,16 @@ def file_upload(request, user_id):
 
                 }, status=status.HTTP_201_CREATED)
 
+            except AzureError as ae:
+                 return Response({
+                    "status_code": StatusCode.SERVER_ERROR,
+                    "message": f"Azure Storage Error: {str(ae)}"
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             except Exception as e:
                 # Ideally log the error here
                 return Response({
                     "status_code": StatusCode.SERVER_ERROR,
-                    "message": "An internal error occurred during file upload."
+                    "message": f"An internal error occurred during file upload: {str(e)}"
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -195,7 +204,7 @@ def file_upload(request, user_id):
         # Ideally log the error here
         return Response({
             "status_code": StatusCode.SERVER_ERROR,
-            "message": "An internal error occurred during file upload."
+            "message": f"An internal error occurred during file upload: {str(e)}"
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
