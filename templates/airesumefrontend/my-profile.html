@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{% static 'css/jobseekers-dashboard.css' %}" />
     <script src="{% static 'js/jobseekerSidebar.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/variables.css' %}">
-    <script src="{% static 'js/notifications.js' %}"></script>
+    <script type="module" src="{% static 'js/notifications.js' %}"></script>
     <script src="{% static 'js/profileCRUD.js' %}"></script>
 </head>
 
@@ -24,9 +24,11 @@
     <div class="main-content">
         <div class="top-bar" style="display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 16px;">
-                <button class="mobile-menu-toggle" id="mobileMenuToggle" title="Open mobile menu" aria-label="Open mobile menu">
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" title="Open mobile menu"
+                    aria-label="Open mobile menu">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
                     </svg>
                 </button>
                 <h1 style="margin: 0;">Update Profile</h1>
@@ -142,7 +144,7 @@
 
             if (!user || !user.user_id) {
                 alert("User not found. Please log in.");
-                window.location.href = "/jobseeker-signin"; 
+                window.location.href = "/jobseeker-signin";
                 return;
             }
 
@@ -234,11 +236,11 @@
                 const user = JSON.parse(localStorage.getItem("user"));
 
                 try {
-                    const response = await fetch(`${apiEndpoints.updateUser}/${user.user_id}`, { 
+                    const response = await fetch(`${apiEndpoints.updateUser}/${user.user_id}`, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",
-                            "Authorization": `Token ${user?.token}` 
+                            "Authorization": `Token ${user?.token}`
                         },
                         body: JSON.stringify(formData)
                     });
