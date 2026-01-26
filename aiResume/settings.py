@@ -30,23 +30,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', '723843898437')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'False'
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
-    "ai-resume-project-a1df6159c7ca.herokuapp.com",
+    "ai-resume-backend.axxendcorp.com",
     "localhost",
     "127.0.0.1",
 ]
 
-azure_storage_connection_string = os.environ.get("AZURE_STORAGE_CONNECTION_STRING")
-azure_container_name = os.environ.get("AZURE_CONTAINER_NAME")
 
-
-# AZURE_STORAGE_CONNECTION_STRING = azure_storage_connection_string
-# AZURE_CONTAINER_NAME = azure_container_name
 
 
 # Application definition
@@ -78,8 +73,6 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -90,7 +83,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
 ROOT_URLCONF = 'aiResume.urls'
@@ -117,22 +109,22 @@ WSGI_APPLICATION = 'aiResume.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# username = os.getenv("DB_USER")
-# password = os.getenv("DB_PASSWORD")
-# server   = os.getenv("SERVER")
-# database = os.getenv("DATABASE")
-# port = os.getenv("PORT")
+username = os.getenv("DB_USER")
+password = os.getenv("DB_PASSWORD")
+server   = os.getenv("SERVER")
+database = os.getenv("DATABASE")
+port = os.getenv("PORT")
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': database,
-#         'USER': username,
-#         'PASSWORD': password,
-#         'HOST': server,  # or '127.0.0.1'
-#         'PORT': port, 
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': database,
+        'USER': username,
+        'PASSWORD': password,
+        'HOST': server,  # or '127.0.0.1'
+        'PORT': port, 
+    }
+}
 
 
 # Password validation
@@ -175,20 +167,24 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),   # tell Django where your /static folder is
 ]
 
-# Enable WhiteNoise storage for compression and caching
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# Database configuration (Heroku uses Postgres)
-DATABASES = {
-    'default': dj_database_url.config(default='sqlite:///db.sqlite3', conn_max_age=600)
-}
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True
+"""CORS configuration: permissive in DEBUG, strict in production."""
+# Allow all origins during local development; restrict in production
+CORS_ALLOW_ALL_ORIGINS = DEBUG
+
+# Comma-separated list of allowed origins for production, e.g.
+# CORS_ALLOWED_ORIGINS=https://frontend.example.com,https://staging.example.com
+_cors_env = os.getenv("CORS_ALLOWED_ORIGINS", "")
+_cors_list = [o.strip() for o in _cors_env.split(",") if o.strip()]
+
+if not DEBUG:
+    CORS_ALLOWED_ORIGINS = _cors_list or [
+        "https://ai-resume-backend.axxendcorp.com",
+    ]
 
 CORS_ALLOW_METHODS = [
     "GET",
@@ -207,30 +203,12 @@ CORS_ALLOW_HEADERS = [
     "x-csrftoken",
 ]
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-        },
-    },
-    "root": {
-        "handlers": ["console"],
-        "level": "ERROR",
-    },
-}
-
-
 CORS_ALLOW_CREDENTIALS = True
-
-
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",  # React/Next.js local dev
-#     "https://yourfrontenddomain.com",  # Production frontend
-# ]
 
 # Wrap django_heroku.settings(locals()) behind a DYNO check
 if 'DYNO' in os.environ:
     import django_heroku
     django_heroku.settings(locals())
+# Azure Storage Settings (Ensure these survive django_heroku)
+AZURE_STORAGE_CONNECTION_STRING = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
+AZURE_CONTAINER_NAME = os.getenv('AZURE_CONTAINER_NAME')
